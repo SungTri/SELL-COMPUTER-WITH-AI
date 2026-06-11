@@ -1075,6 +1075,7 @@ class AdminController extends Controller {
         $revenueChartData = $this->adminModel->getRevenueByDateRange($startDate, $endDate);
         $categoryRevenue = $this->adminModel->getRevenueByCategory($startDate, $endDate);
         $brandRevenue = $this->adminModel->getRevenueByBrand($startDate, $endDate);
+        $orderStatusDist = $this->adminModel->getOrderStatusDistribution($startDate, $endDate);
         
         // Top lists
         $topProducts = $this->adminModel->getTopSellingProducts(5, $startDate, $endDate);
@@ -1127,7 +1128,8 @@ class AdminController extends Controller {
             'charts' => [
                 'revenue' => $revenueChartData,
                 'category_revenue' => $categoryRevenue,
-                'brand_revenue' => $brandRevenue
+                'brand_revenue' => $brandRevenue,
+                'order_status' => $orderStatusDist
             ],
             'top_products' => $topProducts,
             'top_customers' => $topCustomers,
@@ -2816,6 +2818,15 @@ class AdminController extends Controller {
                 $html .= '<td class="chart-container" style="width: 50%;">
                             <div class="chart-title">Cấu trúc doanh thu theo thương hiệu</div>
                             <img class="chart-img" src="' . $charts['brand'] . '">
+                          </td>';
+                $rowCount++;
+                if ($rowCount % 2 == 0) $html .= '</tr>';
+            }
+            if (!empty($charts['orderStatus'])) {
+                if ($rowCount % 2 == 0) $html .= '<tr>';
+                $html .= '<td class="chart-container" style="width: 50%;">
+                            <div class="chart-title">Cấu trúc trạng thái đơn hàng</div>
+                            <img class="chart-img" src="' . $charts['orderStatus'] . '">
                           </td>';
                 $rowCount++;
                 if ($rowCount % 2 == 0) $html .= '</tr>';

@@ -299,22 +299,70 @@
             </div>
         </section>
 
-        <!-- Weekly Growth Analysis -->
-        <section id="weekly-chart-section" class="bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-outline-variant dark:border-neutral-800 shadow-sm transition-colors duration-200">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h2 class="text-h3 font-bold text-primary dark:text-white">Phân tích Tăng trưởng Hàng tuần</h2>
-                    <p class="text-on-surface-variant dark:text-neutral-400 text-[14px]">Biến động doanh thu theo từng tuần (8 tuần gần nhất)</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                        <span class="text-[11px] font-black text-indigo-700 dark:text-indigo-400 uppercase tracking-widest">Real-time Data</span>
+        <!-- Weekly Growth & Order Status Distribution Grid -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Weekly Growth Analysis -->
+            <div id="weekly-chart-section" class="lg:col-span-2 bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-outline-variant dark:border-neutral-800 shadow-sm transition-colors duration-200">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-h3 font-bold text-primary dark:text-white">Phân tích Tăng trưởng Hàng tuần</h2>
+                        <p class="text-on-surface-variant dark:text-neutral-400 text-[14px]">Biến động doanh thu theo từng tuần (8 tuần gần nhất)</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                            <span class="text-[11px] font-black text-indigo-700 dark:text-indigo-400 uppercase tracking-widest">Real-time Data</span>
+                        </div>
                     </div>
                 </div>
+                <div class="h-64">
+                    <canvas id="weeklyRevenueChart"></canvas>
+                </div>
             </div>
-            <div class="h-64">
-                <canvas id="weeklyRevenueChart"></canvas>
+
+            <!-- Order Status Distribution -->
+            <div class="bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-outline-variant dark:border-neutral-800 shadow-sm transition-colors duration-200 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-h3 font-bold text-primary dark:text-white mb-2">Trạng thái Đơn hàng</h2>
+                    <p class="text-on-surface-variant dark:text-neutral-400 text-[14px] mb-6">Tỷ lệ phân bổ trạng thái đơn</p>
+                    <div class="h-48 relative mb-6">
+                        <canvas id="orderStatusChart"></canvas>
+                    </div>
+                </div>
+                <div id="orderStatusLegendList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                    <?php 
+                    $statusColors = [
+                        'pending' => '#f59e0b',
+                        'processing' => '#3b82f6',
+                        'shipping' => '#06b6d4',
+                        'delivered' => '#10b981',
+                        'shipped' => '#10b981',
+                        'completed' => '#8b5cf6',
+                        'cancelled' => '#ef4444'
+                    ];
+                    $statusLabels = [
+                        'pending' => 'Chờ xử lý',
+                        'processing' => 'Đang xử lý',
+                        'shipping' => 'Đang giao',
+                        'delivered' => 'Đã giao',
+                        'shipped' => 'Đã giao',
+                        'completed' => 'Hoàn thành',
+                        'cancelled' => 'Đã hủy'
+                    ];
+                    foreach($data['charts']['order_status'] as $statusItem): 
+                        $statusKey = strtolower($statusItem['status']);
+                        $color = $statusColors[$statusKey] ?? '#6b7280';
+                        $label = $statusLabels[$statusKey] ?? $statusItem['status'];
+                    ?>
+                    <div class="flex items-center justify-between text-[11px]">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background-color: <?php echo $color; ?>"></span>
+                            <span class="font-medium text-slate-600 dark:text-zinc-300"><?php echo $label; ?></span>
+                        </div>
+                        <span class="font-bold dark:text-white text-slate-800"><?php echo $statusItem['count']; ?> đơn</span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </section>
 
@@ -502,6 +550,7 @@ function exportToPDF() {
     if (window.weeklyRevenueChart) chartImages.weekly = window.weeklyRevenueChart.toBase64Image();
     if (window.categoryChart) chartImages.category = window.categoryChart.toBase64Image();
     if (window.brandChart) chartImages.brand = window.brandChart.toBase64Image();
+    if (window.orderStatusChart) chartImages.orderStatus = window.orderStatusChart.toBase64Image();
 
     // Tạo form ẩn để gửi yêu cầu POST xuất PDF
     const form = document.createElement('form');
@@ -596,6 +645,10 @@ function updateChartsTheme() {
     if (window.brandChart) {
         window.brandChart.options.plugins.tooltip.backgroundColor = tooltipBg;
         window.brandChart.update();
+    }
+    if (window.orderStatusChart) {
+        window.orderStatusChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+        window.orderStatusChart.update();
     }
 }
 
@@ -805,6 +858,58 @@ window.brandChart = new Chart(ctxBrand, {
     }
 });
 
+// Global maps for order status translation and colors
+const statusColorsMap = {
+    'pending': '#f59e0b',
+    'processing': '#3b82f6',
+    'shipping': '#06b6d4',
+    'delivered': '#10b981',
+    'shipped': '#10b981',
+    'completed': '#8b5cf6',
+    'cancelled': '#ef4444'
+};
+const statusLabelsMap = {
+    'pending': 'Chờ xử lý',
+    'processing': 'Đang xử lý',
+    'shipping': 'Đang giao',
+    'delivered': 'Đã giao',
+    'shipped': 'Đã giao',
+    'completed': 'Hoàn thành',
+    'cancelled': 'Đã hủy'
+};
+
+// Order Status Distribution Chart
+const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+const statusDataRaw = <?php echo json_encode($data['charts']['order_status']); ?>;
+
+window.orderStatusChart = new Chart(ctxStatus, {
+    type: 'doughnut',
+    data: {
+        labels: statusDataRaw.map(d => statusLabelsMap[d.status.toLowerCase()] || d.status),
+        datasets: [{
+            data: statusDataRaw.map(d => d.count),
+            backgroundColor: statusDataRaw.map(d => statusColorsMap[d.status.toLowerCase()] || '#6b7280'),
+            borderWidth: 0,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return (context.label || '') + ': ' + context.raw + ' đơn';
+                    }
+                }
+            }
+        }
+    }
+});
+
 // AJAX Dynamic Dashboard Update
 async function updateDashboardData() {
     const start = document.getElementById('startDate').value;
@@ -895,13 +1000,39 @@ async function updateDashboardData() {
                 brandHTML += `
                 <div class="flex items-center justify-between text-[11px]">
                     <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full" style="background-color: ${color}"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
                         <span class="font-medium text-on-surface-variant dark:text-neutral-300 truncate">${brand.label}</span>
                     </div>
                     <span class="font-bold ml-auto dark:text-white">${(brand.value/1000000).toFixed(1)}M</span>
                 </div>`;
             });
             brandLegendEl.innerHTML = brandHTML;
+        }
+
+        // 4.5. Update Order Status Chart & Legend
+        if (window.orderStatusChart) {
+            window.orderStatusChart.data.labels = data.charts.order_status.map(d => statusLabelsMap[d.status.toLowerCase()] || d.status);
+            window.orderStatusChart.data.datasets[0].data = data.charts.order_status.map(d => d.count);
+            window.orderStatusChart.data.datasets[0].backgroundColor = data.charts.order_status.map(d => statusColorsMap[d.status.toLowerCase()] || '#6b7280');
+            window.orderStatusChart.update();
+        }
+        
+        const statusLegendEl = document.getElementById('orderStatusLegendList');
+        if (statusLegendEl) {
+            let statusHTML = '';
+            data.charts.order_status.forEach(item => {
+                const color = statusColorsMap[item.status.toLowerCase()] || '#6b7280';
+                const label = statusLabelsMap[item.status.toLowerCase()] || item.status;
+                statusHTML += `
+                <div class="flex items-center justify-between text-[11px]">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
+                        <span class="font-medium text-slate-600 dark:text-zinc-300">${label}</span>
+                    </div>
+                    <span class="font-bold dark:text-white text-slate-800">${item.count} đơn</span>
+                </div>`;
+            });
+            statusLegendEl.innerHTML = statusHTML;
         }
 
         // 5. Update Top Products List

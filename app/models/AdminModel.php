@@ -861,12 +861,20 @@ class AdminModel {
         return $chartData;
     }
 
-    public function getOrderStatusDistribution() {
-        $this->db->query("
+    public function getOrderStatusDistribution($startDate = null, $endDate = null) {
+        $sql = "
             SELECT order_status as status, COUNT(*) as count 
-            FROM orders 
-            GROUP BY order_status
-        ");
+            FROM orders";
+        if ($startDate && $endDate) {
+            $sql .= " WHERE ordered_at BETWEEN :start AND :end";
+        }
+        $sql .= " GROUP BY order_status";
+        
+        $this->db->query($sql);
+        if ($startDate && $endDate) {
+            $this->db->bind(':start', $startDate . ' 00:00:00');
+            $this->db->bind(':end', $endDate . ' 23:59:59');
+        }
         return $this->db->resultSet();
     }
 
