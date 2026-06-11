@@ -1,0 +1,17 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Configuration
+.env
+
+# Logs and databases
+/storage/email_log.txt
+/casso_log.txt
+/casso_api_log.txt
+*.log
+/ajax_fatal.log
+
+# System files
+.DS_Store
+Thumbs.db

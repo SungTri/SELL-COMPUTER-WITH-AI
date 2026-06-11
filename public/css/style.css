@@ -1,0 +1,194 @@
+:root {
+    --color-surface-dim: #d9dadc;
+    --color-on-secondary: #ffffff;
+    --color-inverse-surface: #2e3132;
+    --color-on-tertiary: #ffffff;
+    --color-inverse-on-surface: #f0f1f3;
+    --color-surface-tint: #5f5e5f;
+    --color-outline: #76777b;
+    --color-secondary-fixed: #dae2ff;
+    --color-tertiary-fixed: #e6e2de;
+    --color-outline-variant: #c7c6ca;
+    --color-surface-container-highest: #e1e2e4;
+    --color-surface-container-lowest: #ffffff;
+    --color-on-error-container: #93000a;
+    --color-on-error: #ffffff;
+    --color-on-primary-fixed: #1b1b1c;
+    --color-primary-fixed-dim: #c8c6c7;
+    --color-tertiary-container: #1c1b19;
+    --color-surface-container-high: #e7e8ea;
+    --color-on-primary-container: #858384;
+    --color-error: #ba1a1a;
+    --color-tertiary-fixed-dim: #cac6c2;
+    --color-surface-container-low: #f3f4f6;
+    --color-surface: #f8f9fb;
+    --color-secondary-container: #356ee7;
+    --color-tertiary: #000000;
+    --color-on-tertiary-fixed: #1c1b19;
+    --color-surface-container: #edeef0;
+    --color-on-surface-variant: #46474a;
+    --color-on-primary-fixed-variant: #474647;
+    --color-primary: #000000;
+    --color-primary-fixed: #e5e2e3;
+    --color-error-container: #ffdad6;
+    --color-secondary-fixed-dim: #b2c5ff;
+    --color-surface-bright: #f8f9fb;
+    --color-on-tertiary-fixed-variant: #484644;
+    --color-on-background: #191c1e;
+    --color-inverse-primary: #c8c6c7;
+    --color-surface-variant: #e1e2e4;
+    --color-primary-container: #1b1b1c;
+    --color-on-tertiary-container: #868380;
+    --color-on-secondary-fixed: #001848;
+    --color-on-primary: #ffffff;
+    --color-on-surface: #191c1e;
+    --color-background: #f8f9fb;
+    --color-on-secondary-container: #fefcff;
+    --color-on-secondary-fixed-variant: #0040a2;
+    --color-secondary: #0453cd;
+}
+
+html.dark {
+    --color-surface-dim: #1e2022;
+    --color-on-secondary: #001e54;
+    --color-inverse-surface: #f0f1f3;
+    --color-on-tertiary: #121314;
+    --color-inverse-on-surface: #2e3132;
+    --color-surface-tint: #a4a7ab;
+    --color-outline: #8e9094;
+    --color-secondary-fixed: #0040a2;
+    --color-tertiary-fixed: #484644;
+    --color-outline-variant: #44474a;
+    --color-surface-container-highest: #333538;
+    --color-surface-container-lowest: #0e0f10;
+    --color-on-error-container: #ffdad6;
+    --color-on-error: #600008;
+    --color-on-primary-fixed: #e5e2e3;
+    --color-primary-fixed-dim: #474647;
+    --color-tertiary-container: #eae2de;
+    --color-surface-container-high: #282a2d;
+    --color-on-primary-container: #e5e2e3;
+    --color-error: #ffb4ab;
+    --color-tertiary-fixed-dim: #484644;
+    --color-surface-container-low: #17181b;
+    --color-surface: #121314;
+    --color-secondary-container: #002e7a;
+    --color-tertiary: #ffffff;
+    --color-on-tertiary-fixed: #eae2de;
+    --color-surface-container: #1e2022;
+    --color-on-surface-variant: #a4a7ab;
+    --color-on-primary-fixed-variant: #c8c6c7;
+    --color-primary: #ffffff;
+    --color-primary-fixed: #1b1b1c;
+    --color-error-container: #93000a;
+    --color-secondary-fixed-dim: #002e7a;
+    --color-surface-bright: #1c1d20;
+    --color-on-tertiary-fixed-variant: #cac6c2;
+    --color-on-background: #e2e2e5;
+    --color-inverse-primary: #1b1b1c;
+    --color-surface-variant: #2d2f32;
+    --color-primary-container: #c8c6c7;
+    --color-on-tertiary-container: #eae2de;
+    --color-on-secondary-fixed: #dae2ff;
+    --color-on-primary: #121314;
+    --color-on-surface: #e2e2e5;
+    --color-background: #121314;
+    --color-on-secondary-container: #d6e2ff;
+    --color-on-secondary-fixed-variant: #b2c5ff;
+    --color-secondary: #5a95ff;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.nav-item:hover .nav-dropdown {
+    display: block !important;
+}
+.nav-item:hover > a {
+    color: #356ee7 !important;
+}
+.nav-item:hover > a::after {
+    width: 100% !important;
+}
+
+/* Smooth transition for dark mode */
+body, header, footer, div, section, a, button, input, textarea {
+    transition-property: background-color, border-color, text-color, color, fill, stroke;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Premium Buttons Styles - Simplified to be clean and slightly larger */
+.btn-premium {
+    position: relative;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    color: #ffffff !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    user-select: none;
+    gap: 8px;
+}
+
+.btn-premium:hover {
+    transform: scale(1.02); /* Enlarge slightly on hover */
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.3);
+}
+
+.btn-premium:active {
+    transform: scale(0.98) !important;
+}
+
+/* Premium Buttons Orange - Simplified to be clean and slightly larger */
+.btn-premium-orange {
+    position: relative;
+    background: linear-gradient(135deg, #f97316 0%, #f59e0b 100%);
+    color: #ffffff !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-weight: 700;
+    user-select: none;
+    gap: 8px;
+}
+
+.btn-premium-orange:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(249, 115, 22, 0.3);
+}
+
+.btn-premium-orange:active {
+    transform: scale(0.98) !important;
+}
+
+.inner-glow-border {
+    display: none !important;
+}
+
+/* Helper Overrides for flexible premium buttons */
+.btn-premium.normal-case, .btn-premium-orange.normal-case {
+    text-transform: none !important;
+}
+.btn-premium.tracking-normal, .btn-premium-orange.tracking-normal {
+    letter-spacing: normal !important;
+}
+
+/* Top Promo Bar Marquee Animation */
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
