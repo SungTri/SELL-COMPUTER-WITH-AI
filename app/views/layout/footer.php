@@ -239,7 +239,18 @@
         }
 
         let currentMode = 'ai';
+        let wizardState = {
+            active: false,
+            step: 0,
+            budget: '',
+            purpose: '',
+            cpu: ''
+        };
         function switchChatMode(mode) {
+            if (wizardState.active) {
+                wizardState.active = false;
+                wizardState.step = 0;
+            }
             const oldMode = currentMode;
             currentMode = mode;
             const btnShop = document.getElementById('btn-chat-shop');
@@ -318,9 +329,15 @@
             const container = document.getElementById('chatSuggestions');
             if (!container) return;
             
+            if (mode === 'ai' && wizardState.active) {
+                renderWizardChips();
+                return;
+            }
+            
             let chips = [];
             if (mode === 'ai') {
                 chips = [
+                    { text: currentLang === 'vi' ? '🛠️ Tự động Build PC' : '🛠️ Guided PC Build', isWizard: true, icon: 'build' },
                     { text: currentLang === 'vi' ? 'Build PC Gaming 15 triệu' : 'Build 15M Gaming PC', icon: 'sports_esports' },
                     { text: currentLang === 'vi' ? 'PC làm đồ họa 25 triệu' : '25M Design PC build', icon: 'palette' },
                     { text: currentLang === 'vi' ? 'Chọn CPU Intel hay AMD?' : 'Intel or AMD CPU?', icon: 'memory' },
@@ -335,14 +352,26 @@
                 ];
             }
             
-            container.innerHTML = chips.map((c, index) => `
-                <button onclick="sendQuickQuestion('${c.text}')" 
-                    class="suggestion-chip shrink-0 px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 text-[11px] font-bold rounded-full border border-gray-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 hover:shadow-sm transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
-                    style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
-                    <span class="material-symbols-outlined text-[14px]">${c.icon}</span>
-                    ${c.text}
-                </button>
-            `).join('');
+            container.innerHTML = chips.map((c, index) => {
+                if (c.isWizard) {
+                    return `
+                        <button onclick="startPcBuildWizard()" 
+                            class="suggestion-chip shrink-0 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-[11px] font-extrabold rounded-full hover:shadow-md transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
+                            style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
+                            <span class="material-symbols-outlined text-[14px]">${c.icon}</span>
+                            ${c.text}
+                        </button>
+                    `;
+                }
+                return `
+                    <button onclick="sendQuickQuestion('${c.text}')" 
+                        class="suggestion-chip shrink-0 px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 text-[11px] font-bold rounded-full border border-gray-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 hover:shadow-sm transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
+                        style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
+                        <span class="material-symbols-outlined text-[14px]">${c.icon}</span>
+                        ${c.text}
+                    </button>
+                `;
+            }).join('');
         }
 
         function sendQuickQuestion(text) {
@@ -410,12 +439,195 @@
             }, true);
         }
 
+        function startPcBuildWizard() {
+            if (currentMode !== 'ai') return;
+            
+            wizardState.active = true;
+            wizardState.step = 1;
+            wizardState.budget = '';
+            wizardState.purpose = '';
+            wizardState.cpu = '';
+
+            appendMessage('bot', currentLang === 'vi' 
+                ? '🛠️ **Bắt đầu quy trình Tự động Build PC**\n\n**Bước 1:** Ngân sách dự kiến của bạn là bao nhiêu?' 
+                : '🛠️ **Starting Guided PC Build**\n\n**Step 1:** What is your estimated budget?');
+
+            renderWizardChips();
+        }
+
+        function cancelWizard() {
+            wizardState.active = false;
+            wizardState.step = 0;
+            
+            appendMessage('bot', currentLang === 'vi'
+                ? '❌ Quy trình tư vấn tự động đã hủy. Bạn có thể hỏi tôi bất cứ câu hỏi nào!'
+                : '❌ Guided build cancelled. Feel free to ask me anything!');
+            
+            renderSuggestionChips(currentMode);
+        }
+
+        function renderWizardChips() {
+            const container = document.getElementById('chatSuggestions');
+            if (!container) return;
+
+            let chips = [];
+            if (wizardState.step === 1) {
+                chips = [
+                    { text: currentLang === 'vi' ? 'Dưới 15 triệu' : 'Under 15M', icon: 'payments' },
+                    { text: currentLang === 'vi' ? '15 - 25 triệu' : '15M - 25M', icon: 'payments' },
+                    { text: currentLang === 'vi' ? '25 - 40 triệu' : '25M - 40M', icon: 'payments' },
+                    { text: currentLang === 'vi' ? 'Trên 40 triệu' : 'Over 40M', icon: 'payments' }
+                ];
+            } else if (wizardState.step === 2) {
+                chips = [
+                    { text: currentLang === 'vi' ? 'Chơi game (Gaming)' : 'Gaming', icon: 'sports_esports' },
+                    { text: currentLang === 'vi' ? 'Đồ họa & Render' : 'Design & Render', icon: 'palette' },
+                    { text: currentLang === 'vi' ? 'Văn phòng & Học tập' : 'Office & Study', icon: 'work' },
+                    { text: currentLang === 'vi' ? 'Lập trình & Công việc' : 'Coding & Work', icon: 'code' }
+                ];
+            } else if (wizardState.step === 3) {
+                chips = [
+                    { text: 'Intel (Core i3, i5, i7...)', val: 'Intel', icon: 'memory' },
+                    { text: 'AMD (Ryzen 5, 7...)', val: 'AMD', icon: 'memory' },
+                    { text: currentLang === 'vi' ? 'Tùy chọn nào cũng được' : 'Either is fine', val: 'Tùy chọn nào cũng được', icon: 'check_circle' }
+                ];
+            }
+
+            chips.push({ 
+                text: currentLang === 'vi' ? '❌ Hủy tư vấn' : '❌ Cancel', 
+                isCancel: true 
+            });
+
+            container.innerHTML = chips.map((c, index) => {
+                if (c.isCancel) {
+                    return `
+                        <button onclick="cancelWizard()" 
+                            class="suggestion-chip shrink-0 px-3 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-[11px] font-black rounded-full border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 hover:border-rose-500 transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
+                            style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
+                            ${c.text}
+                        </button>
+                    `;
+                }
+                const clickVal = c.val || c.text;
+                return `
+                    <button onclick="handleWizardSelection('${clickVal.replace(/'/g, "\\'")}')" 
+                        class="suggestion-chip shrink-0 px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 text-[11px] font-bold rounded-full border border-gray-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 hover:shadow-sm transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
+                        style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
+                        <span class="material-symbols-outlined text-[14px]">${c.icon}</span>
+                        ${c.text}
+                    </button>
+                `;
+            }).join('');
+
+            setupDragToScroll(container);
+        }
+
+        function handleWizardSelection(value) {
+            if (!wizardState.active) return;
+
+            appendMessage('user', value);
+
+            if (wizardState.step === 1) {
+                wizardState.budget = value;
+                wizardState.step = 2;
+                setTimeout(() => {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? '**Bước 2:** Bạn sử dụng máy tính vào nhu cầu chính nào?'
+                        : '**Step 2:** What is your primary use case for this PC?');
+                    renderWizardChips();
+                }, 400);
+            } else if (wizardState.step === 2) {
+                wizardState.purpose = value;
+                wizardState.step = 3;
+                setTimeout(() => {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? '**Bước 3:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                        : '**Step 3:** Which CPU brand do you prefer?');
+                    renderWizardChips();
+                }, 400);
+            } else if (wizardState.step === 3) {
+                wizardState.cpu = value;
+                wizardState.active = false;
+                wizardState.step = 0;
+
+                setTimeout(() => {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? '🔄 **Đang tổng hợp yêu cầu và phân tích cấu hình phù hợp...**'
+                        : '🔄 **Compiling options and analyzing compatible build...**');
+                    
+                    const finalQuery = currentLang === 'vi'
+                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${wizardState.purpose}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget}. Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
+                        : `Please suggest a compatible PC build optimized for ${wizardState.purpose}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget}. Provide product tags.`;
+                    
+                    sendMessageWithText(finalQuery);
+                }, 400);
+            }
+        }
+
+        async function sendMessageWithText(messageText) {
+            const typing = document.getElementById('typingIndicator');
+            if (!messageText) return;
+            
+            const typingIcon = document.getElementById('typing-icon');
+            const typingText = document.getElementById('typing-text');
+            if (typingIcon) {
+                typingIcon.innerText = 'smart_toy';
+            }
+            if (typingText) {
+                typingText.innerText = currentLang === 'vi' ? 'TechExpert đang trả lời...' : 'TechExpert is typing...';
+            }
+            
+            typing.classList.remove('hidden');
+            const messages = document.getElementById('chatMessages');
+            messages.scrollTop = messages.scrollHeight;
+
+            try {
+                const formData = new FormData();
+                formData.append('message', messageText);
+                formData.append('mode', 'ai');
+
+                const response = await fetch('<?php echo URLROOT; ?>/chatbot/sendMessage', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: formData
+                });
+                
+                const text = await response.text();
+                typing.classList.add('hidden');
+                
+                let data;
+                try {
+                    data = JSON.parse(text.trim());
+                } catch (e) {
+                    appendMessage('bot', '<?php echo __('server_error', 'Có lỗi xảy ra khi kết nối máy chủ.'); ?>');
+                    return;
+                }
+
+                if (data.status === 'success') {
+                    appendMessage('bot', data.bot_response, data.time);
+                } else {
+                    appendMessage('bot', 'Lỗi: ' + (data.message || 'Không xác định'));
+                }
+            } catch (error) {
+                typing.classList.add('hidden');
+                console.error('Error:', error);
+            }
+        }
+
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             const typing = document.getElementById('typingIndicator');
 
             if (!message) return;
+
+            if (wizardState.active) {
+                wizardState.active = false;
+                wizardState.step = 0;
+                renderSuggestionChips(currentMode);
+            }
 
             if (currentMode !== 'shop') {
                 appendMessage('user', message);
