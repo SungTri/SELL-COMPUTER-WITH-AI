@@ -120,12 +120,7 @@
                     <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
                         <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed"><?php echo __('chatbot_welcome', 'Xin chào! Tôi là chuyên gia <strong>Tư vấn Build PC</strong> của TechExpert. 🛠️'); ?></p>
                         <p class="text-sm text-gray-700 dark:text-zinc-200 mt-2"><?php echo __('chatbot_intro', 'Hãy cho tôi biết ngân sách của bạn (Ví dụ: <strong>20 triệu</strong>), tôi sẽ giúp bạn chọn những linh kiện tốt nhất và tương thích nhất!'); ?></p>
-                        <div class="flex items-center justify-between mt-3">
-                            <span class="text-[9px] text-gray-400 dark:text-zinc-500 font-medium uppercase"><?php echo __('just_now', 'Vừa xong'); ?></span>
-                            <button onclick="speakText(this)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all border-0 bg-transparent cursor-pointer" title="Đọc câu trả lời">
-                                <span class="material-symbols-outlined text-[14px]">volume_up</span>
-                            </button>
-                        </div>
+                        <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-3 block font-medium uppercase"><?php echo __('just_now', 'Vừa xong'); ?></span>
                     </div>
                 </div>
             </div>
@@ -503,12 +498,7 @@
                         <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
                             <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${cleanText}</p>
                             ${productsHtml}
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="text-[9px] text-gray-400 dark:text-zinc-500 font-medium uppercase">${time}</span>
-                                <button onclick="speakText(this)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all border-0 bg-transparent cursor-pointer" title="Đọc câu trả lời">
-                                    <span class="material-symbols-outlined text-[14px]">volume_up</span>
-                                </button>
-                            </div>
+                            <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${time}</span>
                         </div>
                     </div>
                 `;
@@ -721,12 +711,7 @@
                         <div class="flex flex-col gap-1 w-full">
                             <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
                                 <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
-                                <div class="flex items-center justify-between mt-2">
-                                    <span class="text-[9px] text-gray-400 dark:text-zinc-500 font-medium uppercase">${m.time}</span>
-                                    <button onclick="speakText(this)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all border-0 bg-transparent cursor-pointer" title="Đọc câu trả lời">
-                                        <span class="material-symbols-outlined text-[14px]">volume_up</span>
-                                    </button>
-                                </div>
+                                    <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${m.time}</span>
                             </div>
                         </div>
                     </div>
@@ -1149,68 +1134,7 @@
         setInterval(fetchNotifications, 60000);
         <?php endif; ?>
 
-        // --- Audio Output (Text to Speech) for Chatbot ---
-        let currentUtterance = null;
-        function speakText(btn) {
-            if (!('speechSynthesis' in window)) {
-                showToast(currentLang === 'vi' ? 'Trình duyệt không hỗ trợ đọc văn bản.' : 'Text-to-speech not supported in this browser.', 'error');
-                return;
-            }
 
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-                if (currentUtterance && currentUtterance.btn === btn) {
-                    btn.querySelector('.material-symbols-outlined').innerText = 'volume_up';
-                    btn.classList.remove('text-blue-600');
-                    currentUtterance = null;
-                    return;
-                }
-            }
-
-            document.querySelectorAll('button[onclick="speakText(this)"]').forEach(b => {
-                b.querySelector('.material-symbols-outlined').innerText = 'volume_up';
-                b.classList.remove('text-blue-600');
-            });
-
-            const parent = btn.closest('.rounded-2xl');
-            if (!parent) return;
-
-            const paragraphs = parent.querySelectorAll('p');
-            let textToSpeak = "";
-            paragraphs.forEach(p => {
-                textToSpeak += p.innerText + " ";
-            });
-
-            textToSpeak = textToSpeak.trim();
-            if (!textToSpeak) return;
-
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = currentLang === 'vi' ? 'vi-VN' : 'en-US';
-            utterance.btn = btn;
-
-            utterance.rate = 1.05;
-            utterance.pitch = 1.0;
-
-            utterance.onstart = () => {
-                btn.querySelector('.material-symbols-outlined').innerText = 'volume_mute';
-                btn.classList.add('text-blue-600');
-            };
-
-            utterance.onend = () => {
-                btn.querySelector('.material-symbols-outlined').innerText = 'volume_up';
-                btn.classList.remove('text-blue-600');
-                if (currentUtterance === utterance) currentUtterance = null;
-            };
-
-            utterance.onerror = () => {
-                btn.querySelector('.material-symbols-outlined').innerText = 'volume_up';
-                btn.classList.remove('text-blue-600');
-                if (currentUtterance === utterance) currentUtterance = null;
-            };
-
-            currentUtterance = utterance;
-            window.speechSynthesis.speak(utterance);
-        }
     </script>
 </body>
 </html>
