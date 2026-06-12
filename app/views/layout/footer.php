@@ -141,7 +141,7 @@
             </div>
 
             <!-- Horizontal Suggestion Chips Container (Modern Floating UI) -->
-            <div id="chatSuggestions" class="px-5 py-3 flex gap-2 overflow-x-auto bg-slate-50/50 dark:bg-zinc-950/20 border-t border-outline-variant/10 scrollbar-none">
+            <div id="chatSuggestions" class="px-5 py-3 flex gap-2 overflow-x-auto bg-slate-50/50 dark:bg-zinc-950/20 border-t border-outline-variant/10">
                 <!-- Dynamic suggestion chips go here -->
             </div>
 
@@ -190,6 +190,15 @@
         #chatWindow.show { display: flex; opacity: 1; transform: translateY(0); }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        #chatSuggestions::-webkit-scrollbar { height: 4px; }
+        #chatSuggestions::-webkit-scrollbar-track { background: transparent; }
+        #chatSuggestions::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 10px; }
+        #chatSuggestions::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.4); }
+        #chatSuggestions {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(59, 130, 246, 0.2) transparent;
+        }
     </style>
 
     <!-- Compare Bar -->
@@ -326,7 +335,7 @@
             
             container.innerHTML = chips.map((c, index) => `
                 <button onclick="sendQuickQuestion('${c.text}')" 
-                    class="suggestion-chip px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 text-[11px] font-bold rounded-full border border-gray-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 hover:shadow-sm transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
+                    class="suggestion-chip shrink-0 px-3 py-1.5 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-200 text-[11px] font-bold rounded-full border border-gray-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-300 hover:shadow-sm transition-all duration-300 flex items-center gap-1.5 transform translate-y-2 opacity-0 active:scale-95 cursor-pointer whitespace-nowrap"
                     style="animation: chipFadeIn 0.3s ease forwards ${index * 0.05}s">
                     <span class="material-symbols-outlined text-[14px]">${c.icon}</span>
                     ${c.text}
@@ -557,6 +566,54 @@
 
             // check active session
             checkActiveLiveChatOnLoad();
+
+            // Drag-to-scroll for suggestions
+            const suggestionsContainer = document.getElementById('chatSuggestions');
+            if (suggestionsContainer) {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                let moved = false;
+                let startY;
+
+                suggestionsContainer.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    moved = false;
+                    startX = e.pageX - suggestionsContainer.offsetLeft;
+                    startY = e.pageY - suggestionsContainer.offsetTop;
+                    scrollLeft = suggestionsContainer.scrollLeft;
+                    suggestionsContainer.style.scrollBehavior = 'auto';
+                });
+
+                suggestionsContainer.addEventListener('mouseleave', () => {
+                    isDown = false;
+                });
+
+                suggestionsContainer.addEventListener('mouseup', () => {
+                    isDown = false;
+                    suggestionsContainer.style.scrollBehavior = 'smooth';
+                });
+
+                suggestionsContainer.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    const x = e.pageX - suggestionsContainer.offsetLeft;
+                    const y = e.pageY - suggestionsContainer.offsetTop;
+                    const walkX = x - startX;
+                    const walkY = y - startY;
+                    if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                        moved = true;
+                        e.preventDefault();
+                        suggestionsContainer.scrollLeft = scrollLeft - walkX * 1.2;
+                    }
+                });
+
+                suggestionsContainer.addEventListener('click', (e) => {
+                    if (moved) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }, true);
+            }
         });
 
         document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
