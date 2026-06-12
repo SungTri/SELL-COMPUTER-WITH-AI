@@ -75,6 +75,9 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-1">
+                        <button onclick="confirmResetChat()" class="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-all text-white flex items-center justify-center group" title="<?php echo __('chatbot_reset_title', 'Làm mới cuộc hội thoại'); ?>">
+                            <span class="material-symbols-outlined text-xl group-hover:rotate-180 transition-transform duration-500">refresh</span>
+                        </button>
                         <button onclick="toggleChat()" class="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-all text-white flex items-center justify-center" title="Minimize">
                             <span class="material-symbols-outlined text-xl">stat_minus_1</span>
                         </button>
@@ -235,6 +238,61 @@
                 chatWindow.classList.remove('show');
                 setTimeout(() => chatWindow.classList.add('hidden'), 300);
                 sessionStorage.setItem('chat_open', 'false');
+            }
+        }
+
+        async function confirmResetChat() {
+            const confirmMsg = currentLang === 'vi' 
+                ? 'Bạn có chắc chắn muốn xóa lịch sử cuộc hội thoại này để bắt đầu cuộc hội thoại mới?' 
+                : 'Are you sure you want to reset the conversation history to start a new chat?';
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const response = await fetch('<?php echo URLROOT; ?>/chatbot/clearHistory', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    // Clear client-side cache
+                    sessionStorage.removeItem('chat_history_ai');
+                    sessionStorage.removeItem('chat_history_shop');
+                    sessionStorage.removeItem('chat_last_msg_count');
+                    
+                    // Reset PC Build Wizard
+                    wizardState.active = false;
+                    wizardState.step = 0;
+                    wizardState.budget = '';
+                    wizardState.purpose = '';
+                    wizardState.cpu = '';
+
+                    // Stop live chat polling
+                    stopLiveChatPolling();
+
+                    // Restore AI mode pointerEvents & opacity in case it was disabled during live chat
+                    const btnAi = document.getElementById('btn-chat-ai');
+                    if (btnAi) {
+                        btnAi.style.pointerEvents = 'auto';
+                        btnAi.style.opacity = '1';
+                    }
+                    const statusText = document.querySelector('.tracking-widest.leading-none');
+                    if (statusText) {
+                        statusText.innerText = currentLang === 'vi' ? 'ĐANG HOẠT ĐỘNG' : 'ACTIVE';
+                    }
+
+                    // Switch chat mode to 'ai' to rebuild default greeting bubble
+                    switchChatMode('ai');
+
+                    showToast(currentLang === 'vi' ? 'Đã làm mới cuộc hội thoại!' : 'Chat history reset successfully!', 'success');
+                } else {
+                    showToast(data.message || 'Lỗi khi làm mới hội thoại', 'error');
+                }
+            } catch (error) {
+                console.error('Error resetting chat:', error);
+                showToast(currentLang === 'vi' ? 'Không thể kết nối máy chủ' : 'Cannot connect to server', 'error');
             }
         }
 

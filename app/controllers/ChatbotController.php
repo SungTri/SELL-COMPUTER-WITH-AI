@@ -222,6 +222,44 @@ class ChatbotController extends Controller {
         exit();
     }
 
+    public function clearHistory() {
+        ob_start();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Invalid method']);
+            exit();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;       // users.id for support_sessions
+        $custId = $_SESSION['customer_id'] ?? null;   // customers.id for chat_history
+
+        $db = new Database();
+
+        // 1. Delete chat history from database
+        if ($custId) {
+            $db->query("DELETE FROM chat_history WHERE customer_id = :customer_id");
+            $db->bind(':customer_id', $custId);
+            $db->execute();
+        }
+
+        // 2. Delete support session from database (support_sessions uses users.id as customer_id)
+        if ($userId) {
+            $db->query("DELETE FROM support_sessions WHERE customer_id = :customer_id");
+            $db->bind(':customer_id', $userId);
+            $db->execute();
+        }
+
+        // 3. Clear PHP Session variables
+        unset($_SESSION['chat_history_ai']);
+        unset($_SESSION['chat_history_shop']);
+
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'success']);
+        exit();
+    }
+
 
     private function getAIResponse($message, $apiKey, $mode = 'ai') {
         $servicePath = APPROOT . '/services/GeminiService.php';
