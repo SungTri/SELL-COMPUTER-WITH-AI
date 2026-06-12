@@ -266,6 +266,7 @@
                     wizardState.active = false;
                     wizardState.step = 0;
                     wizardState.budget = '';
+                    wizardState.setupType = '';
                     wizardState.purpose = '';
                     wizardState.subPurpose = '';
                     wizardState.cpu = '';
@@ -302,6 +303,7 @@
             active: false,
             step: 0,
             budget: '',
+            setupType: '',
             purpose: '',
             subPurpose: '',
             cpu: ''
@@ -310,6 +312,7 @@
             if (wizardState.active) {
                 wizardState.active = false;
                 wizardState.step = 0;
+                wizardState.setupType = '';
                 wizardState.subPurpose = '';
             }
             const oldMode = currentMode;
@@ -506,6 +509,7 @@
             wizardState.active = true;
             wizardState.step = 1;
             wizardState.budget = '';
+            wizardState.setupType = '';
             wizardState.purpose = '';
             wizardState.subPurpose = '';
             wizardState.cpu = '';
@@ -520,6 +524,7 @@
         function cancelWizard() {
             wizardState.active = false;
             wizardState.step = 0;
+            wizardState.setupType = '';
             wizardState.subPurpose = '';
             
             appendMessage('bot', currentLang === 'vi'
@@ -540,6 +545,12 @@
                     { text: currentLang === 'vi' ? '15 - 25 triệu' : '15M - 25M', icon: 'payments' },
                     { text: currentLang === 'vi' ? '25 - 40 triệu' : '25M - 40M', icon: 'payments' },
                     { text: currentLang === 'vi' ? 'Trên 40 triệu' : 'Over 40M', icon: 'payments' }
+                ];
+            } else if (wizardState.step === 6) {
+                // Step 6 is Setup Type (PC Case vs Full Setup)
+                chips = [
+                    { text: currentLang === 'vi' ? 'Chỉ thùng máy (PC Case)' : 'PC Case only', icon: 'computer' },
+                    { text: currentLang === 'vi' ? 'Trọn bộ (PC + Màn hình + Phím chuột)' : 'Full setup (PC + Monitor + Peripherals)', icon: 'desktop_windows' }
                 ];
             } else if (wizardState.step === 2) {
                 chips = [
@@ -607,11 +618,20 @@
 
             if (wizardState.step === 1) {
                 wizardState.budget = value;
+                wizardState.step = 6;
+                setTimeout(() => {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? '**Bước 2:** Ngân sách này bạn muốn bao gồm những gì?'
+                        : '**Step 2:** What do you want this budget to cover?');
+                    renderWizardChips();
+                }, 400);
+            } else if (wizardState.step === 6) {
+                wizardState.setupType = value;
                 wizardState.step = 2;
                 setTimeout(() => {
                     appendMessage('bot', currentLang === 'vi'
-                        ? '**Bước 2:** Bạn sử dụng máy tính vào nhu cầu chính nào?'
-                        : '**Step 2:** What is your primary use case for this PC?');
+                        ? '**Bước 3:** Bạn sử dụng máy tính vào nhu cầu chính nào?'
+                        : '**Step 3:** What is your primary use case for this PC?');
                     renderWizardChips();
                 }, 400);
             } else if (wizardState.step === 2) {
@@ -622,16 +642,16 @@
                     wizardState.step = 3;
                     setTimeout(() => {
                         appendMessage('bot', currentLang === 'vi'
-                            ? '**Bước 3:** Bạn muốn chơi những thể loại game nào?'
-                            : '**Step 3:** Which gaming genres do you want to play?');
+                            ? '**Bước 4:** Bạn muốn chơi những thể loại game nào?'
+                            : '**Step 4:** Which gaming genres do you want to play?');
                         renderWizardChips();
                     }, 400);
                 } else if (value.includes('Đồ họa') || value.includes('Design')) {
                     wizardState.step = 4;
                     setTimeout(() => {
                         appendMessage('bot', currentLang === 'vi'
-                            ? '**Bước 3:** Phần mềm làm việc chính của bạn là gì?'
-                            : '**Step 3:** What is your primary work software?');
+                            ? '**Bước 4:** Phần mềm làm việc chính của bạn là gì?'
+                            : '**Step 4:** What is your primary work software?');
                         renderWizardChips();
                     }, 400);
                 } else {
@@ -639,8 +659,8 @@
                     wizardState.step = 5;
                     setTimeout(() => {
                         appendMessage('bot', currentLang === 'vi'
-                            ? '**Bước 3:** Bạn ưu tiên thương hiệu CPU nào hơn?'
-                            : '**Step 3:** Which CPU brand do you prefer?');
+                            ? '**Bước 4:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                            : '**Step 4:** Which CPU brand do you prefer?');
                         renderWizardChips();
                     }, 400);
                 }
@@ -649,8 +669,8 @@
                 wizardState.step = 5;
                 setTimeout(() => {
                     appendMessage('bot', currentLang === 'vi'
-                        ? '**Bước 4:** Bạn ưu tiên thương hiệu CPU nào hơn?'
-                        : '**Step 4:** Which CPU brand do you prefer?');
+                        ? '**Bước 5:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                        : '**Step 5:** Which CPU brand do you prefer?');
                     renderWizardChips();
                 }, 400);
             } else if (wizardState.step === 5) {
@@ -669,8 +689,8 @@
                     }
 
                     const finalQuery = currentLang === 'vi'
-                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${purposeString}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget}. Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
-                        : `Please suggest a compatible PC build optimized for ${purposeString}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget}. Provide product tags.`;
+                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${purposeString}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget} (Yêu cầu cấu hình: ${wizardState.setupType}). Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
+                        : `Please suggest a compatible PC build optimized for ${purposeString}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget} (Configuration requirement: ${wizardState.setupType}). Provide product tags.`;
                     
                     sendMessageWithText(finalQuery);
                 }, 400);
@@ -739,6 +759,7 @@
             if (wizardState.active) {
                 wizardState.active = false;
                 wizardState.step = 0;
+                wizardState.setupType = '';
                 wizardState.subPurpose = '';
                 renderSuggestionChips(currentMode);
             }
