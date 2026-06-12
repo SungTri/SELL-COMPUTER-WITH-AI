@@ -152,14 +152,9 @@
 
             <!-- Input Area -->
             <div class="p-5 bg-white dark:bg-zinc-900 border-t border-outline-variant/20 dark:border-outline-variant/10">
-                <div class="relative group flex items-center">
-                    <button onclick="toggleVoiceInput()" id="btnVoiceInput"
-                        class="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 text-gray-400 dark:text-zinc-400 rounded-xl flex items-center justify-center hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all active:scale-95 cursor-pointer border-0 bg-transparent z-10"
-                        title="Nói câu hỏi của bạn">
-                        <span class="material-symbols-outlined text-xl">mic</span>
-                    </button>
+                <div class="relative group">
                     <input id="chatInput" 
-                        class="w-full pl-12 pr-14 py-3.5 bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700/60 rounded-2xl text-sm dark:text-zinc-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-zinc-500" 
+                        class="w-full pl-5 pr-14 py-3.5 bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700/60 rounded-2xl text-sm dark:text-zinc-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-zinc-500" 
                         placeholder="<?php echo __('chatbot_placeholder', 'Nhập câu hỏi của bạn...'); ?>" 
                         type="text"
                         autocomplete="off"/>
@@ -1154,69 +1149,7 @@
         setInterval(fetchNotifications, 60000);
         <?php endif; ?>
 
-        // --- Voice Input (Speech to Text) & Audio Output (Text to Speech) for Chatbot ---
-        let recognition = null;
-        let isListening = false;
-
-        function toggleVoiceInput() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                showToast(currentLang === 'vi' ? 'Trình duyệt không hỗ trợ nhận diện giọng nói.' : 'Speech recognition not supported in this browser.', 'error');
-                return;
-            }
-
-            const btn = document.getElementById('btnVoiceInput');
-            const input = document.getElementById('chatInput');
-
-            if (isListening) {
-                if (recognition) recognition.stop();
-                return;
-            }
-
-            if (!recognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = currentLang === 'vi' ? 'vi-VN' : 'en-US';
-
-                recognition.onstart = () => {
-                    isListening = true;
-                    btn.classList.add('text-red-500', 'animate-pulse');
-                    input.placeholder = currentLang === 'vi' ? 'Đang lắng nghe...' : 'Listening...';
-                };
-
-                recognition.onresult = (event) => {
-                    const result = event.results[0][0].transcript;
-                    if (input) {
-                        input.value = result;
-                    }
-                };
-
-                recognition.onerror = (event) => {
-                    console.error('Speech recognition error:', event.error);
-                    stopVoiceListening();
-                };
-
-                recognition.onend = () => {
-                    stopVoiceListening();
-                };
-            }
-
-            recognition.start();
-        }
-
-        function stopVoiceListening() {
-            isListening = false;
-            const btn = document.getElementById('btnVoiceInput');
-            const input = document.getElementById('chatInput');
-            if (btn) {
-                btn.classList.remove('text-red-500', 'animate-pulse');
-            }
-            if (input) {
-                input.placeholder = currentLang === 'vi' ? 'Nhập câu hỏi của bạn...' : 'Type your question...';
-            }
-        }
-
+        // --- Audio Output (Text to Speech) for Chatbot ---
         let currentUtterance = null;
         function speakText(btn) {
             if (!('speechSynthesis' in window)) {
