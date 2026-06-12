@@ -9,8 +9,8 @@ class GeminiService {
     }
 
     public function generateResponse($systemInstruction, $history = [], $latestPrompt = "") {
-        // Cố định mô hình nhanh nhất làm mặc định để giảm độ trễ
-        $defaultModel = "models/gemini-2.0-flash";
+        // Sử dụng mô hình gemini-2.5-flash làm mặc định để tránh lỗi 429 và tối ưu độ trễ
+        $defaultModel = "models/gemini-2.5-flash";
         
         // Chuẩn bị payload chứa lịch sử hội thoại
         $contents = [];
@@ -73,26 +73,50 @@ class GeminiService {
     }
 
     private function fallbackToOtherModels($payload) {
-        $listUrl = "{$this->baseUrl}/models?key=" . $this->apiKey;
-        $ch = curl_init($listUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $listResponse = curl_exec($ch);
-        $listData = json_decode($listResponse, true);
-        curl_close($ch);
+        // Thử danh sách các mô hình ổn định và nhanh trước để tránh overhead gọi API ListModels
+        $fallbackModels = [
+            "models/gemini-2.5-flash-lite",
+            "models/gemini-3.1-flash-lite",
+            "models/gemini-flash-latest",
+            "models/gemini-flash-lite-latest",
+            "models/gemini-3-flash-preview",
+            "models/gemini-3.5-flash"
+        ];
 
-        if (isset($listData['models'])) {
-            foreach ($listData['models'] as $m) {
-                $modelName = $m['name'];
-                if ($modelName === "models/gemini-1.5-flash") continue; 
-                
-                if (in_array('generateContent', $m['supportedGenerationMethods'])) {
-                    try {
-                        return $this->callGemini($modelName, $payload);
-                    } catch (Exception $e) { continue; }
-                }
+        foreach ($fallbackModels as $modelName) {
+            try {
+                return $this->callGemini($modelName, $payload);
+            } catch (Exception $e) {
+                continue;
             }
         }
+
+        // Dự phòng cuối cùng: Lấy danh sách mô hình từ API Google
+        try {
+            $listUrl = "{$this->baseUrl}/models?key=" . $this->apiKey;
+            $ch = curl_init($listUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $listResponse = curl_exec($ch);
+            $listData = json_decode($listResponse, true);
+            curl_close($ch);
+
+            if (isset($listData['models'])) {
+                foreach ($listData['models'] as $m) {
+                    $modelName = $m['name'];
+                    if (in_array($modelName, $fallbackModels)) continue;
+                    
+                    if (in_array('generateContent', $m['supportedGenerationMethods'])) {
+                        try {
+                            return $this->callGemini($modelName, $payload);
+                        } catch (Exception $e) {
+                            continue;
+                        }
+                    }
+                }
+            }
+        } catch (Exception $ex) {}
+
         throw new Exception("Tất cả các mô hình AI đều không phản hồi.");
     }
 }
