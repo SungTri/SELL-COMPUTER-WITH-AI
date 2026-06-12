@@ -267,6 +267,7 @@
                     wizardState.step = 0;
                     wizardState.budget = '';
                     wizardState.purpose = '';
+                    wizardState.subPurpose = '';
                     wizardState.cpu = '';
 
                     // Stop live chat polling
@@ -302,12 +303,14 @@
             step: 0,
             budget: '',
             purpose: '',
+            subPurpose: '',
             cpu: ''
         };
         function switchChatMode(mode) {
             if (wizardState.active) {
                 wizardState.active = false;
                 wizardState.step = 0;
+                wizardState.subPurpose = '';
             }
             const oldMode = currentMode;
             currentMode = mode;
@@ -504,6 +507,7 @@
             wizardState.step = 1;
             wizardState.budget = '';
             wizardState.purpose = '';
+            wizardState.subPurpose = '';
             wizardState.cpu = '';
 
             appendMessage('bot', currentLang === 'vi' 
@@ -516,6 +520,7 @@
         function cancelWizard() {
             wizardState.active = false;
             wizardState.step = 0;
+            wizardState.subPurpose = '';
             
             appendMessage('bot', currentLang === 'vi'
                 ? '❌ Quy trình tư vấn tự động đã hủy. Bạn có thể hỏi tôi bất cứ câu hỏi nào!'
@@ -544,6 +549,21 @@
                     { text: currentLang === 'vi' ? 'Lập trình & Công việc' : 'Coding & Work', icon: 'code' }
                 ];
             } else if (wizardState.step === 3) {
+                // Step 3 is Gaming sub-purpose branch
+                chips = [
+                    { text: currentLang === 'vi' ? 'Esports nhẹ (LOL, Valorant...)' : 'Light Esports (LOL, Valorant...)', icon: 'sports_esports' },
+                    { text: currentLang === 'vi' ? 'AAA đồ họa nặng (GTA V, Cyberpunk...)' : 'Heavy AAA (GTA V, Cyberpunk...)', icon: 'sports_esports' },
+                    { text: currentLang === 'vi' ? 'Giả lập / Treo Nox, LDPlayer...' : 'Emulator / Multi-box Nox...', icon: 'grid_view' }
+                ];
+            } else if (wizardState.step === 4) {
+                // Step 4 is Design sub-purpose branch
+                chips = [
+                    { text: currentLang === 'vi' ? '2D (Photoshop, Illustrator, Canva)' : '2D (Photoshop, Illustrator...)', icon: 'image' },
+                    { text: currentLang === 'vi' ? 'Edit video (Premiere, Capcut, AE)' : 'Video Editing (Premiere, Capcut...)', icon: 'movie' },
+                    { text: currentLang === 'vi' ? 'Vẽ 3D / CAD (Blender, AutoCAD...)' : '3D / CAD (Blender, AutoCAD...)', icon: '3d_rotation' }
+                ];
+            } else if (wizardState.step === 5) {
+                // Step 5 is CPU brand selection
                 chips = [
                     { text: 'Intel (Core i3, i5, i7...)', val: 'Intel', icon: 'memory' },
                     { text: 'AMD (Ryzen 5, 7...)', val: 'AMD', icon: 'memory' },
@@ -596,14 +616,44 @@
                 }, 400);
             } else if (wizardState.step === 2) {
                 wizardState.purpose = value;
-                wizardState.step = 3;
+                
+                // Branch detection
+                if (value.includes('Chơi game') || value.includes('Gaming')) {
+                    wizardState.step = 3;
+                    setTimeout(() => {
+                        appendMessage('bot', currentLang === 'vi'
+                            ? '**Bước 3:** Bạn muốn chơi những thể loại game nào?'
+                            : '**Step 3:** Which gaming genres do you want to play?');
+                        renderWizardChips();
+                    }, 400);
+                } else if (value.includes('Đồ họa') || value.includes('Design')) {
+                    wizardState.step = 4;
+                    setTimeout(() => {
+                        appendMessage('bot', currentLang === 'vi'
+                            ? '**Bước 3:** Phần mềm làm việc chính của bạn là gì?'
+                            : '**Step 3:** What is your primary work software?');
+                        renderWizardChips();
+                    }, 400);
+                } else {
+                    // Skip to CPU selection (Step 5)
+                    wizardState.step = 5;
+                    setTimeout(() => {
+                        appendMessage('bot', currentLang === 'vi'
+                            ? '**Bước 3:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                            : '**Step 3:** Which CPU brand do you prefer?');
+                        renderWizardChips();
+                    }, 400);
+                }
+            } else if (wizardState.step === 3 || wizardState.step === 4) {
+                wizardState.subPurpose = value;
+                wizardState.step = 5;
                 setTimeout(() => {
                     appendMessage('bot', currentLang === 'vi'
-                        ? '**Bước 3:** Bạn ưu tiên thương hiệu CPU nào hơn?'
-                        : '**Step 3:** Which CPU brand do you prefer?');
+                        ? '**Bước 4:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                        : '**Step 4:** Which CPU brand do you prefer?');
                     renderWizardChips();
                 }, 400);
-            } else if (wizardState.step === 3) {
+            } else if (wizardState.step === 5) {
                 wizardState.cpu = value;
                 wizardState.active = false;
                 wizardState.step = 0;
@@ -613,9 +663,14 @@
                         ? '🔄 **Đang tổng hợp yêu cầu và phân tích cấu hình phù hợp...**'
                         : '🔄 **Compiling options and analyzing compatible build...**');
                     
+                    let purposeString = wizardState.purpose;
+                    if (wizardState.subPurpose) {
+                        purposeString += ` (cụ thể là ${wizardState.subPurpose})`;
+                    }
+
                     const finalQuery = currentLang === 'vi'
-                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${wizardState.purpose}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget}. Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
-                        : `Please suggest a compatible PC build optimized for ${wizardState.purpose}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget}. Provide product tags.`;
+                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${purposeString}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget}. Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
+                        : `Please suggest a compatible PC build optimized for ${purposeString}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget}. Provide product tags.`;
                     
                     sendMessageWithText(finalQuery);
                 }, 400);
@@ -684,6 +739,7 @@
             if (wizardState.active) {
                 wizardState.active = false;
                 wizardState.step = 0;
+                wizardState.subPurpose = '';
                 renderSuggestionChips(currentMode);
             }
 
