@@ -52,20 +52,26 @@ class ChatbotController extends Controller {
                 }
             }
 
-            // --- Gemini AI Integration ---
-            $apiKey = GEMINI_API_KEY; 
-            $response = "";
+            // --- High Confidence Local Matching Pre-check ---
+            $localResponse = $this->findHighConfidenceLocalResponse($userMessage);
+            if ($localResponse !== null) {
+                $response = $localResponse;
+            } else {
+                // --- Gemini AI Integration ---
+                $apiKey = GEMINI_API_KEY; 
+                $response = "";
 
-            try {
-                if ($apiKey === 'YOUR_GEMINI_API_KEY_HERE' || empty($apiKey)) {
-                    $response = $this->findLocalResponse($userMessage);
-                } else if (!function_exists('curl_init')) {
-                    $response = "Lỗi hệ thống: Thư viện CURL chưa được bật trong PHP.ini.";
-                } else {
-                    $response = $this->getAIResponse($userMessage, $apiKey, $mode);
+                try {
+                    if ($apiKey === 'YOUR_GEMINI_API_KEY_HERE' || empty($apiKey)) {
+                        $response = $this->findLocalResponse($userMessage);
+                    } else if (!function_exists('curl_init')) {
+                        $response = "Lỗi hệ thống: Thư viện CURL chưa được bật trong PHP.ini.";
+                    } else {
+                        $response = $this->getAIResponse($userMessage, $apiKey, $mode);
+                    }
+                } catch (Exception $e) {
+                    $response = "Lỗi AI: " . $e->getMessage();
                 }
-            } catch (Exception $e) {
-                $response = "Lỗi AI: " . $e->getMessage();
             }
             
             // Log to history with database prefix to distinguish modes (use customers.id)
@@ -368,13 +374,76 @@ NHIỆM VỤ CỦA BẠN:
 6. CHÚ Ý QUAN TRỌNG: Chỉ trả về câu trả lời thoại trực tiếp của An Bá Tử Khang cho khách hàng bằng tiếng Việt. KHÔNG ĐƯỢC sinh ra bất kỳ văn bản phân tích, các bước suy nghĩ (thinking process) hay các lập kế hoạch phân vai nào khác ngoài câu trả lời trực tiếp.";
 
         } else {
-            // Lấy danh sách sản phẩm (Ưu tiên linh kiện và máy bộ)
-            $db->query("SELECT p.id, p.name, p.price, p.main_image, c.name as category 
-                        FROM products p 
-                        LEFT JOIN categories c ON p.category_id = c.id 
-                        WHERE c.id BETWEEN 2 AND 14 OR p.category_id IS NULL
-                        ORDER BY p.id DESC 
-                        LIMIT 200");
+            // --- Smart Context Retrieval based on User message ---
+            $messageClean = mb_strtolower(trim($message));
+            $normMessage = $this->removeAccents($messageClean);
+
+            $targetCategoryIds = [];
+            
+            // Laptop
+            if (preg_match('/(laptop|xach tay|notebook|macbook|dell|asus|acer|hp|lenovo|thinkpad)/i', $normMessage)) {
+                $targetCategoryIds[] = 1;
+            }
+            // CPU
+            if (preg_match('/(cpu|chip|vi xu ly|intel|amd|ryzen|core|i3|i5|i7|i9)/i', $normMessage)) {
+                $targetCategoryIds[] = 5;
+                $targetCategoryIds[] = 16;
+                $targetCategoryIds[] = 17;
+            }
+            // RAM
+            if (preg_match('/(ram|bo nho trong|ddr4|ddr5)/i', $normMessage)) {
+                $targetCategoryIds[] = 6;
+            }
+            // VGA
+            if (preg_match('/(vga|gpu|card do hoa|card man hinh|nvidia|geforce|rtx|gtx|rx|radeon)/i', $normMessage)) {
+                $targetCategoryIds[] = 7;
+            }
+            // Mainboard
+            if (preg_match('/(main|mainboard|bo mach chu|h610|b760|z790|b650)/i', $normMessage)) {
+                $targetCategoryIds[] = 9;
+            }
+            // SSD/HDD
+            if (preg_match('/(ssd|hdd|o cung|nvme|sata|m2|dung luong)/i', $normMessage)) {
+                $targetCategoryIds[] = 10;
+                $targetCategoryIds[] = 15;
+            }
+            // Tản nhiệt
+            if (preg_match('/(tan nhiet|cooler|fan|tan nuoc|tan khi)/i', $normMessage)) {
+                $targetCategoryIds[] = 11;
+            }
+            // Vỏ Case
+            if (preg_match('/(case|vo may|vo case)/i', $normMessage)) {
+                $targetCategoryIds[] = 12;
+            }
+            // Nguồn (PSU)
+            if (preg_match('/(nguon|psu|power supply|cong suat)/i', $normMessage)) {
+                $targetCategoryIds[] = 13;
+            }
+            // Màn hình
+            if (preg_match('/(man hinh|monitor|hien thi|hz)/i', $normMessage)) {
+                $targetCategoryIds[] = 14;
+            }
+            // Phụ kiện / Chuột / Bàn phím
+            if (preg_match('/(chuot|phim|ban phim|mouse|keyboard|tai nghe|headset|lot chuot|phu kien)/i', $normMessage)) {
+                $targetCategoryIds[] = 4;
+            }
+
+            if (!empty($targetCategoryIds)) {
+                $idsStr = implode(',', array_map('intval', $targetCategoryIds));
+                $db->query("SELECT p.id, p.name, p.price, p.main_image, c.name as category 
+                            FROM products p 
+                            LEFT JOIN categories c ON p.category_id = c.id 
+                            WHERE p.status = 1 AND p.category_id IN ($idsStr)
+                            ORDER BY p.id DESC 
+                            LIMIT 35");
+            } else {
+                $db->query("SELECT p.id, p.name, p.price, p.main_image, c.name as category 
+                            FROM products p 
+                            LEFT JOIN categories c ON p.category_id = c.id 
+                            WHERE p.status = 1 AND (p.category_id = 2 OR p.category_id IN (5, 6, 7, 9, 10, 12, 13, 15))
+                            ORDER BY p.id DESC 
+                            LIMIT 50");
+            }
             $products = $db->resultSet();
             
             $baseUrl = URLROOT . "/product/detail/";
@@ -624,6 +693,79 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
         $str = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", 'Y', $str);
         $str = preg_replace("/(Đ)/", 'D', $str);
         return $str;
+    }
+
+    private function findHighConfidenceLocalResponse($message) {
+        $faqs = $this->chatbotModel->getAllData();
+        $messageClean = mb_strtolower(trim($message));
+        $normMessage = $this->removeAccents($messageClean);
+        
+        $bestMatch = null;
+        $maxScore = 0;
+        
+        $stopWordsRaw = [
+            'của', 'và', 'là', 'có', 'không', 'thì', 'làm', 'gì', 'bị', 'được', 'cho', 'tôi', 'bạn', 'ở', 'thế', 'nào', 'cả', 'đến', 'đi', 'ra', 'với', 'trong', 'ngoài', 'này', 'kia', 'đó', 'như', 'để', 'tại', 'về', 'cái', 'hay', 'cho', 'nha', 'ạ', 'da', 'dạ',
+            'the', 'and', 'are', 'you', 'for', 'how', 'what', 'where', 'when', 'who', 'why', 'can', 'your', 'with', 'this', 'that', 'from', 'about', 'is', 'it', 'to'
+        ];
+        $stopWords = array_map(function($w) {
+            return $this->removeAccents(mb_strtolower($w));
+        }, $stopWordsRaw);
+        
+        foreach ($faqs as $faq) {
+            $question = mb_strtolower(trim($faq['question']));
+            $normQuestion = $this->removeAccents($question);
+            
+            // 1. Exact match gets highest score
+            if ($question === $messageClean || $normQuestion === $normMessage) {
+                return $faq['answer'];
+            }
+            
+            // 2. Keyword score matching
+            $score = 0;
+            $keywordsStr = $faq['keywords'] ?? '';
+            $keywords = explode(',', $keywordsStr);
+            
+            foreach ($keywords as $kw) {
+                $kw = trim(mb_strtolower($kw));
+                if (empty($kw)) continue;
+                $normKw = $this->removeAccents($kw);
+                
+                if (mb_strpos(" " . $normMessage . " ", " " . $normKw . " ") !== false || mb_strpos(" " . $messageClean . " ", " " . $kw . " ") !== false) {
+                    $scoreVal = (mb_strlen($normKw) >= 5) ? 15 : 8;
+                    $score += $scoreVal;
+                }
+            }
+            
+            // 3. Word matching
+            $cleanQuestion = preg_replace('/[^\p{L}\p{N}\s]/u', '', $normQuestion);
+            $questionWords = explode(' ', $cleanQuestion);
+            
+            $cleanMessage = preg_replace('/[^\p{L}\p{N}\s]/u', '', $normMessage);
+            $messageWords = explode(' ', $cleanMessage);
+            
+            $matchCount = 0;
+            foreach ($messageWords as $word) {
+                $word = trim($word);
+                if (empty($word) || in_array($word, $stopWords)) continue;
+                
+                if (mb_strlen($word) > 1 && in_array($word, $questionWords)) {
+                    $matchCount++;
+                }
+            }
+            
+            $totalScore = $score + ($matchCount * 4);
+            if ($totalScore > $maxScore) {
+                $maxScore = $totalScore;
+                $bestMatch = $faq['answer'];
+            }
+        }
+        
+        // High confidence threshold (keyword score >= 20)
+        if ($maxScore >= 20 && $bestMatch !== null) {
+            return $bestMatch;
+        }
+        
+        return null;
     }
 
     private function logChat($data) {
