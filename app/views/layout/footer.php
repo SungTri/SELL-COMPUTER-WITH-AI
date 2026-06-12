@@ -581,7 +581,6 @@
             sessionStorage.setItem('chat_history_' + currentMode, messages.innerHTML);
             sessionStorage.setItem('chat_user_id', '<?php echo $_SESSION['user_id'] ?? ''; ?>');
         }
-        }
 
         async function addAllToCart(productIds) {
             try {
