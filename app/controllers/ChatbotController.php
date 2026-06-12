@@ -251,9 +251,43 @@ class ChatbotController extends Controller {
         }
 
         $currentLang = $_SESSION['lang'] ?? 'vi';
+        $customerId = $_SESSION['customer_id'] ?? null;
+
+        // Fetch Cart and Wishlist Context for AI prompt personalization
+        $cartContext = "";
+        $wishlistContext = "";
+        if ($customerId) {
+            // Load Cart Items Context
+            $cartModel = $this->model('CartModel');
+            $cart = $cartModel->getCartByCustomerId($customerId);
+            if ($cart) {
+                $cartItems = $cartModel->getItems($cart['id']);
+                if (!empty($cartItems)) {
+                    $cartContext = ($currentLang === 'en')
+                        ? "Items currently in user's cart:\n"
+                        : "Sản phẩm hiện đang có trong giỏ hàng của khách hàng:\n";
+                    foreach ($cartItems as $item) {
+                        $cartContext .= "- " . $item['name'] . " (" . (($currentLang === 'en') ? "Qty" : "SL") . ": " . $item['quantity'] . " | " . (($currentLang === 'en') ? "Price" : "Giá") . ": " . number_format($item['price'], 0, ',', '.') . " VNĐ)\n";
+                    }
+                    $cartContext .= "\n";
+                }
+            }
+
+            // Load Wishlist Items Context
+            $wishlistModel = $this->model('WishlistModel');
+            $wishlistItems = $wishlistModel->getWishlistByCustomer($customerId);
+            if (!empty($wishlistItems)) {
+                $wishlistContext = ($currentLang === 'en')
+                    ? "Items currently in user's wishlist:\n"
+                    : "Sản phẩm hiện đang có trong danh sách yêu thích của khách hàng:\n";
+                foreach ($wishlistItems as $item) {
+                    $wishlistContext .= "- " . $item['name'] . " (" . (($currentLang === 'en') ? "Price" : "Giá") . ": " . number_format($item['price'], 0, ',', '.') . " VNĐ)\n";
+                }
+                $wishlistContext .= "\n";
+            }
+        }
 
         if ($mode === 'shop') {
-            $customerId = $_SESSION['customer_id'] ?? null;
             $orderContext = "";
             if ($customerId) {
                 $orderModel = $this->model('OrderModel');
@@ -338,14 +372,17 @@ $shippingFeesContextEn
   + 1-to-1 replacement within the first 7 days if there is a hardware manufacturer defect.
   
 $orderContext
+$cartContext
+$wishlistContext
 
 YOUR MISSION:
 1. Answer all customer questions related to ordering, payment, shipping policies, warranty, or contact info politely, briefly, and helpfully.
 2. If the customer asks about the shipping fee to a specific province, look up the exact fee in the dynamic shipping fees list and state it clearly.
 3. If the customer asks about the status of their orders, use the 'Recent order details' data above to provide exact info on order ID, order date, delivery status, payment status, and shipping address.
 4. If the customer is not logged in and wants to ask about their order, politely guide them to log in or use the Order Tracking tool on the website with their Phone Number and Order ID.
-5. Avoid answering deep technical questions like building a PC in this mode. If they ask about PC building, guide them to switch to the 'AI CONSULTANT' tab.
-6. IMPORTANT NOTE: You must respond in English because the system language is set to English. Only return the direct dialog response of An Ba Tu Khang to the customer. DO NOT generate any analysis, thinking steps, or planning other than the direct response."
+5. If the customer asks about what is currently in their cart or wishlist, use the provided context data to tell them what items they have added.
+6. Avoid answering deep technical questions like building a PC in this mode. If they ask about PC building, guide them to switch to the 'AI CONSULTANT' tab.
+7. IMPORTANT NOTE: You must respond in English because the system language is set to English. Only return the direct dialog response of An Ba Tu Khang to the customer. DO NOT generate any analysis, thinking steps, or planning other than the direct response."
                 : "Bạn là AN BÁ TỬ KHANG - Nhân viên Chăm sóc Khách hàng ảo của TechExpert. 
 Tên khách hàng đang nói chuyện với bạn là: $userName. Hãy luôn xưng hô lễ phép, thân thiện, chu đáo và cá nhân hóa lời thoại theo tên riêng của khách hàng (xưng em và gọi khách là anh/chị nếu biết).
 
@@ -364,14 +401,17 @@ $shippingFeesContextVi
   + 1 đổi 1 trong vòng 7 ngày đầu nếu có lỗi phần cứng từ nhà sản xuất.
   
 $orderContext
+$cartContext
+$wishlistContext
 
 NHIỆM VỤ CỦA BẠN:
 1. Trả lời tất cả câu hỏi của khách hàng liên quan đến đặt hàng, thanh toán, chính sách giao hàng, bảo hành hoặc thông tin liên hệ một cách lịch sự, ngắn gọn và hữu ích nhất.
 2. Nếu khách hàng hỏi về phí ship của một tỉnh thành cụ thể, hãy tra cứu bảng giá phí vận chuyển động ở trên để trả lời con số chính xác nhất cho khách hàng.
 3. Nếu khách hàng hỏi về thông tin hay trạng thái các đơn hàng của họ, hãy dựa vào dữ liệu 'Thông tin đơn hàng gần đây' ở trên để cung cấp thông tin chính xác về mã đơn hàng, ngày đặt, trạng thái giao hàng, trạng thái thanh toán và địa chỉ giao hàng.
 4. Nếu khách hàng chưa đăng nhập và muốn hỏi về đơn hàng của mình, hãy lịch sự hướng dẫn khách hàng đăng nhập tài khoản hoặc dùng công cụ Tra cứu đơn hàng trên website bằng Số điện thoại và Mã đơn hàng của họ.
-5. Tránh trả lời các vấn đề kỹ thuật sâu như build PC ở chế độ này, nếu khách hàng hỏi build PC, hãy hướng dẫn họ chuyển sang tab 'AI TƯ VẤN' để được hỗ trợ chuyên sâu nhất.
-6. CHÚ Ý QUAN TRỌNG: Chỉ trả về câu trả lời thoại trực tiếp của An Bá Tử Khang cho khách hàng bằng tiếng Việt. KHÔNG ĐƯỢC sinh ra bất kỳ văn bản phân tích, các bước suy nghĩ (thinking process) hay các lập kế hoạch phân vai nào khác ngoài câu trả lời trực tiếp.";
+5. Nếu khách hàng hỏi trong giỏ hàng hoặc danh sách yêu thích của mình hiện có sản phẩm gì, hãy sử dụng thông tin giỏ hàng và danh sách yêu thích ở trên để phản hồi đầy đủ và chính xác nhất.
+6. Tránh trả lời các vấn đề kỹ thuật sâu như build PC ở chế độ này, nếu khách hàng hỏi build PC, hãy hướng dẫn họ chuyển sang tab 'AI TƯ VẤN' để được hỗ trợ chuyên sâu nhất.
+7. CHÚ Ý QUAN TRỌNG: Chỉ trả về câu trả lời thoại trực tiếp của An Bá Tử Khang cho khách hàng bằng tiếng Việt. KHÔNG ĐƯỢC sinh ra bất kỳ văn bản phân tích, các bước suy nghĩ (thinking process) hay các lập kế hoạch phân vai nào khác ngoài câu trả lời trực tiếp.";
 
         } else {
             // --- Smart Context Retrieval based on User message ---
@@ -468,6 +508,9 @@ NOTE: The store has both PRE-BUILT PCs (Desktop Series) and INDIVIDUAL COMPONENT
 Here is the list of available products (COPY EXACTLY THE CONTENT INSIDE THE SQUARE BRACKETS):
 $productContext
 
+$cartContext
+$wishlistContext
+
 MANDATORY COMPATIBILITY AUDIT RULES:
 1. Sockets: An Intel CPU (e.g. LGA1700) must go with an Intel Mainboard. An AMD CPU (e.g. AM5) must go with an AMD Mainboard. Warn the user if they mismatch.
 2. RAM type: Mainboard and CPU DDR version (DDR4 vs DDR5) must match the selected RAM kit.
@@ -488,21 +531,25 @@ MANDATORY CONSULTING RULES:
 1. When the customer wants to buy individual parts or Build a PC, select corresponding products (CPU, RAM, VGA...) from the list.
 2. Never say that the store does not have individual components.
 3. MANDATORY: COPY EXACTLY the [PRODUCT:...] block from the list above (which includes all 5 fields separated by |: [PRODUCT:ID|Name|Price|Image|Link]). Never abbreviate, and do not remove the Image and Link fields at the end. If these 5 fields are not fully present, the product card will fail to display in the UI!
-4. STRICTLY FORBIDDEN:
+4. If the customer asks what they have added to their cart or wishlist, use the provided context to let them know.
+5. STRICTLY FORBIDDEN:
    - Do NOT change the price to 0 VND.
    - Do NOT modify the image link or the product link.
-5. Response structure:
+6. Response structure:
    - Consult enthusiastically, explain why you chose those components and explain the compatibility audit check.
    - Embed standard Markdown links in the text when mentioning specific products.
    - List the [PRODUCT:...] tags with full info.
    - Calculate the TOTAL cost at the end.
-6. IMPORTANT NOTE: You must respond in English because the system language is set to English. Only return the direct consulting response to the customer. DO NOT generate any analysis, thinking steps, or planning other than the direct response."
+7. IMPORTANT NOTE: You must respond in English because the system language is set to English. Only return the direct consulting response to the customer. DO NOT generate any analysis, thinking steps, or planning other than the direct response."
                 : "Bạn là CHUYÊN GIA TƯ VẤN BUILD PC của TechExpert. 
 Tên của khách hàng đang nói chuyện với bạn là: $userName. Hãy xưng hô thân thiện, cá nhân hóa theo tên của họ nếu phù hợp (ví dụ chào tên riêng, xưng hô anh/chị nếu biết).
 CHÚ Ý: Cửa hàng có đầy đủ cả MÁY BỘ (Desktop Series) và LINH KIỆN RỜI (CPU, RAM, VGA, Mainboard...).
 
 Dưới đây là danh sách sản phẩm hiện có (COPY CHÍNH XÁC NỘI DUNG TRONG NGOẶC VUÔNG):\n
 $productContext\n
+
+$cartContext
+$wishlistContext
 
 QUY TẮC KIỂM TRA ĐỘ TƯƠNG THÍCH BẮT BUỘC:
 1. Socket CPU và Mainboard: CPU Intel (LGA1700) bắt buộc đi với Mainboard hỗ trợ LGA1700 (H610, B760, Z790...). CPU AMD (AM5) đi với Mainboard hỗ trợ AM5 (B650, X670...).
@@ -524,23 +571,24 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
 1. Khi khách muốn mua linh kiện rời hoặc Build PC, hãy chọn các sản phẩm có loại tương ứng (CPU, RAM, VGA...) từ danh sách.
 2. Tuyệt đối không được nói cửa hàng không có linh kiện rời.
 3. BẮT BUỘC COPY NGUYÊN SI đoạn [PRODUCT:...] từ danh sách trên (gồm đầy đủ cả 5 trường ngăn cách bởi dấu |: [PRODUCT:ID|Tên|Giá|Ảnh|Link]). Tuyệt đối không được viết tắt, không được tự ý xóa bớt phần Ảnh và Link ở cuối của thẻ. Nếu thiếu đủ 5 trường này, sản phẩm sẽ bị lỗi và không thể hiển thị được trên giao diện của khách hàng!
-4. CẤM TUYỆT ĐỐI:
+4. Nếu khách hàng hỏi trong giỏ hàng hoặc danh sách yêu thích của họ có sản phẩm nào, hãy trả lời chi tiết dựa trên dữ liệu giỏ hàng/yêu thích được cung cấp.
+5. CẤM TUYỆT ĐỐI:
    - KHÔNG được sửa giá thành 0 VNĐ.
    - KHÔNG được sửa link ảnh hay link liên kết sản phẩm.
-5. Cấu trúc câu trả lời:
+6. Cấu trúc câu trả lời:
    - Tư vấn nhiệt tình, phân tích tại sao chọn linh kiện đó và đưa ra nhận xét về tính tương thích.
    - Lồng ghép liên kết Markdown của sản phẩm khi đề cập đến trong văn bản giải thích.
    - Liệt kê các thẻ [PRODUCT:...] đầy đủ thông tin để tạo giao diện card sản phẩm trực quan.
    - Tính TỔNG CỘNG chi phí ở cuối.
-6. CHÚ Ý QUAN TRỌNG: Chỉ trả về trực tiếp câu trả lời tư vấn cho khách hàng. KHÔNG ĐƯỢC sinh ra bất kỳ văn bản phân tích, các bước suy nghĩ (thinking process) hay các lập kế hoạch phân vai nào khác ngoài câu trả lời trực tiếp.";
+7. CHÚ Ý QUAN TRỌNG: Chỉ trả về trực tiếp câu trả lời tư vấn cho khách hàng. KHÔNG ĐƯỢC sinh ra bất kỳ văn bản phân tích, các bước suy nghĩ (thinking process) hay các lập kế hoạch phân vai nào khác ngoài câu trả lời trực tiếp.";
         }
 
         // Lấy lịch sử trò chuyện (tối đa 5 lượt chat = 10 tin nhắn gần nhất) để tạo trí nhớ ngắn hạn
         $history = [];
-        if ($userId) {
+        if ($customerId) {
             // Lấy tối đa 20 bản ghi gần nhất để lọc theo mode thích hợp
             $db->query("SELECT question, answer FROM chat_history WHERE customer_id = :customer_id ORDER BY chatted_at DESC LIMIT 20");
-            $db->bind(':customer_id', $userId);
+            $db->bind(':customer_id', $customerId);
             $rawHistory = $db->resultSet();
             $rawHistory = array_reverse($rawHistory);
             
