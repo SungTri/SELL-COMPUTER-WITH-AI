@@ -191,14 +191,16 @@
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
         
-        #chatSuggestions::-webkit-scrollbar { height: 4px; }
-        #chatSuggestions::-webkit-scrollbar-track { background: transparent; }
-        #chatSuggestions::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 10px; }
-        #chatSuggestions::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.4); }
-        #chatSuggestions {
+        #chatSuggestions::-webkit-scrollbar, .product-carousel::-webkit-scrollbar { height: 4px; }
+        #chatSuggestions::-webkit-scrollbar-track, .product-carousel::-webkit-scrollbar-track { background: transparent; }
+        #chatSuggestions::-webkit-scrollbar-thumb, .product-carousel::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 10px; }
+        #chatSuggestions::-webkit-scrollbar-thumb:hover, .product-carousel::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.4); }
+        #chatSuggestions, .product-carousel {
             scrollbar-width: thin;
             scrollbar-color: rgba(59, 130, 246, 0.2) transparent;
         }
+        .cursor-grab { cursor: grab; }
+        .cursor-grabbing { cursor: grabbing; }
     </style>
 
     <!-- Compare Bar -->
@@ -351,6 +353,63 @@
             }
         }
 
+        function setupDragToScroll(el) {
+            if (!el) return;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let moved = false;
+            let startY;
+
+            el.style.cursor = 'grab';
+
+            el.addEventListener('mousedown', (e) => {
+                isDown = true;
+                moved = false;
+                startX = e.pageX - el.offsetLeft;
+                startY = e.pageY - el.offsetTop;
+                scrollLeft = el.scrollLeft;
+                el.style.scrollBehavior = 'auto';
+                el.style.cursor = 'grabbing';
+            });
+
+            el.addEventListener('mouseleave', () => {
+                if (isDown) {
+                    isDown = false;
+                    el.style.scrollBehavior = 'smooth';
+                    el.style.cursor = 'grab';
+                }
+            });
+
+            el.addEventListener('mouseup', () => {
+                if (isDown) {
+                    isDown = false;
+                    el.style.scrollBehavior = 'smooth';
+                    el.style.cursor = 'grab';
+                }
+            });
+
+            el.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const x = e.pageX - el.offsetLeft;
+                const y = e.pageY - el.offsetTop;
+                const walkX = x - startX;
+                const walkY = y - startY;
+                if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                    moved = true;
+                    e.preventDefault();
+                    el.scrollLeft = scrollLeft - walkX * 1.2;
+                }
+            });
+
+            el.addEventListener('click', (e) => {
+                if (moved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+        }
+
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -455,29 +514,36 @@
                 // Remove tags from text for cleaner display
                 const cleanText = formattedText.replace(/\[PRODUCT:[^\]]+\]/g, '');
 
-                msgDiv.className = 'flex gap-3 max-w-[90%] chatbot-bubble-in';
+                msgDiv.className = 'flex gap-3 max-w-[90%] chatbot-bubble-in w-full';
                 let productsHtml = '';
                 
                 if (products.length > 0) {
                     productsHtml = `
-                        <div class="flex flex-col gap-3 mt-4 w-full">
-                            ${products.map(p => `
-                                <div class="bg-blue-50/50 dark:bg-zinc-800/30 border border-blue-100 dark:border-zinc-700/60 rounded-2xl p-3 flex gap-4 hover:shadow-md transition-all group/card">
-                                    <div class="w-16 h-16 bg-white dark:bg-zinc-800 rounded-xl flex-shrink-0 border border-outline-variant/20 dark:border-outline-variant/10 overflow-hidden">
-                                        <img src="${p.image}" class="w-full h-full object-contain p-1 group-hover/card:scale-110 transition-transform" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-[12px] font-bold text-gray-800 dark:text-zinc-200 line-clamp-1 mb-0.5">${p.name}</p>
-                                        <p class="text-[11px] font-black text-blue-600 dark:text-blue-400">${p.price}</p>
-                                        <div class="flex gap-2 mt-2">
-                                            <button onclick="addToCart(${p.id})" class="flex-1 bg-blue-600 text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">${currentLang === 'vi' ? 'THÊM GIỎ HÀNG' : 'ADD TO CART'}</button>
-                                            <a href="${p.link}" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all">
-                                                <span class="material-symbols-outlined text-[16px]">visibility</span>
-                                            </a>
+                        <div class="w-full mt-4 flex flex-col gap-3 overflow-hidden">
+                            <div class="product-carousel flex gap-3 overflow-x-auto pb-2 w-full scroll-smooth select-none">
+                                ${products.map(p => `
+                                    <div class="product-carousel-item flex-shrink-0 w-[180px] bg-slate-50/50 dark:bg-zinc-800/30 border border-blue-100/60 dark:border-zinc-700/60 rounded-2xl p-3 flex flex-col hover:shadow-md transition-all duration-300 group/card">
+                                        <div class="w-full h-[100px] bg-white dark:bg-zinc-800 rounded-xl mb-2.5 overflow-hidden flex items-center justify-center border border-zinc-100/60 dark:border-zinc-750/50">
+                                            <img src="${p.image}" class="w-full h-full object-contain p-1.5 group-hover/card:scale-105 transition-transform duration-300 pointer-events-none" draggable="false" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                                        </div>
+                                        <div class="flex-1 flex flex-col justify-between">
+                                            <div class="mb-2">
+                                                <p class="text-[12px] font-bold text-gray-800 dark:text-zinc-200 line-clamp-2 leading-snug min-h-[34px]" title="${p.name}">${p.name}</p>
+                                                <p class="text-[11px] font-black text-blue-600 dark:text-blue-400 mt-1">${p.price}</p>
+                                            </div>
+                                            <div class="flex gap-1.5 mt-auto">
+                                                <button onclick="addToCart(${p.id})" class="flex-1 bg-blue-600 text-white text-[10px] font-black py-2 rounded-lg hover:bg-blue-700 transition-colors border-0 cursor-pointer active:scale-95 flex items-center justify-center gap-1">
+                                                    <span class="material-symbols-outlined text-[12px]">add_shopping_cart</span>
+                                                    ${currentLang === 'vi' ? 'MUA' : 'ADD'}
+                                                </button>
+                                                <a href="${p.link}" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all flex-shrink-0">
+                                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                             ${products.length > 1 ? `
                                 <button onclick="addAllToCart(${JSON.stringify(products.map(p => p.id)).replace(/"/g, "'")})" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[11px] font-black py-3 rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98] mt-1 flex items-center justify-center gap-2 cursor-pointer border-0">
                                     <span class="material-symbols-outlined text-[18px]">shopping_cart_checkout</span>
@@ -505,9 +571,16 @@
             }
             
             messages.appendChild(msgDiv);
+            
+            const newCarousel = msgDiv.querySelector('.product-carousel');
+            if (newCarousel) {
+                setupDragToScroll(newCarousel);
+            }
+
             messages.scrollTop = messages.scrollHeight;
             sessionStorage.setItem('chat_history_' + currentMode, messages.innerHTML);
             sessionStorage.setItem('chat_user_id', '<?php echo $_SESSION['user_id'] ?? ''; ?>');
+        }
         }
 
         async function addAllToCart(productIds) {
@@ -570,50 +643,11 @@
             // Drag-to-scroll for suggestions
             const suggestionsContainer = document.getElementById('chatSuggestions');
             if (suggestionsContainer) {
-                let isDown = false;
-                let startX;
-                let scrollLeft;
-                let moved = false;
-                let startY;
-
-                suggestionsContainer.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    moved = false;
-                    startX = e.pageX - suggestionsContainer.offsetLeft;
-                    startY = e.pageY - suggestionsContainer.offsetTop;
-                    scrollLeft = suggestionsContainer.scrollLeft;
-                    suggestionsContainer.style.scrollBehavior = 'auto';
-                });
-
-                suggestionsContainer.addEventListener('mouseleave', () => {
-                    isDown = false;
-                });
-
-                suggestionsContainer.addEventListener('mouseup', () => {
-                    isDown = false;
-                    suggestionsContainer.style.scrollBehavior = 'smooth';
-                });
-
-                suggestionsContainer.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    const x = e.pageX - suggestionsContainer.offsetLeft;
-                    const y = e.pageY - suggestionsContainer.offsetTop;
-                    const walkX = x - startX;
-                    const walkY = y - startY;
-                    if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
-                        moved = true;
-                        e.preventDefault();
-                        suggestionsContainer.scrollLeft = scrollLeft - walkX * 1.2;
-                    }
-                });
-
-                suggestionsContainer.addEventListener('click', (e) => {
-                    if (moved) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                }, true);
+                setupDragToScroll(suggestionsContainer);
             }
+
+            // Drag-to-scroll for loaded product carousels
+            document.querySelectorAll('.product-carousel').forEach(setupDragToScroll);
         });
 
         document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
