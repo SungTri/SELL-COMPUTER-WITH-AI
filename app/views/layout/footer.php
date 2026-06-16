@@ -270,6 +270,7 @@
                     wizardState.purpose = '';
                     wizardState.subPurpose = '';
                     wizardState.cpu = '';
+                    wizardState.upgradePlan = '';
 
                     // Stop live chat polling
                     stopLiveChatPolling();
@@ -306,7 +307,8 @@
             setupType: '',
             purpose: '',
             subPurpose: '',
-            cpu: ''
+            cpu: '',
+            upgradePlan: ''
         };
         function switchChatMode(mode) {
             if (wizardState.active) {
@@ -314,6 +316,7 @@
                 wizardState.step = 0;
                 wizardState.setupType = '';
                 wizardState.subPurpose = '';
+                wizardState.upgradePlan = '';
             }
             const oldMode = currentMode;
             currentMode = mode;
@@ -513,6 +516,7 @@
             wizardState.purpose = '';
             wizardState.subPurpose = '';
             wizardState.cpu = '';
+            wizardState.upgradePlan = '';
 
             appendMessage('bot', currentLang === 'vi' 
                 ? '🛠️ **Bắt đầu quy trình Tự động Build PC**\n\n**Bước 1:** Ngân sách dự kiến của bạn là bao nhiêu?' 
@@ -526,6 +530,7 @@
             wizardState.step = 0;
             wizardState.setupType = '';
             wizardState.subPurpose = '';
+            wizardState.upgradePlan = '';
             
             appendMessage('bot', currentLang === 'vi'
                 ? '❌ Quy trình tư vấn tự động đã hủy. Bạn có thể hỏi tôi bất cứ câu hỏi nào!'
@@ -544,7 +549,8 @@
                     { text: currentLang === 'vi' ? 'Dưới 15 triệu' : 'Under 15M', icon: 'payments' },
                     { text: currentLang === 'vi' ? '15 - 25 triệu' : '15M - 25M', icon: 'payments' },
                     { text: currentLang === 'vi' ? '25 - 40 triệu' : '25M - 40M', icon: 'payments' },
-                    { text: currentLang === 'vi' ? 'Trên 40 triệu' : 'Over 40M', icon: 'payments' }
+                    { text: currentLang === 'vi' ? 'Trên 40 triệu' : 'Over 40M', icon: 'payments' },
+                    { text: currentLang === 'vi' ? '⌨️ Nhập số khác...' : '⌨️ Enter custom...', val: '⌨️ Nhập số khác...', icon: 'edit_note' }
                 ];
             } else if (wizardState.step === 6) {
                 // Step 6 is Setup Type (PC Case vs Full Setup)
@@ -579,6 +585,12 @@
                     { text: 'Intel (Core i3, i5, i7...)', val: 'Intel', icon: 'memory' },
                     { text: 'AMD (Ryzen 5, 7...)', val: 'AMD', icon: 'memory' },
                     { text: currentLang === 'vi' ? 'Tùy chọn nào cũng được' : 'Either is fine', val: 'Tùy chọn nào cũng được', icon: 'check_circle' }
+                ];
+            } else if (wizardState.step === 7) {
+                // Step 7 is Future Upgradeability selection
+                chips = [
+                    { text: currentLang === 'vi' ? 'Có, mainboard & nguồn dư dả để nâng cấp' : 'Yes, future-proof main & PSU', icon: 'upgrade' },
+                    { text: currentLang === 'vi' ? 'Không, tối ưu cấu hình mạnh nhất hiện tại' : 'No, maximize current performance', icon: 'speed' }
                 ];
             }
 
@@ -617,6 +629,12 @@
             appendMessage('user', value);
 
             if (wizardState.step === 1) {
+                if (value.includes('Nhập số khác') || value.includes('Enter custom')) {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? 'Vui lòng nhập số tiền ngân sách cụ thể của bạn (Ví dụ: **18.5 triệu** hoặc **23 triệu**) vào ô chat và gửi.'
+                        : 'Please enter your specific budget (e.g. **18.5 million** or **23 million**) in the chat box and send.');
+                    return; // Wait for text input from user
+                }
                 wizardState.budget = value;
                 wizardState.step = 6;
                 setTimeout(() => {
@@ -668,7 +686,7 @@
                 wizardState.subPurpose = value;
                 wizardState.step = 5;
 
-                const isUnder15M = wizardState.budget.includes('Dưới 15') || wizardState.budget.includes('Under 15');
+                const isUnder15M = wizardState.budget.includes('Dưới 15') || wizardState.budget.includes('Under 15') || wizardState.budget.includes('15tr') || parseFloat(wizardState.budget) < 15;
                 const isHeavyGaming = value.includes('AAA') || value.includes('Giả lập') || value.includes('Emulator');
                 const isHeavyDesign = value.includes('video') || value.includes('Video') || value.includes('3D') || value.includes('CAD');
                 
@@ -692,6 +710,15 @@
                 }, 400);
             } else if (wizardState.step === 5) {
                 wizardState.cpu = value;
+                wizardState.step = 7;
+                setTimeout(() => {
+                    appendMessage('bot', currentLang === 'vi'
+                        ? '**Bước 6:** Bạn có dự định nâng cấp máy tính trong 2-3 năm tới không?'
+                        : '**Step 6:** Do you plan to upgrade this PC in the next 2-3 years?');
+                    renderWizardChips();
+                }, 400);
+            } else if (wizardState.step === 7) {
+                wizardState.upgradePlan = value;
                 wizardState.active = false;
                 wizardState.step = 0;
 
@@ -706,8 +733,8 @@
                     }
 
                     const finalQuery = currentLang === 'vi'
-                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${purposeString}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget} (Yêu cầu cấu hình: ${wizardState.setupType}). Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
-                        : `Please suggest a compatible PC build optimized for ${purposeString}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget} (Configuration requirement: ${wizardState.setupType}). Provide product tags.`;
+                        ? `Tôi muốn tư vấn cấu hình PC tối ưu cho nhu cầu ${purposeString}, ưu tiên sử dụng CPU ${wizardState.cpu}, với mức ngân sách khoảng ${wizardState.budget} (Yêu cầu cấu hình: ${wizardState.setupType}, Định hướng nâng cấp: ${wizardState.upgradePlan}). Vui lòng gợi ý trọn bộ linh kiện tương thích tốt nhất.`
+                        : `Please suggest a compatible PC build optimized for ${purposeString}, preferring ${wizardState.cpu} CPU, with a budget of around ${wizardState.budget} (Configuration: ${wizardState.setupType}, Upgrade plan: ${wizardState.upgradePlan}). Provide product tags.`;
                     
                     sendMessageWithText(finalQuery);
                 }, 400);
@@ -774,11 +801,9 @@
             if (!message) return;
 
             if (wizardState.active) {
-                wizardState.active = false;
-                wizardState.step = 0;
-                wizardState.setupType = '';
-                wizardState.subPurpose = '';
-                renderSuggestionChips(currentMode);
+                input.value = '';
+                handleWizardSelection(message);
+                return;
             }
 
             if (currentMode !== 'shop') {
