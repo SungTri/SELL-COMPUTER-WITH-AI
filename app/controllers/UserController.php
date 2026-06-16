@@ -47,6 +47,15 @@ class UserController extends Controller {
             $order['status_text'] = $statusMapping[strtolower($order['status'])] ?? 'Không rõ';
         }
 
+        // Notification pagination (10 per page)
+        $notiPerPage = 10;
+        $notiPage = max(1, intval($_GET['noti_page'] ?? 1));
+        $notiOffset = ($notiPage - 1) * $notiPerPage;
+        $totalNotiCount = $this->notificationModel->getTotalNotificationCount($userId);
+        $totalNotiPages = max(1, ceil($totalNotiCount / $notiPerPage));
+        $notiPage = min($notiPage, $totalNotiPages);
+        $notiOffset = ($notiPage - 1) * $notiPerPage;
+
         $data = [
             'title' => 'Trang cá nhân',
             'noindex' => true,
@@ -63,6 +72,10 @@ class UserController extends Controller {
             'wishlist' => $wishlist,
             'addresses' => $addresses,
             'notifications' => $this->notificationModel->getNotificationsByUser($userId),
+            'notifications_paginated' => $this->notificationModel->getNotificationsPaginated($userId, $notiPerPage, $notiOffset),
+            'noti_page' => $notiPage,
+            'noti_total_pages' => $totalNotiPages,
+            'noti_total_count' => $totalNotiCount,
             'saved_vouchers' => $this->userModel->getSavedVouchers($userId)
         ];
 

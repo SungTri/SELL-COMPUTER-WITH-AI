@@ -13,6 +13,21 @@ class NotificationModel {
         return $this->db->resultSet();
     }
 
+    public function getNotificationsPaginated($userId, $limit = 10, $offset = 0) {
+        $this->db->query("SELECT * FROM user_notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+        $this->db->bind(':user_id', $userId);
+        $this->db->bind(':limit', (int)$limit);
+        $this->db->bind(':offset', (int)$offset);
+        return $this->db->resultSet();
+    }
+
+    public function getTotalNotificationCount($userId) {
+        $this->db->query("SELECT COUNT(*) as total FROM user_notifications WHERE user_id = :user_id");
+        $this->db->bind(':user_id', $userId);
+        $result = $this->db->single();
+        return $result['total'] ?? 0;
+    }
+
     public function markAsRead($id) {
         $this->db->query("UPDATE user_notifications SET is_read = 1 WHERE id = :id");
         $this->db->bind(':id', $id);

@@ -549,8 +549,8 @@
             </div>
 
             <div class="divide-y divide-outline-variant">
-                <?php if(!empty($data['notifications'])): ?>
-                    <?php foreach($data['notifications'] as $noti): ?>
+                <?php if(!empty($data['notifications_paginated'])): ?>
+                    <?php foreach($data['notifications_paginated'] as $noti): ?>
                         <div class="p-6 hover:bg-surface-container/30 transition-all cursor-pointer relative group <?php echo $noti['is_read'] == 0 ? 'bg-secondary/5' : ''; ?>" onclick="handleNotificationClick(this, <?php echo $noti['id']; ?>)">
                             <div class="flex gap-4">
                                 <div class="w-12 h-12 rounded-2xl <?php 
@@ -593,6 +593,59 @@
                             </div>
                         </div>
                     <?php endforeach; ?>
+
+                    <!-- Pagination Controls -->
+                    <?php if($data['noti_total_pages'] > 1): ?>
+                    <div class="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container/5">
+                        <p class="text-xs text-outline">
+                            <?php echo __('showing_page', 'Trang'); ?> <span class="font-bold text-on-surface"><?php echo $data['noti_page']; ?></span> / <span class="font-bold text-on-surface"><?php echo $data['noti_total_pages']; ?></span>
+                            <span class="ml-2 text-outline/60">(<?php echo $data['noti_total_count']; ?> <?php echo __('notifications_unit', 'thông báo'); ?>)</span>
+                        </p>
+                        <div class="flex items-center gap-1.5">
+                            <!-- Prev -->
+                            <?php if($data['noti_page'] > 1): ?>
+                                <a href="?tab=notifications&noti_page=<?php echo $data['noti_page'] - 1; ?>" class="px-3 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container hover:bg-secondary hover:text-on-secondary transition-all flex items-center gap-1 border border-outline-variant/30">
+                                    <span class="material-symbols-outlined !text-[14px]">chevron_left</span> <?php echo __('prev_page', 'Trước'); ?>
+                                </a>
+                            <?php endif; ?>
+
+                            <!-- Page Numbers -->
+                            <?php 
+                                $startPage = max(1, $data['noti_page'] - 2);
+                                $endPage = min($data['noti_total_pages'], $data['noti_page'] + 2);
+                                if ($startPage > 1): 
+                            ?>
+                                <a href="?tab=notifications&noti_page=1" class="w-9 h-9 rounded-xl text-xs font-bold flex items-center justify-center transition-all border border-outline-variant/30 text-on-surface-variant hover:bg-secondary hover:text-on-secondary">1</a>
+                                <?php if ($startPage > 2): ?>
+                                    <span class="text-outline text-xs px-1">…</span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                            <?php for($i = $startPage; $i <= $endPage; $i++): ?>
+                                <?php if($i == $data['noti_page']): ?>
+                                    <span class="w-9 h-9 rounded-xl text-xs font-bold flex items-center justify-center bg-secondary text-on-secondary shadow-md"><?php echo $i; ?></span>
+                                <?php else: ?>
+                                    <a href="?tab=notifications&noti_page=<?php echo $i; ?>" class="w-9 h-9 rounded-xl text-xs font-bold flex items-center justify-center transition-all border border-outline-variant/30 text-on-surface-variant hover:bg-secondary hover:text-on-secondary"><?php echo $i; ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+                            <?php if ($endPage < $data['noti_total_pages']): ?>
+                                <?php if ($endPage < $data['noti_total_pages'] - 1): ?>
+                                    <span class="text-outline text-xs px-1">…</span>
+                                <?php endif; ?>
+                                <a href="?tab=notifications&noti_page=<?php echo $data['noti_total_pages']; ?>" class="w-9 h-9 rounded-xl text-xs font-bold flex items-center justify-center transition-all border border-outline-variant/30 text-on-surface-variant hover:bg-secondary hover:text-on-secondary"><?php echo $data['noti_total_pages']; ?></a>
+                            <?php endif; ?>
+
+                            <!-- Next -->
+                            <?php if($data['noti_page'] < $data['noti_total_pages']): ?>
+                                <a href="?tab=notifications&noti_page=<?php echo $data['noti_page'] + 1; ?>" class="px-3 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container hover:bg-secondary hover:text-on-secondary transition-all flex items-center gap-1 border border-outline-variant/30">
+                                    <?php echo __('next_page', 'Sau'); ?> <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                 <?php else: ?>
                     <div class="p-20 text-center">
                         <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-6">
