@@ -64,6 +64,24 @@ return [
     'hero_slide_2_desc' => 'Dominate every match with the latest RTX 40-Series components. Save up to 30%.',
     'hero_slide_2_btn' => 'Get It Now',
     
+    // Slide 3
+    'hero_slide_3_tag' => 'Mobile Devices',
+    'hero_slide_3_title' => 'Ultra-Portable <br><span class="text-amber-400">Premium Laptops</span>',
+    'hero_slide_3_desc' => 'Experience the ultimate portable power. Super thin and light design, all-day battery life, and impressive processing speed.',
+    'hero_slide_3_btn' => 'View List',
+    
+    // Slide 4
+    'hero_slide_4_tag' => 'Professional Gear',
+    'hero_slide_4_title' => 'Precision <br><span class="text-teal-400">Gaming Gear</span>',
+    'hero_slide_4_desc' => 'Elevate your experience with responsive mechanical keyboards and high-precision gaming mice.',
+    'hero_slide_4_btn' => 'Explore Now',
+    
+    // Slide 5
+    'hero_slide_5_tag' => 'Studio & Creative',
+    'hero_slide_5_title' => 'Powering <br><span class="text-purple-400">Visual Creators</span>',
+    'hero_slide_5_desc' => 'Optimal solutions for designers and video editors. Color-accurate monitors, smooth 3D rendering.',
+    'hero_slide_5_btn' => 'View Solutions',
+    
     // AI Section
     'ai_consult_badge' => 'TechExpert Intelligence',
     'ai_consult_title' => 'Need PC config <br> <span class="text-secondary">advice?</span>',

@@ -64,6 +64,24 @@ return [
     'hero_slide_2_desc' => 'Thống trị mọi trận đấu với các linh kiện RTX 40-Series mới nhất. Giảm giá lên đến 30%.',
     'hero_slide_2_btn' => 'Săn ngay',
     
+    // Slide 3
+    'hero_slide_3_tag' => 'Thiết bị di động',
+    'hero_slide_3_title' => 'Ultra-Portable <br><span class="text-amber-400">Premium Laptops</span>',
+    'hero_slide_3_desc' => 'Trải nghiệm sức mạnh di động đỉnh cao. Thiết kế siêu mỏng nhẹ, pin cả ngày dài cùng hiệu năng xử lý ấn tượng.',
+    'hero_slide_3_btn' => 'Xem ngay',
+    
+    // Slide 4
+    'hero_slide_4_tag' => 'Gear chuyên nghiệp',
+    'hero_slide_4_title' => 'Precision <br><span class="text-teal-400">Gaming Gear</span>',
+    'hero_slide_4_desc' => 'Nâng tầm trải nghiệm với bàn phím cơ cơ học phản hồi nhanh nhạy và chuột gaming độ chính xác cao.',
+    'hero_slide_4_btn' => 'Khám phá bộ sưu tập',
+    
+    // Slide 5
+    'hero_slide_5_tag' => 'Studio & Sáng tạo',
+    'hero_slide_5_title' => 'Powering <br><span class="text-purple-400">Visual Creators</span>',
+    'hero_slide_5_desc' => 'Giải pháp tối ưu cho nhà thiết kế và biên tập video. Màn hình chuẩn màu, dựng hình 3D mượt mà.',
+    'hero_slide_5_btn' => 'Xem giải pháp',
+    
     // AI Section
     'ai_consult_badge' => 'TechExpert Intelligence',
     'ai_consult_title' => 'Cần tư vấn <br> cấu hình <span class="text-secondary">phù hợp?</span>',

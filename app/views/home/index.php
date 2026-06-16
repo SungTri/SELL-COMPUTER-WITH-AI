@@ -115,6 +115,39 @@
                         <a href="<?php echo URLROOT; ?>/product/category/3" class="px-6 py-3 bg-error text-on-error rounded-xl font-bold hover:shadow-[0_0_20px_rgba(186,26,26,0.5)] transition-all transform hover:-translate-y-1 inline-block text-sm"><?php echo __('hero_slide_2_btn', 'Săn ngay'); ?></a>
                     </div>
                 </div>
+                <!-- Slide 3 -->
+                <div class="swiper-slide relative flex items-center">
+                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1600" class="absolute inset-0 w-full h-full object-cover" alt="Hero 3">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
+                    <div class="relative z-10 p-8 md:p-16 max-w-2xl text-white">
+                        <span class="inline-block px-4 py-1 rounded-full bg-amber-500 text-black text-xs font-bold uppercase tracking-widest mb-4"><?php echo __('hero_slide_3_tag', 'Thiết bị di động'); ?></span>
+                        <h2 class="text-4xl md:text-5xl font-black font-h1 mb-4 leading-tight"><?php echo __('hero_slide_3_title', 'Ultra-Portable <br><span class="text-amber-400">Premium Laptops</span>'); ?></h2>
+                        <p class="text-base text-surface-variant mb-6 opacity-90 leading-relaxed"><?php echo __('hero_slide_3_desc', 'Trải nghiệm sức mạnh di động đỉnh cao. Thiết kế siêu mỏng nhẹ, pin cả ngày dài cùng hiệu năng xử lý ấn tượng.'); ?></p>
+                        <a href="<?php echo URLROOT; ?>/product/category/1" class="px-6 py-3 bg-amber-500 text-black rounded-xl font-bold hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all transform hover:-translate-y-1 inline-block text-sm hover:bg-amber-400"><?php echo __('hero_slide_3_btn', 'Xem ngay'); ?></a>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="swiper-slide relative flex items-center">
+                    <img src="https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&q=80&w=1600" class="absolute inset-0 w-full h-full object-cover" alt="Hero 4">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
+                    <div class="relative z-10 p-8 md:p-16 max-w-2xl text-white">
+                        <span class="inline-block px-4 py-1 rounded-full bg-teal-500 text-black text-xs font-bold uppercase tracking-widest mb-4"><?php echo __('hero_slide_4_tag', 'Gear chuyên nghiệp'); ?></span>
+                        <h2 class="text-4xl md:text-5xl font-black font-h1 mb-4 leading-tight"><?php echo __('hero_slide_4_title', 'Precision <br><span class="text-teal-400">Gaming Gear</span>'); ?></h2>
+                        <p class="text-base text-surface-variant mb-6 opacity-90 leading-relaxed"><?php echo __('hero_slide_4_desc', 'Nâng tầm trải nghiệm với bàn phím cơ cơ học phản hồi nhanh nhạy và chuột gaming độ chính xác cao.'); ?></p>
+                        <a href="<?php echo URLROOT; ?>/product/category/4" class="px-6 py-3 bg-teal-500 text-black rounded-xl font-bold hover:shadow-[0_0_20px_rgba(20,184,166,0.5)] transition-all transform hover:-translate-y-1 inline-block text-sm hover:bg-teal-400"><?php echo __('hero_slide_4_btn', 'Khám phá bộ sưu tập'); ?></a>
+                    </div>
+                </div>
+                <!-- Slide 5 -->
+                <div class="swiper-slide relative flex items-center">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1600" class="absolute inset-0 w-full h-full object-cover" alt="Hero 5">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
+                    <div class="relative z-10 p-8 md:p-16 max-w-2xl text-white">
+                        <span class="inline-block px-4 py-1 rounded-full bg-purple-500 text-white text-xs font-bold uppercase tracking-widest mb-4"><?php echo __('hero_slide_5_tag', 'Studio & Sáng tạo'); ?></span>
+                        <h2 class="text-4xl md:text-5xl font-black font-h1 mb-4 leading-tight"><?php echo __('hero_slide_5_title', 'Powering <br><span class="text-purple-400">Visual Creators</span>'); ?></h2>
+                        <p class="text-base text-surface-variant mb-6 opacity-90 leading-relaxed"><?php echo __('hero_slide_5_desc', 'Giải pháp tối ưu cho nhà thiết kế và biên tập video. Màn hình chuẩn màu, dựng hình 3D mượt mà.'); ?></p>
+                        <a href="<?php echo URLROOT; ?>/product/category/3" class="px-6 py-3 bg-purple-600 text-white rounded-xl font-bold hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all transform hover:-translate-y-1 inline-block text-sm hover:bg-purple-500"><?php echo __('hero_slide_5_btn', 'Xem giải pháp'); ?></a>
+                    </div>
+                </div>
             </div>
             <div class="swiper-pagination"></div>
             <div class="swiper-button-next !text-white/50 hover:!text-white transition-colors"></div>
