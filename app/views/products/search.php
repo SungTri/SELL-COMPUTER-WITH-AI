@@ -118,15 +118,59 @@
             <div class="flex-1">
                 <?php if(!empty($data['products'])): ?>
                     <!-- Sorting Bar -->
-                    <div class="bg-white rounded-xl border border-outline-variant p-4 mb-8 flex items-center justify-between shadow-sm">
-                        <div class="flex items-center gap-2 text-sm text-on-surface-variant">
-                            <?php echo __('sort_by', 'Sắp xếp:'); ?>
-                            <select name="sort" onchange="this.form.submit()" class="bg-transparent border-none focus:ring-0 font-bold text-primary cursor-pointer pr-8">
-                                <option value="newest" <?php echo ($data['filters']['sort'] == 'newest') ? 'selected' : ''; ?>><?php echo __('sort_newest', 'Mới nhất'); ?></option>
-                                <option value="price_asc" <?php echo ($data['filters']['sort'] == 'price_asc') ? 'selected' : ''; ?>><?php echo __('sort_price_low', 'Giá thấp đến cao'); ?></option>
-                                <option value="price_desc" <?php echo ($data['filters']['sort'] == 'price_desc') ? 'selected' : ''; ?>><?php echo __('sort_price_high', 'Giá cao đến thấp'); ?></option>
-                                <option value="popular" <?php echo ($data['filters']['sort'] == 'popular') ? 'selected' : ''; ?>><?php echo __('sort_popular', 'Phổ biến nhất'); ?></option>
-                            </select>
+                    <div class="bg-white dark:bg-zinc-900 rounded-xl border border-outline-variant dark:border-zinc-700/60 p-4 mb-8 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3 text-sm text-on-surface-variant">
+                            <span class="text-sm text-outline font-medium"><?php echo __('sort_by', 'Sắp xếp:'); ?></span>
+                            <input type="hidden" name="sort" id="sort-value" value="<?php echo $data['filters']['sort'] ?? 'newest'; ?>">
+                            
+                            <div class="relative inline-block text-left" id="custom-sort-dropdown">
+                                <button type="button" onclick="toggleCustomDropdown()" class="flex items-center justify-between gap-3 px-4 py-2 bg-surface-container-lowest border border-outline-variant dark:border-zinc-700/50 rounded-xl text-sm font-bold text-primary dark:text-zinc-100 hover:border-secondary hover:text-secondary transition-all shadow-sm cursor-pointer min-w-[190px] select-none">
+                                    <span id="selected-sort-label">
+                                        <?php 
+                                        $currentSort = $data['filters']['sort'] ?? 'newest';
+                                        if ($currentSort === 'price_low' || $currentSort === 'price_asc') {
+                                            echo __('sort_price_low', 'Từ rẻ nhất đến đắt nhất');
+                                        } elseif ($currentSort === 'price_high' || $currentSort === 'price_desc') {
+                                            echo __('sort_price_high', 'Từ đắt nhất đến rẻ nhất');
+                                        } elseif ($currentSort === 'popular') {
+                                            echo __('sort_popular', 'Phổ biến nhất');
+                                        } else {
+                                            echo __('sort_newest', 'Mới nhất');
+                                        }
+                                        ?>
+                                    </span>
+                                    <span class="material-symbols-outlined text-outline transition-transform duration-300" id="dropdown-chevron">keyboard_arrow_down</span>
+                                </button>
+                                
+                                <div id="dropdown-menu-list" class="hidden absolute left-0 mt-2 w-56 rounded-2xl bg-white dark:bg-zinc-900 border border-outline-variant dark:border-zinc-800 shadow-2xl z-50 p-1.5 focus:outline-none animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div class="py-1" role="none">
+                                        <button type="button" onclick="selectSortOption('newest')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo ($data['filters']['sort'] ?? 'newest') == 'newest' ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                            <span><?php echo __('sort_newest', 'Mới nhất'); ?></span>
+                                            <?php if (($data['filters']['sort'] ?? 'newest') == 'newest'): ?>
+                                                <span class="material-symbols-outlined text-[18px]">check</span>
+                                            <?php endif; ?>
+                                        </button>
+                                        <button type="button" onclick="selectSortOption('price_asc')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo (($data['filters']['sort'] ?? 'newest') == 'price_low' || ($data['filters']['sort'] ?? 'newest') == 'price_asc') ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                            <span><?php echo __('sort_price_low', 'Từ rẻ nhất đến đắt nhất'); ?></span>
+                                            <?php if (($data['filters']['sort'] ?? 'newest') == 'price_low' || ($data['filters']['sort'] ?? 'newest') == 'price_asc'): ?>
+                                                <span class="material-symbols-outlined text-[18px]">check</span>
+                                            <?php endif; ?>
+                                        </button>
+                                        <button type="button" onclick="selectSortOption('price_desc')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo (($data['filters']['sort'] ?? 'newest') == 'price_high' || ($data['filters']['sort'] ?? 'newest') == 'price_desc') ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                            <span><?php echo __('sort_price_high', 'Từ đắt nhất đến rẻ nhất'); ?></span>
+                                            <?php if (($data['filters']['sort'] ?? 'newest') == 'price_high' || ($data['filters']['sort'] ?? 'newest') == 'price_desc'): ?>
+                                                <span class="material-symbols-outlined text-[18px]">check</span>
+                                            <?php endif; ?>
+                                        </button>
+                                        <button type="button" onclick="selectSortOption('popular')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo ($data['filters']['sort'] ?? 'newest') == 'popular' ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                            <span><?php echo __('sort_popular', 'Phổ biến nhất'); ?></span>
+                                            <?php if (($data['filters']['sort'] ?? 'newest') == 'popular'): ?>
+                                                <span class="material-symbols-outlined text-[18px]">check</span>
+                                            <?php endif; ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="text-[12px] text-outline font-medium">
                             <?php echo __('show_products_count', 'Đang hiển thị'); ?> <?php echo count($data['products']); ?> <?php echo __('show_products_suffix', 'sản phẩm'); ?>
@@ -213,7 +257,35 @@
             </div>
         </form>
     </div>
-</main>
+
+        <script>
+            function toggleCustomDropdown() {
+                const menu = document.getElementById('dropdown-menu-list');
+                const chevron = document.getElementById('dropdown-chevron');
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                } else {
+                    menu.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                }
+            }
+
+            function selectSortOption(val) {
+                document.getElementById('sort-value').value = val;
+                document.getElementById('filterForm').submit();
+            }
+
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('custom-sort-dropdown');
+                if (dropdown && !dropdown.contains(e.target)) {
+                    const menu = document.getElementById('dropdown-menu-list');
+                    const chevron = document.getElementById('dropdown-chevron');
+                    if (menu) menu.classList.add('hidden');
+                    if (chevron) chevron.classList.remove('rotate-180');
+                }
+            });
+        </script>
 
 <style>
     @keyframes fadeIn {

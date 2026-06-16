@@ -91,11 +91,48 @@
                     
                     <div class="flex items-center gap-4">
                         <span class="text-sm text-outline font-medium"><?php echo __('sort_by', 'Sắp xếp theo:'); ?></span>
-                        <select name="sort" class="bg-surface border border-outline-variant rounded-lg px-4 py-2 text-sm outline-none focus:border-secondary font-medium cursor-pointer" onchange="this.form.submit()">
-                            <option value="newest" <?php echo $data['filters']['sort'] == 'newest' ? 'selected' : ''; ?>><?php echo __('sort_newest', 'Mới nhất'); ?></option>
-                            <option value="price_low" <?php echo $data['filters']['sort'] == 'price_low' ? 'selected' : ''; ?>><?php echo __('sort_price_low', 'Giá thấp đến cao'); ?></option>
-                            <option value="price_high" <?php echo $data['filters']['sort'] == 'price_high' ? 'selected' : ''; ?>><?php echo __('sort_price_high', 'Giá cao đến thấp'); ?></option>
-                        </select>
+                        <input type="hidden" name="sort" id="sort-value" value="<?php echo $data['filters']['sort'] ?? 'newest'; ?>">
+                        
+                        <div class="relative inline-block text-left" id="custom-sort-dropdown">
+                            <button type="button" onclick="toggleCustomDropdown()" class="flex items-center justify-between gap-3 px-5 py-2.5 bg-white dark:bg-zinc-900 border border-outline-variant dark:border-zinc-700/60 rounded-xl text-sm font-semibold text-on-surface hover:border-secondary hover:text-secondary transition-all shadow-sm cursor-pointer min-w-[200px] select-none">
+                                <span id="selected-sort-label">
+                                    <?php 
+                                    $currentSort = $data['filters']['sort'] ?? 'newest';
+                                    if ($currentSort === 'price_low' || $currentSort === 'price_asc') {
+                                        echo __('sort_price_low', 'Từ rẻ nhất đến đắt nhất');
+                                    } elseif ($currentSort === 'price_high' || $currentSort === 'price_desc') {
+                                        echo __('sort_price_high', 'Từ đắt nhất đến rẻ nhất');
+                                    } else {
+                                        echo __('sort_newest', 'Mới nhất');
+                                    }
+                                    ?>
+                                </span>
+                                <span class="material-symbols-outlined text-outline transition-transform duration-300" id="dropdown-chevron">keyboard_arrow_down</span>
+                            </button>
+                            
+                            <div id="dropdown-menu-list" class="hidden absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-zinc-900 border border-outline-variant dark:border-zinc-800 shadow-2xl z-50 p-1.5 focus:outline-none animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div class="py-1" role="none">
+                                    <button type="button" onclick="selectSortOption('newest')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo ($data['filters']['sort'] ?? 'newest') == 'newest' ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                        <span><?php echo __('sort_newest', 'Mới nhất'); ?></span>
+                                        <?php if (($data['filters']['sort'] ?? 'newest') == 'newest'): ?>
+                                            <span class="material-symbols-outlined text-[18px]">check</span>
+                                        <?php endif; ?>
+                                    </button>
+                                    <button type="button" onclick="selectSortOption('price_low')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo (($data['filters']['sort'] ?? 'newest') == 'price_low' || ($data['filters']['sort'] ?? 'newest') == 'price_asc') ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                        <span><?php echo __('sort_price_low', 'Từ rẻ nhất đến đắt nhất'); ?></span>
+                                        <?php if (($data['filters']['sort'] ?? 'newest') == 'price_low' || ($data['filters']['sort'] ?? 'newest') == 'price_asc'): ?>
+                                            <span class="material-symbols-outlined text-[18px]">check</span>
+                                        <?php endif; ?>
+                                    </button>
+                                    <button type="button" onclick="selectSortOption('price_high')" class="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between cursor-pointer <?php echo (($data['filters']['sort'] ?? 'newest') == 'price_high' || ($data['filters']['sort'] ?? 'newest') == 'price_desc') ? 'bg-secondary/10 text-secondary font-bold' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'; ?>">
+                                        <span><?php echo __('sort_price_high', 'Từ đắt nhất đến rẻ nhất'); ?></span>
+                                        <?php if (($data['filters']['sort'] ?? 'newest') == 'price_high' || ($data['filters']['sort'] ?? 'newest') == 'price_desc'): ?>
+                                            <span class="material-symbols-outlined text-[18px]">check</span>
+                                        <?php endif; ?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -193,6 +230,33 @@
                 document.getElementById('pageInput').value = page;
                 document.getElementById('filterForm').submit();
             }
+
+            function toggleCustomDropdown() {
+                const menu = document.getElementById('dropdown-menu-list');
+                const chevron = document.getElementById('dropdown-chevron');
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                } else {
+                    menu.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                }
+            }
+
+            function selectSortOption(val) {
+                document.getElementById('sort-value').value = val;
+                document.getElementById('filterForm').submit();
+            }
+
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('custom-sort-dropdown');
+                if (dropdown && !dropdown.contains(e.target)) {
+                    const menu = document.getElementById('dropdown-menu-list');
+                    const chevron = document.getElementById('dropdown-chevron');
+                    if (menu) menu.classList.add('hidden');
+                    if (chevron) chevron.classList.remove('rotate-180');
+                }
+            });
 
 
         </script>
