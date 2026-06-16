@@ -415,12 +415,19 @@
                 <?php renderProductCard($product, $data['wishlist_ids'] ?? []); ?>
             <?php endforeach; ?>
         </div>
-
         <!-- Featured Products Grid (Hidden) -->
         <div id="grid-featured" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in duration-500">
             <?php foreach(array_slice($data['products'], 0, 4) as $product): ?>
                 <?php renderProductCard($product, $data['wishlist_ids'] ?? []); ?>
             <?php endforeach; ?>
+        </div>
+
+        <!-- See All Products Button -->
+        <div class="mt-12 flex justify-center">
+            <a href="<?php echo URLROOT; ?>/product" class="group px-8 py-4 bg-white dark:bg-zinc-900 border border-outline-variant/60 dark:border-zinc-700/60 text-primary dark:text-zinc-100 rounded-2xl font-black text-sm hover:border-secondary hover:text-secondary hover:shadow-lg dark:hover:shadow-secondary/15 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2.5 cursor-pointer shadow-sm">
+                <span><?php echo __('view_all_products', 'Xem tất cả sản phẩm'); ?></span>
+                <span class="material-symbols-outlined group-hover:translate-x-1.5 transition-transform text-lg">arrow_forward</span>
+            </a>
         </div>
     </section>
 
