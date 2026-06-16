@@ -667,11 +667,28 @@
             } else if (wizardState.step === 3 || wizardState.step === 4) {
                 wizardState.subPurpose = value;
                 wizardState.step = 5;
+
+                const isUnder15M = wizardState.budget.includes('Dưới 15') || wizardState.budget.includes('Under 15');
+                const isHeavyGaming = value.includes('AAA') || value.includes('Giả lập') || value.includes('Emulator');
+                const isHeavyDesign = value.includes('video') || value.includes('Video') || value.includes('3D') || value.includes('CAD');
+                
+                let warningMsg = '';
+                if (isUnder15M && (isHeavyGaming || isHeavyDesign)) {
+                    warningMsg = currentLang === 'vi'
+                        ? '⚠️ **Lưu ý từ chuyên gia:** Với ngân sách dưới 15 triệu, hiệu năng chiến game AAA / vẽ 3D / giả lập nặng có thể chưa đạt mức mượt mà tối đa. Hệ thống sẽ cố gắng tối ưu hóa các linh kiện tốt nhất ở mức thiết lập Trung bình.'
+                        : '⚠️ **Expert Note:** With a budget under 15M, heavy AAA gaming / 3D render / emulator performance might be limited. The system will optimize for the best possible components at Medium settings.';
+                }
+
                 setTimeout(() => {
-                    appendMessage('bot', currentLang === 'vi'
-                        ? '**Bước 5:** Bạn ưu tiên thương hiệu CPU nào hơn?'
-                        : '**Step 5:** Which CPU brand do you prefer?');
-                    renderWizardChips();
+                    if (warningMsg) {
+                        appendMessage('bot', warningMsg);
+                    }
+                    setTimeout(() => {
+                        appendMessage('bot', currentLang === 'vi'
+                            ? '**Bước 5:** Bạn ưu tiên thương hiệu CPU nào hơn?'
+                            : '**Step 5:** Which CPU brand do you prefer?');
+                        renderWizardChips();
+                    }, warningMsg ? 800 : 0);
                 }, 400);
             } else if (wizardState.step === 5) {
                 wizardState.cpu = value;
