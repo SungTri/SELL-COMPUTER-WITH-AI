@@ -181,8 +181,8 @@ return [
     'show_products_suffix' => 'sản phẩm',
     'sort_by' => 'Sắp xếp theo:',
     'sort_newest' => 'Mới nhất',
-    'sort_price_low' => 'Giá thấp đến cao',
-    'sort_price_high' => 'Giá cao đến thấp',
+    'sort_price_low' => 'Từ rẻ nhất đến đắt nhất',
+    'sort_price_high' => 'Từ đắt nhất đến rẻ nhất',
     'no_products_found' => 'Không tìm thấy sản phẩm nào',
     'no_products_found_desc' => 'Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.',
     

@@ -57,10 +57,15 @@ class ProductModel {
         $sort = $filters['sort'] ?? 'newest';
         switch ($sort) {
             case 'price_low':
+            case 'price_asc':
                 $sql .= " ORDER BY p.price ASC";
                 break;
             case 'price_high':
+            case 'price_desc':
                 $sql .= " ORDER BY p.price DESC";
+                break;
+            case 'popular':
+                $sql .= " ORDER BY p.view_count DESC";
                 break;
             case 'newest':
             default:
@@ -184,10 +189,20 @@ class ProductModel {
 
         // Sorting
         switch ($filters['sort'] ?? 'newest') {
-            case 'price_asc': $sql .= " ORDER BY p.price ASC"; break;
-            case 'price_desc': $sql .= " ORDER BY p.price DESC"; break;
-            case 'popular': $sql .= " ORDER BY p.view_count DESC"; break;
-            default: $sql .= " ORDER BY p.created_at DESC"; break;
+            case 'price_low':
+            case 'price_asc': 
+                $sql .= " ORDER BY p.price ASC"; 
+                break;
+            case 'price_high':
+            case 'price_desc': 
+                $sql .= " ORDER BY p.price DESC"; 
+                break;
+            case 'popular': 
+                $sql .= " ORDER BY p.view_count DESC"; 
+                break;
+            default: 
+                $sql .= " ORDER BY p.created_at DESC"; 
+                break;
         }
 
         $this->db->query($sql);

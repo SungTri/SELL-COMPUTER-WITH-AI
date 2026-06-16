@@ -181,8 +181,8 @@ return [
     'show_products_suffix' => 'products',
     'sort_by' => 'Sort by:',
     'sort_newest' => 'Newest',
-    'sort_price_low' => 'Price: Low to High',
-    'sort_price_high' => 'Price: High to Low',
+    'sort_price_low' => 'From cheapest to most expensive',
+    'sort_price_high' => 'From most expensive to cheapest',
     'no_products_found' => 'No products found',
     'no_products_found_desc' => 'Try changing your filters or search keywords.',
     
