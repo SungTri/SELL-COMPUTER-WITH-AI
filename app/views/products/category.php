@@ -154,35 +154,36 @@
                                 </h3>
                                 <p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1"><?php echo $product['short_description']; ?></p>
                                 
-                                <div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant">
-                                    <div class="min-w-0 flex-1">
-                                        <span class="text-xl font-h3 text-primary block truncate">
-                                            <?php 
-                                            if (($_SESSION['lang'] ?? 'vi') === 'en') {
-                                                echo number_format($product['price'], 0, '.', ',') . 'đ';
-                                            } else {
-                                                echo number_format($product['price'], 0, ',', '.') . 'đ';
-                                            }
-                                            ?>
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center gap-2 flex-shrink-0">
-                                        <button type="button" onclick="toggleCompare(<?php echo $product['id']; ?>)" 
-                                                class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-secondary hover:text-white transition-all flex items-center justify-center compare-btn"
-                                                data-id="<?php echo $product['id']; ?>">
-                                            <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
-                                        </button>
-                                        <button type="button" onclick="addToCart(<?php echo $product['id']; ?>)" 
-                                                class="w-10 h-10 rounded-xl bg-primary text-white hover:bg-secondary transition-all flex items-center justify-center group/btn">
-                                            <span class="material-symbols-outlined text-[20px] group-hover/btn:scale-110 transition-transform">shopping_cart</span>
-                                        </button>
-                                        <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>"
-                                           class="w-10 h-10 rounded-xl bg-on-surface text-surface hover:bg-secondary hover:text-on-secondary transition-all flex items-center justify-center"
-                                           title="Xem chi tiết">
-                                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-                                        </a>
-                                    </div>
-                                </div>
+                                <div class="mt-auto pt-4 border-t border-outline-variant flex flex-col gap-3">
+                                     <span class="text-xl font-h3 text-primary block">
+                                         <?php 
+                                         if (($_SESSION['lang'] ?? 'vi') === 'en') {
+                                             echo number_format($product['price'], 0, '.', ',') . 'đ';
+                                         } else {
+                                             echo number_format($product['price'], 0, ',', '.') . 'đ';
+                                         }
+                                         ?>
+                                     </span>
+                                     <div class="flex items-center justify-between gap-2">
+                                         <div class="flex gap-2">
+                                             <button type="button" onclick="toggleCompare(<?php echo $product['id']; ?>)" 
+                                                     class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-secondary hover:text-white transition-all flex items-center justify-center compare-btn"
+                                                     data-id="<?php echo $product['id']; ?>" title="<?php echo __('compare_title', 'So sánh'); ?>">
+                                                 <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
+                                             </button>
+                                             <button type="button" onclick="addToCart(<?php echo $product['id']; ?>)" 
+                                                     class="w-10 h-10 rounded-xl bg-primary text-white hover:bg-secondary transition-all flex items-center justify-center group/btn"
+                                                     title="<?php echo __('add_to_cart', 'Thêm vào giỏ'); ?>">
+                                                 <span class="material-symbols-outlined text-[20px] group-hover/btn:scale-110 transition-transform">shopping_cart</span>
+                                             </button>
+                                         </div>
+                                         <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>"
+                                            class="w-10 h-10 rounded-xl bg-on-surface text-surface hover:bg-secondary hover:text-on-secondary transition-all flex items-center justify-center flex-shrink-0"
+                                            title="Xem chi tiết">
+                                             <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                                         </a>
+                                     </div>
+                                 </div>
                             </div>
                         </div>
                         <?php endforeach; ?>

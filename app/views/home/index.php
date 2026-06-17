@@ -684,25 +684,24 @@ function renderProductCard($product, $wishlistIds = []) {
             <h3 class="font-bold text-on-surface group-hover:text-secondary transition-colors mb-4 line-clamp-2 min-h-[48px]">
                 <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>"><?php echo $product['name']; ?></a>
             </h3>
-            <div class="flex items-center justify-between gap-2">
-                <div class="min-w-0 flex-1">
-                    <span class="text-on-surface font-price-display text-xl font-bold block truncate">
-                        <?php 
-                        if (($_SESSION['lang'] ?? 'vi') === 'en') {
-                            echo number_format($product['price'], 0, '.', ',') . 'đ';
-                        } else {
-                            echo number_format($product['price'], 0, ',', '.') . 'đ';
-                        }
-                        ?>
-                    </span>
-                </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="flex flex-col gap-3">
+                <span class="text-on-surface font-price-display text-xl font-bold block">
+                    <?php 
+                    if (($_SESSION['lang'] ?? 'vi') === 'en') {
+                        echo number_format($product['price'], 0, '.', ',') . 'đ';
+                    } else {
+                        echo number_format($product['price'], 0, ',', '.') . 'đ';
+                    }
+                    ?>
+                </span>
+                <div class="flex items-center gap-2">
                     <button type="button" onclick="addToCart(<?php echo $product['id']; ?>)" 
-                            class="w-10 h-10 rounded-xl bg-surface-container-high dark:bg-zinc-800 text-primary hover:bg-secondary hover:text-on-secondary dark:hover:bg-indigo-600 transition-all flex items-center justify-center group/btn shadow-sm">
-                        <span class="material-symbols-outlined text-[20px] group-hover/btn:scale-110 transition-transform">shopping_cart</span>
+                            class="flex-1 h-10 rounded-xl bg-surface-container-high dark:bg-zinc-800 text-primary hover:bg-secondary hover:text-on-secondary dark:hover:bg-indigo-600 transition-all flex items-center justify-center gap-2 group/btn shadow-sm text-xs font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[18px] group-hover/btn:scale-110 transition-transform">shopping_cart</span>
+                        <span><?php echo __('add_to_cart', 'THÊM GIỎ HÀNG'); ?></span>
                     </button>
                     <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>" 
-                       class="w-10 h-10 rounded-xl bg-on-surface dark:bg-zinc-200 text-surface dark:text-zinc-900 hover:bg-secondary hover:text-on-secondary dark:hover:bg-indigo-600 dark:hover:text-white transition-all flex items-center justify-center shadow-sm"
+                       class="w-10 h-10 rounded-xl bg-on-surface dark:bg-zinc-200 text-surface dark:text-zinc-900 hover:bg-secondary hover:text-on-secondary dark:hover:bg-indigo-600 dark:hover:text-white transition-all flex items-center justify-center shadow-sm flex-shrink-0"
                        title="Xem chi tiết">
                         <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
                     </a>

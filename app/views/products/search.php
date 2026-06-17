@@ -208,32 +208,32 @@
                                     <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>"><?php echo $product['name']; ?></a>
                                 </h3>
                                 
-                                <div class="mt-auto flex items-center justify-between gap-2">
-                                    <div class="min-w-0 flex-1">
-                                        <span class="text-2xl font-black text-secondary block truncate">
-                                            <?php 
-                                            if (($_SESSION['lang'] ?? 'vi') === 'en') {
-                                                echo number_format($product['price'], 0, '.', ',') . 'đ';
-                                            } else {
-                                                echo number_format($product['price'], 0, ',', '.') . 'đ';
-                                            }
-                                            ?>
-                                        </span>
-                                    </div>
+                                <div class="mt-auto pt-4 border-t border-outline-variant/50 flex flex-col gap-3">
+                                    <span class="text-2xl font-black text-secondary block">
+                                        <?php 
+                                        if (($_SESSION['lang'] ?? 'vi') === 'en') {
+                                            echo number_format($product['price'], 0, '.', ',') . 'đ';
+                                        } else {
+                                            echo number_format($product['price'], 0, ',', '.') . 'đ';
+                                        }
+                                        ?>
+                                    </span>
                                     
-                                    <div class="flex gap-2 flex-shrink-0">
-                                        <button type="button" onclick="toggleCompare(<?php echo $product['id']; ?>)" 
-                                                class="w-10 h-10 bg-surface-container-low rounded-xl border border-outline-variant/50 flex items-center justify-center transition-all text-on-surface-variant hover:text-secondary compare-btn"
-                                                data-id="<?php echo $product['id']; ?>" title="<?php echo __('compare_title', 'So sánh'); ?>">
-                                            <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
-                                        </button>
-                                        <button type="button" onclick="toggleWishlist(this, <?php echo $product['id']; ?>)" 
-                                                class="w-10 h-10 bg-surface-container-low rounded-xl border border-outline-variant/50 flex items-center justify-center transition-all wishlist-btn <?php echo in_array($product['id'], $data['wishlist_ids'] ?? []) ? 'text-red-500 bg-red-50 border-red-200' : 'text-on-surface-variant hover:text-red-500'; ?>"
-                                                data-product-id="<?php echo $product['id']; ?>">
-                                            <span class="material-symbols-outlined text-[20px] <?php echo in_array($product['id'], $data['wishlist_ids'] ?? []) ? 'fill-1' : ''; ?>">favorite</span>
-                                        </button>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex gap-2">
+                                            <button type="button" onclick="toggleCompare(<?php echo $product['id']; ?>)" 
+                                                    class="w-10 h-10 bg-surface-container-low rounded-xl border border-outline-variant/50 flex items-center justify-center transition-all text-on-surface-variant hover:text-secondary compare-btn"
+                                                    data-id="<?php echo $product['id']; ?>" title="<?php echo __('compare_title', 'So sánh'); ?>">
+                                                <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
+                                            </button>
+                                            <button type="button" onclick="toggleWishlist(this, <?php echo $product['id']; ?>)" 
+                                                    class="w-10 h-10 bg-surface-container-low rounded-xl border border-outline-variant/50 flex items-center justify-center transition-all wishlist-btn <?php echo in_array($product['id'], $data['wishlist_ids'] ?? []) ? 'text-red-500 bg-red-50 border-red-200' : 'text-on-surface-variant hover:text-red-500'; ?>"
+                                                    data-product-id="<?php echo $product['id']; ?>">
+                                                <span class="material-symbols-outlined text-[20px] <?php echo in_array($product['id'], $data['wishlist_ids'] ?? []) ? 'fill-1' : ''; ?>">favorite</span>
+                                            </button>
+                                        </div>
                                         <a href="<?php echo URLROOT; ?>/product/detail/<?php echo $product['id']; ?>" 
-                                           class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-secondary transition-all shadow-lg shadow-primary/10">
+                                           class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-secondary transition-all shadow-lg shadow-primary/10 flex-shrink-0">
                                             <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                                         </a>
                                     </div>
