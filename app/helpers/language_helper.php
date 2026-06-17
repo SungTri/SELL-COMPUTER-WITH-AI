@@ -109,6 +109,28 @@ function translate_db_results($data) {
         'Đã thanh toán' => 'Paid',
         'Chờ thanh toán' => 'Pending payment',
         'Chính hãng' => 'Genuine',
+
+        // Product Description Template Sentences
+        'Đặc điểm nổi bật của' => 'Key features of',
+        'tự hào giới thiệu dòng sản phẩm' => 'proudly introduces the new generation of',
+        'thế hệ mới. Với sự kết hợp hoàn hảo giữa thiết kế và công nghệ, đây là lựa chọn không thể bỏ qua cho người dùng chuyên nghiệp.' => 'products. With a perfect combination of design and technology, this is an indispensable choice for professional users.',
+        'Hiệu năng vượt trội:' => 'Outstanding performance:',
+        'Được trang bị công nghệ mới nhất từ' => 'Equipped with the latest technology from',
+        'giúp xử lý mọi tác vụ mượt mà.' => 'for smooth processing of all tasks.',
+        'Thiết kế sang trọng:' => 'Elegant design:',
+        'Hoàn thiện tỉ mỉ với chất liệu cao cấp, mang lại vẻ ngoài đẳng cấp.' => 'Meticulously crafted with premium materials, delivering a classy look.',
+        'Độ bền cao:' => 'High durability:',
+        'Đạt tiêu chuẩn kiểm định nghiêm ngặt, đảm bảo hoạt động ổn định trong thời gian dài.' => 'Meets strict inspection standards, ensuring stable operation over the long term.',
+        'Bảo hành chính hãng:' => 'Genuine warranty:',
+        'Hỗ trợ kỹ thuật 24/7 và chính sách bảo hành linh hoạt.' => '24/7 technical support and flexible warranty policy.',
+        'Thông số kỹ thuật:' => 'Specifications:',
+        'Thương hiệu' => 'Brand',
+        'Dòng sản phẩm' => 'Product line',
+        'Năm sản xuất' => 'Manufacturing year',
+        'Tình trạng' => 'Condition',
+        'Mới 100% (Nguyên seal)' => 'New 100% (Sealed)',
+        'Mới 100%' => 'New 100%',
+        'SẢN PHẨM ĐẸP, HIỆU NĂNG CAO' => 'BEAUTIFUL PRODUCT, HIGH PERFORMANCE',
     ];
     
     if (is_array($data)) {
