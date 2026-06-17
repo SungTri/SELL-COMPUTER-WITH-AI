@@ -585,4 +585,19 @@ return [
     'review_placeholder' => 'Chia sẻ cảm nhận của bạn về chất lượng sản phẩm...',
     'submit_review_btn' => 'GỬI ĐÁNH GIÁ',
     'file_selected_label' => 'Đã chọn: ',
+    
+    // Stats Bar Keys
+    'stat_customers' => 'Khách hàng tin dùng',
+    'stat_products' => 'Sản phẩm chính hãng',
+    'stat_rating' => 'Điểm đánh giá trung bình',
+    'stat_support' => 'Hỗ trợ kỹ thuật',
+    
+    // About Page Keys
+    'about_us_tag' => 'Về Chúng Tôi',
+    'stat_genuine' => 'Chính Hãng',
+    'stat_pc_built' => 'Bộ PC Đã Build',
+    'core_values_title' => 'Giá Trị Cốt Lõi Tại TechExpert',
+    'core_values_desc' => 'Triết lý vận hành giúp chúng tôi luôn duy trì vị trí dẫn đầu và niềm tin từ phía khách hàng.',
+    'vision_title' => 'Tầm Nhìn',
+    'mission_title' => 'Sứ Mệnh',
 ];

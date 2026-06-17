@@ -10,7 +10,7 @@
         <div class="relative z-20 py-20 px-8 md:px-16 text-center md:text-left max-w-3xl">
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/20 text-secondary-container font-semibold text-xs uppercase tracking-wider mb-6 border border-secondary/30">
                 <span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
-                Về Chúng Tôi
+                <?php echo __('about_us_tag', 'Về Chúng Tôi'); ?>
             </span>
             <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-none">
                 Định Hình Tương Lai <br>
@@ -27,30 +27,30 @@
         <div class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-center hover:shadow-lg transition-all duration-300 group">
             <span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">verified</span>
             <div class="text-3xl font-black text-primary mb-1">100%</div>
-            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Chính Hãng</div>
+            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider"><?php echo __('stat_genuine', 'Chính Hãng'); ?></div>
         </div>
         <div class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-center hover:shadow-lg transition-all duration-300 group">
             <span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">groups</span>
             <div class="text-3xl font-black text-primary mb-1">10,000+</div>
-            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Khách Hàng Tin Dùng</div>
+            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider"><?php echo __('stat_customers', 'Khách Hàng Tin Dùng'); ?></div>
         </div>
         <div class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-center hover:shadow-lg transition-all duration-300 group">
             <span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">tools_installation_kit</span>
             <div class="text-3xl font-black text-primary mb-1">5,000+</div>
-            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Bộ PC Đã Build</div>
+            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider"><?php echo __('stat_pc_built', 'Bộ PC Đã Build'); ?></div>
         </div>
         <div class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/30 text-center hover:shadow-lg transition-all duration-300 group">
             <span class="material-symbols-outlined text-4xl text-primary mb-3 group-hover:scale-110 transition-transform">support_agent</span>
             <div class="text-3xl font-black text-primary mb-1">24/7</div>
-            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Hỗ Trợ Kỹ Thuật</div>
+            <div class="text-sm font-semibold text-on-surface-variant uppercase tracking-wider"><?php echo __('stat_support', 'Hỗ Trợ Kỹ Thuật'); ?></div>
         </div>
     </div>
 
     <!-- Core Values Section -->
     <div class="mb-16">
         <div class="text-center max-w-xl mx-auto mb-12">
-            <h2 class="text-3xl font-black text-primary tracking-tight mb-4">Giá Trị Cốt Lõi Tại TechExpert</h2>
-            <p class="text-on-surface-variant">Triết lý vận hành giúp chúng tôi luôn duy trì vị trí dẫn đầu và niềm tin từ phía khách hàng.</p>
+            <h2 class="text-3xl font-black text-primary tracking-tight mb-4"><?php echo __('core_values_title', 'Giá Trị Cốt Lõi Tại TechExpert'); ?></h2>
+            <p class="text-on-surface-variant"><?php echo __('core_values_desc', 'Triết lý vận hành giúp chúng tôi luôn duy trì vị trí dẫn đầu và niềm tin từ phía khách hàng.'); ?></p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -92,7 +92,7 @@
         <div class="bg-gradient-to-br from-surface-container-lowest to-surface-container-low p-10 rounded-3xl border border-outline-variant/30">
             <h3 class="text-2xl font-black text-primary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-secondary">visibility</span>
-                Tầm Nhìn
+                <?php echo __('vision_title', 'Tầm Nhìn'); ?>
             </h3>
             <p class="text-on-surface-variant leading-relaxed">
                 Trở thành biểu tượng uy tín hàng đầu trong lĩnh vực phân phối linh kiện phần cứng và thiết bị công nghệ cao tại Việt Nam. Đồng thời, xây dựng một hệ sinh thái hỗ trợ tối đa cho các nhà phát triển phần mềm, thiết kế đồ họa, người dùng chuyên nghiệp và cộng đồng game thủ.
@@ -102,7 +102,7 @@
         <div class="bg-gradient-to-br from-surface-container-lowest to-surface-container-low p-10 rounded-3xl border border-outline-variant/30">
             <h3 class="text-2xl font-black text-primary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-secondary">rocket_launch</span>
-                Sứ Mệnh
+                <?php echo __('mission_title', 'Sứ Mệnh'); ?>
             </h3>
             <p class="text-on-surface-variant leading-relaxed">
                 Mang những công nghệ và phần cứng máy tính hiện đại nhất thế giới tiếp cận người dùng Việt Nam với chi phí hợp lý. Chúng tôi không ngừng nâng cao trải nghiệm khách hàng bằng sự tận tụy, chân thành và chất lượng sản phẩm chuẩn mực.

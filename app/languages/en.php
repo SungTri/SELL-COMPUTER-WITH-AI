@@ -585,4 +585,19 @@ return [
     'review_placeholder' => 'Share your thoughts about product quality...',
     'submit_review_btn' => 'SUBMIT REVIEW',
     'file_selected_label' => 'Selected: ',
+    
+    // Stats Bar Keys
+    'stat_customers' => 'Happy Customers',
+    'stat_products' => 'Genuine Products',
+    'stat_rating' => 'Average Rating',
+    'stat_support' => 'Technical Support',
+    
+    // About Page Keys
+    'about_us_tag' => 'About Us',
+    'stat_genuine' => 'Genuine',
+    'stat_pc_built' => 'PCs Built',
+    'core_values_title' => 'Core Values at TechExpert',
+    'core_values_desc' => 'Operating philosophy that keeps us leading and trusted by our clients.',
+    'vision_title' => 'Vision',
+    'mission_title' => 'Mission',
 ];
