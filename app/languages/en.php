@@ -169,6 +169,8 @@ return [
     'register_showcase_badge_1_desc' => 'Discounts on custom PC builds',
     'register_showcase_badge_2_title' => '24/7 Support',
     'register_showcase_badge_2_desc' => 'Standby technical support team',
+    'live_chat_banner_question' => 'Do you want to chat directly with support staff?',
+    'live_chat_banner_btn' => 'Talk to Agent',
     
     // Additional UI translations
     'select_language' => 'Select language',

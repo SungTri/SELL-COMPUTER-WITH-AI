@@ -169,6 +169,8 @@ return [
     'register_showcase_badge_1_desc' => 'Giảm giá cho các đơn build PC',
     'register_showcase_badge_2_title' => 'Hỗ Trợ 24/7',
     'register_showcase_badge_2_desc' => 'Đội ngũ kỹ thuật túc trực',
+    'live_chat_banner_question' => 'Bạn muốn chat trực tiếp với nhân viên hỗ trợ?',
+    'live_chat_banner_btn' => 'Gặp nhân viên',
     
     // Additional UI translations
     'select_language' => 'Chọn ngôn ngữ',

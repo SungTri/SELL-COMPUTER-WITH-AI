@@ -104,10 +104,10 @@
             <div id="liveChatBanner" class="bg-blue-50 dark:bg-zinc-800/80 px-5 py-3 border-b border-blue-100 dark:border-zinc-700/60 flex items-center justify-between gap-3 shrink-0 hidden">
                 <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">support_agent</span>
-                    <span class="text-[11px] font-semibold text-gray-700 dark:text-zinc-200">Bạn muốn chat trực tiếp với nhân viên hỗ trợ?</span>
+                    <span class="text-[11px] font-semibold text-gray-700 dark:text-zinc-200"><?php echo __('live_chat_banner_question', 'Bạn muốn chat trực tiếp với nhân viên hỗ trợ?'); ?></span>
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <button id="btnRequestLiveSupport" onclick="requestLiveSupport()" class="bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-blue-700 cursor-pointer border-0">Gặp nhân viên</button>
+                    <button id="btnRequestLiveSupport" onclick="requestLiveSupport()" class="bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-blue-700 cursor-pointer border-0"><?php echo __('live_chat_banner_btn', 'Gặp nhân viên'); ?></button>
                 <?php else: ?>
                     <a href="<?php echo URLROOT; ?>/auth/login" class="bg-yellow-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-yellow-700"><?php echo __('login', 'Đăng nhập'); ?></a>
                 <?php endif; ?>
@@ -1065,7 +1065,7 @@
             const btn = document.getElementById('btnRequestLiveSupport');
             if (btn) {
                 btn.setAttribute('disabled', 'true');
-                btn.innerText = 'Đang kết nối...';
+                btn.innerText = currentLang === 'vi' ? 'Đang kết nối...' : 'Connecting...';
             }
             try {
                 const response = await fetch('<?php echo URLROOT; ?>/chatbot/requestSupport', {
@@ -1080,17 +1080,17 @@
                     const liveChatBanner = document.getElementById('liveChatBanner');
                     if (liveChatBanner) liveChatBanner.classList.add('hidden');
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra.');
+                    alert(data.message || (currentLang === 'vi' ? 'Có lỗi xảy ra.' : 'An error occurred.'));
                     if (btn) {
                         btn.removeAttribute('disabled');
-                        btn.innerText = 'GẶP NHÂN VIÊN HỖ TRỢ';
+                        btn.innerText = currentLang === 'vi' ? 'Gặp nhân viên' : 'Talk to Agent';
                     }
                 }
             } catch (e) {
                 console.error(e);
                 if (btn) {
                     btn.removeAttribute('disabled');
-                    btn.innerText = 'GẶP NHÂN VIÊN HỖ TRỢ';
+                    btn.innerText = currentLang === 'vi' ? 'Gặp nhân viên' : 'Talk to Agent';
                 }
             }
         }
