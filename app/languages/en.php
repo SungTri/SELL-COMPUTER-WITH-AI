@@ -601,4 +601,8 @@ return [
     'core_values_desc' => 'Operating philosophy that keeps us leading and trusted by our clients.',
     'vision_title' => 'Vision',
     'mission_title' => 'Mission',
+    
+    // Testimonials Keys
+    'testimonial_tag' => 'What Customers Say',
+    'testimonial_title' => 'Real reviews from <span class="text-secondary">customers</span>',
 ];

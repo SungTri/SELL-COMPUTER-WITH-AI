@@ -601,4 +601,8 @@ return [
     'core_values_desc' => 'Triết lý vận hành giúp chúng tôi luôn duy trì vị trí dẫn đầu và niềm tin từ phía khách hàng.',
     'vision_title' => 'Tầm Nhìn',
     'mission_title' => 'Sứ Mệnh',
+    
+    // Testimonials Keys
+    'testimonial_tag' => 'Khách hàng nói gì',
+    'testimonial_title' => 'Đánh giá <span class="text-secondary">thực tế</span> từ khách hàng',
 ];
