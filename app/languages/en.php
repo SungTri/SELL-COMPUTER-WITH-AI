@@ -672,4 +672,38 @@ return [
 
     'ship_insure_title' => '100% Insurance',
     'ship_insure_desc' => 'All distant shipments are fully insured. In case of loss or damage due to delivery issues, TechExpert guarantees to reship new items or issue a 100% refund immediately.',
+
+    // Warranty Page Keys
+    'warr_title_tag' => 'Service Commitment',
+    'warr_title' => 'Warranty & Returns',
+    'warr_subtitle' => 'Professional support, simple procedures, and optimized waiting time for you.',
+    
+    'warr_card_1_title' => '24-Month Warranty',
+    'warr_card_1_desc' => 'Genuine hardware warranty up to 24 months applies to all PC systems and Workstations assembled by TechExpert.',
+    'warr_card_2_title' => '7-Day Replacement',
+    'warr_card_2_desc' => 'Free 1-to-1 replacement within the first 7 days from purchase if manufacturer hardware defects are detected.',
+    'warr_card_3_title' => 'Lifetime Tech Support',
+    'warr_card_3_desc' => 'Complimentary remote technical support for driver installation and software configuration for the lifetime of the system.',
+    
+    'warr_sec_1_title' => 'Warranty Conditions',
+    'warr_sec_1_desc' => 'TechExpert accepts warranty services for products meeting all the following criteria:',
+    'warr_sec_1_li1' => 'The product is within the warranty period recorded via purchase invoice or online serial number system.',
+    'warr_sec_1_li2' => 'Distributor, manufacturer, and TechExpert warranty seals must be intact, with no signs of tearing, erasure, or tampering.',
+    'warr_sec_1_li3' => 'Serial Number/IMEI code must be intact and legible, not scratched, blurred, or removed.',
+    'warr_sec_1_li4' => 'The product failure originates from technical defects in the constituent hardware component.',
+    
+    'warr_sec_2_title' => 'Warranty Exclusions',
+    'warr_sec_2_desc' => 'TechExpert regrets that warranty claims will be denied for the following misuses:',
+    'warr_sec_2_li1' => 'The product is mechanically damaged due to dropping, cracking, denting, scratching, or severe deformation during user operation.',
+    'warr_sec_2_li2' => 'The product is damaged by natural disasters, fires, floods, or suffers from rust, oxidation, or yellowing due to moisture or chemical exposure.',
+    'warr_sec_2_li3' => 'The product has short-circuited circuits, exploded chips, swollen capacitors, or burnt ICs due to incorrect voltage input or overheating from overclocking.',
+    'warr_sec_2_li4' => 'The customer has disassembled the device or altered components via unauthorized parties or shops.',
+    
+    'warr_sec_3_title' => '3-Step Warranty Process',
+    'warr_step_1_title' => '1. Register Request',
+    'warr_step_1_desc' => 'Contact us via Hotline 1900 1234, send support emails, or chat directly with our assistant to report product issues.',
+    'warr_step_2_title' => '2. Ship & Receive',
+    'warr_step_2_desc' => 'Bring components to the Warranty Center or ship via postal services. (Technicians will support home visits to disassemble faulty parts for full PC systems purchased here).',
+    'warr_step_3_title' => '3. Verify & Return',
+    'warr_step_3_desc' => 'The technical department tests the product and submits it to the manufacturer (or replaces it immediately if within the first 7 days). The serviced product is delivered back to you for free.',
 ];
