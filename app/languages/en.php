@@ -127,6 +127,10 @@ return [
     'trust_factor_2_desc' => 'Lifetime technical support for all products.',
     'trust_factor_3_title' => 'Expert Consultation',
     'trust_factor_3_desc' => 'Experienced technician team supporting 24/7.',
+    'trust_free_shipping' => 'Free Shipping',
+    'trust_free_delivery' => 'Free Delivery',
+    'trust_warranty_badge' => 'Genuine Warranty',
+    'trust_support_badge' => '24/7 Support',
     
     // Newsletter
     'newsletter_title' => 'Don\'t miss our latest offers',

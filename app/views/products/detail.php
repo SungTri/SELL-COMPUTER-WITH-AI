@@ -156,7 +156,7 @@
                     <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                         <span class="material-symbols-outlined text-[20px]">local_shipping</span>
                     </div>
-                    <span class="font-bold text-xs text-slate-600 dark:text-zinc-400 uppercase tracking-wider"><?php echo __('trust_factor_1_title', 'Miễn phí giao hàng'); ?></span>
+                    <span class="font-bold text-xs text-slate-600 dark:text-zinc-400 uppercase tracking-wider"><?php echo __('trust_free_delivery', 'Miễn phí giao hàng'); ?></span>
                 </div>
                 <div class="flex items-center gap-3 bg-slate-50 dark:bg-zinc-900/60 p-3 rounded-2xl border border-slate-100 dark:border-zinc-800/50">
                     <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">

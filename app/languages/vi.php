@@ -127,6 +127,10 @@ return [
     'trust_factor_2_desc' => 'Cam kết hỗ trợ kỹ thuật trọn đời cho mọi sản phẩm.',
     'trust_factor_3_title' => 'Tư vấn chuyên sâu',
     'trust_factor_3_desc' => 'Đội ngũ kỹ thuật viên giàu kinh nghiệm hỗ trợ 24/7.',
+    'trust_free_shipping' => 'Miễn phí vận chuyển',
+    'trust_free_delivery' => 'Miễn phí giao hàng',
+    'trust_warranty_badge' => 'Bảo hành chính hãng',
+    'trust_support_badge' => 'Hỗ trợ 24/7',
     
     // Newsletter
     'newsletter_title' => 'Đừng bỏ lỡ các ưu đãi mới nhất',
