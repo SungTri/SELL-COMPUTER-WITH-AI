@@ -56,12 +56,20 @@ class Database {
 
     public function resultSet() {
         $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        $results = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (function_exists('translate_db_results')) {
+            $results = translate_db_results($results);
+        }
+        return $results;
     }
 
     public function single() {
         $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result && function_exists('translate_db_results')) {
+            $result = translate_db_results($result);
+        }
+        return $result;
     }
 
     public function rowCount() {
