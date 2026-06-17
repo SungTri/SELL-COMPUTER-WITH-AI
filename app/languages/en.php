@@ -706,4 +706,22 @@ return [
     'warr_step_2_desc' => 'Bring components to the Warranty Center or ship via postal services. (Technicians will support home visits to disassemble faulty parts for full PC systems purchased here).',
     'warr_step_3_title' => '3. Verify & Return',
     'warr_step_3_desc' => 'The technical department tests the product and submits it to the manufacturer (or replaces it immediately if within the first 7 days). The serviced product is delivered back to you for free.',
+
+    // Contact & Feedback Page Keys
+    'contact_title' => 'Contact Us',
+    'contact_subtitle' => 'TechExpert is always ready to answer any questions and receive feedback from customers.',
+    'contact_address_label' => 'Address',
+    'contact_phone_label' => 'Support Hotline',
+    'contact_email_label' => 'Contact Email',
+    'contact_hours_label' => 'Operating Hours',
+    'contact_hours_value' => '8:00 - 21:00 daily (including Sundays & holidays)',
+    'feedback_form_title' => 'Send your feedback',
+    'feedback_title_label' => 'Feedback Title',
+    'feedback_title_placeholder' => 'Enter the title or issue you want to give feedback on...',
+    'feedback_content_label' => 'Detailed Content',
+    'feedback_content_placeholder' => 'Describe your feedback, complaints, or suggestions in detail here so that we can support you best...',
+    'feedback_submit_btn' => 'Send feedback',
+    'feedback_login_required_title' => 'Login to send feedback',
+    'feedback_login_required_desc' => 'To secure information and receive direct support from management, please log in to your customer account.',
+    'contact_login_btn' => 'Login now',
 ];

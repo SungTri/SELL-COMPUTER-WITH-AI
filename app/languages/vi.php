@@ -706,4 +706,22 @@ return [
     'warr_step_2_desc' => 'Mang linh kiện trực tiếp qua Trung tâm bảo hành hoặc liên hệ gửi chuyển phát qua bưu cục. (Kỹ thuật viên sẽ hỗ trợ đến nhà tháo linh kiện lỗi đối với PC mua nguyên bộ).',
     'warr_step_3_title' => 'Kiểm Tra & Hoàn Trả',
     'warr_step_3_desc' => 'Phòng kỹ thuật tiến hành đo đạc, kiểm tra lỗi và gửi hãng bảo hành (hoặc đổi mới ngay nếu còn trong 7 ngày đầu). Sản phẩm hoàn trả được giao lại miễn phí tận tay khách hàng.',
+
+    // Contact & Feedback Page Keys
+    'contact_title' => 'Liên hệ với chúng tôi',
+    'contact_subtitle' => 'TechExpert luôn sẵn sàng hỗ trợ giải đáp mọi thắc mắc và tiếp nhận ý kiến đóng góp từ khách hàng.',
+    'contact_address_label' => 'Địa chỉ',
+    'contact_phone_label' => 'Hotline hỗ trợ',
+    'contact_email_label' => 'Email liên hệ',
+    'contact_hours_label' => 'Giờ hoạt động',
+    'contact_hours_value' => '8:00 - 21:00 hàng ngày (kể cả chủ nhật và ngày lễ)',
+    'feedback_form_title' => 'Gửi góp ý của bạn',
+    'feedback_title_label' => 'Tiêu đề góp ý',
+    'feedback_title_placeholder' => 'Nhập tiêu đề hoặc vấn đề bạn muốn góp ý...',
+    'feedback_content_label' => 'Nội dung chi tiết',
+    'feedback_content_placeholder' => 'Mô tả chi tiết ý kiến, khiếu nại hoặc đóng góp của bạn tại đây để cửa hàng hỗ trợ tốt nhất...',
+    'feedback_submit_btn' => 'Gửi góp ý',
+    'feedback_login_required_title' => 'Đăng nhập để gửi góp ý',
+    'feedback_login_required_desc' => 'Để bảo mật thông tin và nhận được hỗ trợ trực tiếp từ ban quản lý, bạn vui lòng đăng nhập tài khoản khách hàng.',
+    'contact_login_btn' => 'Đăng nhập ngay',
 ];

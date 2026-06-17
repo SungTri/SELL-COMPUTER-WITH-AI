@@ -138,7 +138,7 @@
                     <div class="pt-2">
                         <a href="<?php echo URLROOT; ?>/auth/login" class="inline-flex items-center gap-2 bg-secondary text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:bg-secondary/90 transition-all">
                             <span class="material-symbols-outlined text-[18px]">login</span>
-                            <?php echo __('login', 'Đăng nhập ngay'); ?>
+                            <?php echo __('contact_login_btn', 'Đăng nhập ngay'); ?>
                         </a>
                     </div>
                 </div>
