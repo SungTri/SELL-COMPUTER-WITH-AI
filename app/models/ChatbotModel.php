@@ -43,12 +43,21 @@ class ChatbotModel {
 
     public function getChatbotDataPaginated($search, $limit, $offset) {
         if (!empty($search)) {
-            $this->db->query("SELECT * FROM chatbot_data 
-                              WHERE question LIKE :search 
-                                 OR answer LIKE :search 
-                                 OR keywords LIKE :search 
-                              ORDER BY id DESC LIMIT :limit OFFSET :offset");
+            $isNumeric = is_numeric($search);
+            $query = "SELECT * FROM chatbot_data 
+                      WHERE question LIKE :search 
+                         OR answer LIKE :search 
+                         OR keywords LIKE :search";
+            if ($isNumeric) {
+                $query .= " OR id = :id_exact";
+            }
+            $query .= " ORDER BY id DESC LIMIT :limit OFFSET :offset";
+            
+            $this->db->query($query);
             $this->db->bind(':search', '%' . $search . '%');
+            if ($isNumeric) {
+                $this->db->bind(':id_exact', intval($search), PDO::PARAM_INT);
+            }
         } else {
             $this->db->query("SELECT * FROM chatbot_data ORDER BY id DESC LIMIT :limit OFFSET :offset");
         }
@@ -59,11 +68,19 @@ class ChatbotModel {
 
     public function getTotalChatbotDataCount($search) {
         if (!empty($search)) {
-            $this->db->query("SELECT COUNT(*) as total FROM chatbot_data 
-                              WHERE question LIKE :search 
-                                 OR answer LIKE :search 
-                                 OR keywords LIKE :search");
+            $isNumeric = is_numeric($search);
+            $query = "SELECT COUNT(*) as total FROM chatbot_data 
+                      WHERE question LIKE :search 
+                         OR answer LIKE :search 
+                         OR keywords LIKE :search";
+            if ($isNumeric) {
+                $query .= " OR id = :id_exact";
+            }
+            $this->db->query($query);
             $this->db->bind(':search', '%' . $search . '%');
+            if ($isNumeric) {
+                $this->db->bind(':id_exact', intval($search), PDO::PARAM_INT);
+            }
         } else {
             $this->db->query("SELECT COUNT(*) as total FROM chatbot_data");
         }
