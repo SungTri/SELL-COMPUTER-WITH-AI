@@ -80,20 +80,20 @@
                 TechExpert Store
             </div>
             <h2 class="text-4xl font-extrabold text-white tracking-tight leading-tight font-h1">
-                Kiến tạo không gian làm việc chuyên nghiệp
+                <?php echo __('login_showcase_title', 'Kiến tạo không gian làm việc chuyên nghiệp'); ?>
             </h2>
             <p class="text-zinc-400 leading-relaxed font-body-lg">
-                Đăng nhập để tiếp tục khám phá thế giới linh kiện máy tính cao cấp, nhận các đặc quyền thành viên và dịch vụ tư vấn cấu hình tự động bằng trí tuệ nhân tạo (AI).
+                <?php echo __('login_showcase_desc', 'Đăng nhập để tiếp tục khám phá thế giới linh kiện máy tính cao cấp, nhận các đặc quyền thành viên và dịch vụ tư vấn cấu hình tự động bằng trí tuệ nhân tạo (AI).'); ?>
             </p>
             
             <div class="pt-6 grid grid-cols-2 gap-6 border-t border-white/10">
                 <div>
-                    <h4 class="text-lg font-bold text-white font-h2">100% Chính Hãng</h4>
-                    <p class="text-zinc-500 text-sm mt-1">Linh kiện kiểm định kỹ càng</p>
+                    <h4 class="text-lg font-bold text-white font-h2"><?php echo __('login_showcase_badge_1_title', '100% Chính Hãng'); ?></h4>
+                    <p class="text-zinc-500 text-sm mt-1"><?php echo __('login_showcase_badge_1_desc', 'Linh kiện kiểm định kỹ càng'); ?></p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-white font-h2">Hỗ Trợ AI</h4>
-                    <p class="text-zinc-500 text-sm mt-1">Tư vấn cấu hình tối ưu</p>
+                    <h4 class="text-lg font-bold text-white font-h2"><?php echo __('login_showcase_badge_2_title', 'Hỗ Trợ AI'); ?></h4>
+                    <p class="text-zinc-500 text-sm mt-1"><?php echo __('login_showcase_badge_2_desc', 'Tư vấn cấu hình tối ưu'); ?></p>
                 </div>
             </div>
         </div>

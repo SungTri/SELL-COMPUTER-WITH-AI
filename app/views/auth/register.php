@@ -192,23 +192,23 @@
         <div class="relative z-10 max-w-lg p-12 space-y-6 text-left">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wider uppercase animate-pulse">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                Đặc quyền Thành viên
+                <?php echo __('register_showcase_tag', 'Đặc quyền Thành viên'); ?>
             </div>
             <h2 class="text-4xl font-extrabold text-white tracking-tight leading-tight font-h1">
-                Gia nhập cộng đồng chuyên gia công nghệ
+                <?php echo __('register_showcase_title', 'Gia nhập cộng đồng chuyên gia công nghệ'); ?>
             </h2>
             <p class="text-zinc-400 leading-relaxed font-body-lg">
-                Đăng ký tài khoản để bắt đầu tích lũy điểm thưởng, lưu cấu hình PC yêu thích, nhận thông báo khuyến mãi độc quyền và được hỗ trợ kỹ thuật trọn đời bởi các chuyên gia TechExpert.
+                <?php echo __('register_showcase_desc', 'Đăng ký tài khoản để bắt đầu tích lũy điểm thưởng, lưu cấu hình PC yêu thích, nhận thông báo khuyến mãi độc quyền và được hỗ trợ kỹ thuật trọn đời bởi các chuyên gia TechExpert.'); ?>
             </p>
             
             <div class="pt-6 grid grid-cols-2 gap-6 border-t border-white/10">
                 <div>
-                    <h4 class="text-lg font-bold text-white font-h2">Ưu Đãi Đặc Biệt</h4>
-                    <p class="text-zinc-500 text-sm mt-1">Giảm giá cho các đơn build PC</p>
+                    <h4 class="text-lg font-bold text-white font-h2"><?php echo __('register_showcase_badge_1_title', 'Ưu Đãi Đặc Biệt'); ?></h4>
+                    <p class="text-zinc-500 text-sm mt-1"><?php echo __('register_showcase_badge_1_desc', 'Giảm giá cho các đơn build PC'); ?></p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-white font-h2">Hỗ Trợ 24/7</h4>
-                    <p class="text-zinc-500 text-sm mt-1">Đội ngũ kỹ thuật túc trực</p>
+                    <h4 class="text-lg font-bold text-white font-h2"><?php echo __('register_showcase_badge_2_title', 'Hỗ Trợ 24/7'); ?></h4>
+                    <p class="text-zinc-500 text-sm mt-1"><?php echo __('register_showcase_badge_2_desc', 'Đội ngũ kỹ thuật túc trực'); ?></p>
                 </div>
             </div>
         </div>

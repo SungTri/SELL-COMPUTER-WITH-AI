@@ -155,6 +155,21 @@ return [
     'footer_contact' => 'Liên hệ',
     'footer_rights' => 'Bảo lưu mọi quyền.',
     
+    // Auth Pages Showcase
+    'login_showcase_title' => 'Kiến tạo không gian làm việc chuyên nghiệp',
+    'login_showcase_desc' => 'Đăng nhập để tiếp tục khám phá thế giới linh kiện máy tính cao cấp, nhận các đặc quyền thành viên và dịch vụ tư vấn cấu hình tự động bằng trí tuệ nhân tạo (AI).',
+    'login_showcase_badge_1_title' => '100% Chính Hãng',
+    'login_showcase_badge_1_desc' => 'Linh kiện kiểm định kỹ càng',
+    'login_showcase_badge_2_title' => 'Hỗ Trợ AI',
+    'login_showcase_badge_2_desc' => 'Tư vấn cấu hình tối ưu',
+    'register_showcase_tag' => 'Đặc quyền Thành viên',
+    'register_showcase_title' => 'Gia nhập cộng đồng chuyên gia công nghệ',
+    'register_showcase_desc' => 'Đăng ký tài khoản để bắt đầu tích lũy điểm thưởng, lưu cấu hình PC yêu thích, nhận thông báo khuyến mãi độc quyền và được hỗ trợ kỹ thuật trọn đời bởi các chuyên gia TechExpert.',
+    'register_showcase_badge_1_title' => 'Ưu Đãi Đặc Biệt',
+    'register_showcase_badge_1_desc' => 'Giảm giá cho các đơn build PC',
+    'register_showcase_badge_2_title' => 'Hỗ Trợ 24/7',
+    'register_showcase_badge_2_desc' => 'Đội ngũ kỹ thuật túc trực',
+    
     // Additional UI translations
     'select_language' => 'Chọn ngôn ngữ',
     'build_pc_15tr' => 'Build PC 15Tr',

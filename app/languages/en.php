@@ -155,6 +155,21 @@ return [
     'footer_contact' => 'Contact Us',
     'footer_rights' => 'All rights reserved.',
     
+    // Auth Pages Showcase
+    'login_showcase_title' => 'Creating Professional Workspaces',
+    'login_showcase_desc' => 'Log in to continue exploring the world of premium computer components, receive member privileges, and enjoy automatic configuration consulting powered by Artificial Intelligence (AI).',
+    'login_showcase_badge_1_title' => '100% Genuine',
+    'login_showcase_badge_1_desc' => 'Thoroughly tested components',
+    'login_showcase_badge_2_title' => 'AI Assistant',
+    'login_showcase_badge_2_desc' => 'Optimal configuration advice',
+    'register_showcase_tag' => 'Member Privileges',
+    'register_showcase_title' => 'Join the Technology Expert Community',
+    'register_showcase_desc' => 'Register an account to start earning reward points, save your favorite PC configurations, receive exclusive promotional updates, and get lifetime technical support from TechExpert specialists.',
+    'register_showcase_badge_1_title' => 'Special Offers',
+    'register_showcase_badge_1_desc' => 'Discounts on custom PC builds',
+    'register_showcase_badge_2_title' => '24/7 Support',
+    'register_showcase_badge_2_desc' => 'Standby technical support team',
+    
     // Additional UI translations
     'select_language' => 'Select language',
     'build_pc_15tr' => 'Build PC 15M',
