@@ -605,4 +605,16 @@ return [
     // Testimonials Keys
     'testimonial_tag' => 'Khách hàng nói gì',
     'testimonial_title' => 'Đánh giá <span class="text-secondary">thực tế</span> từ khách hàng',
+
+    // Detailed About Page Keys
+    'about_banner_title' => 'Định Hình Tương Lai <br> <span class="text-secondary-container bg-clip-text">Công Nghệ Việt Nam</span>',
+    'about_banner_desc' => 'TechExpert tự hào là hệ thống bán lẻ và tư vấn lắp đặt linh kiện máy tính, Workstation, PC Gaming cao cấp hàng đầu. Chúng tôi kiến tạo các giải pháp phần cứng tối ưu nhất cho nhu cầu của bạn.',
+    'about_value_1_title' => 'Chất Lượng Tối Thượng',
+    'about_value_1_desc' => 'Mỗi linh kiện, sản phẩm bán ra đều trải qua quy trình kiểm thử kỹ lưỡng. Chúng tôi nói KHÔNG với hàng giả, hàng kém chất lượng.',
+    'about_value_2_title' => 'Tư Vấn Chuyên Sâu',
+    'about_value_2_desc' => 'Không chỉ bán hàng, chúng tôi đồng hành cùng khách hàng để đưa ra giải pháp cấu hình phần cứng tối ưu nhất dựa trên nhu cầu sử dụng thực tế.',
+    'about_value_3_title' => 'Dịch Vụ Tận Tâm',
+    'about_value_3_desc' => 'Hỗ trợ kỹ thuật trọn đời, chính sách đổi trả nhanh chóng và thời gian xử lý bảo hành tối ưu giúp quý khách tuyệt đối an tâm khi mua sắm.',
+    'about_vision_desc' => 'Trở thành biểu tượng uy tín hàng đầu trong lĩnh vực phân phối linh kiện phần cứng và thiết bị công nghệ cao tại Việt Nam. Đồng thời, xây dựng một hệ sinh thái hỗ trợ tối đa cho các nhà phát triển phần mềm, thiết kế đồ họa, người dùng chuyên nghiệp và cộng đồng game thủ.',
+    'about_mission_desc' => 'Mang những công nghệ và phần cứng máy tính hiện đại nhất thế giới tiếp cận người dùng Việt Nam với chi phí hợp lý. Chúng tôi không ngừng nâng cao trải nghiệm khách hàng bằng sự tận tụy, chân thành và chất lượng sản phẩm chuẩn mực.',
 ];

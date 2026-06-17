@@ -13,11 +13,10 @@
                 <?php echo __('about_us_tag', 'Về Chúng Tôi'); ?>
             </span>
             <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-none">
-                Định Hình Tương Lai <br>
-                <span class="text-secondary-container bg-clip-text">Công Nghệ Việt Nam</span>
+                <?php echo __('about_banner_title', 'Định Hình Tương Lai <br> <span class="text-secondary-container bg-clip-text">Công Nghệ Việt Nam</span>'); ?>
             </h1>
             <p class="text-lg text-white/80 leading-relaxed font-medium">
-                TechExpert tự hào là hệ thống bán lẻ và tư vấn lắp đặt linh kiện máy tính, Workstation, PC Gaming cao cấp hàng đầu. Chúng tôi kiến tạo các giải pháp phần cứng tối ưu nhất cho nhu cầu của bạn.
+                <?php echo __('about_banner_desc', 'TechExpert tự hào là hệ thống bán lẻ và tư vấn lắp đặt linh kiện máy tính, Workstation, PC Gaming cao cấp hàng đầu. Chúng tôi kiến tạo các giải pháp phần cứng tối ưu nhất cho nhu cầu của bạn.'); ?>
             </p>
         </div>
     </div>
@@ -59,9 +58,9 @@
                 <div class="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
                     <span class="material-symbols-outlined">workspace_premium</span>
                 </div>
-                <h3 class="text-xl font-bold text-primary mb-3">Chất Lượng Tối Thượng</h3>
+                <h3 class="text-xl font-bold text-primary mb-3"><?php echo __('about_value_1_title', 'Chất Lượng Tối Thượng'); ?></h3>
                 <p class="text-on-surface-variant text-sm leading-relaxed">
-                    Mỗi linh kiện, sản phẩm bán ra đều trải qua quy trình kiểm thử kỹ lưỡng. Chúng tôi nói KHÔNG với hàng giả, hàng kém chất lượng.
+                    <?php echo __('about_value_1_desc', 'Mỗi linh kiện, sản phẩm bán ra đều trải qua quy trình kiểm thử kỹ lưỡng. Chúng tôi nói KHÔNG với hàng giả, hàng kém chất lượng.'); ?>
                 </p>
             </div>
             <!-- Value 2 -->
@@ -69,9 +68,9 @@
                 <div class="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
                     <span class="material-symbols-outlined">psychology</span>
                 </div>
-                <h3 class="text-xl font-bold text-primary mb-3">Tư Vấn Chuyên Sâu</h3>
+                <h3 class="text-xl font-bold text-primary mb-3"><?php echo __('about_value_2_title', 'Tư Vấn Chuyên Sâu'); ?></h3>
                 <p class="text-on-surface-variant text-sm leading-relaxed">
-                    Không chỉ bán hàng, chúng tôi đồng hành cùng khách hàng để đưa ra giải pháp cấu hình phần cứng tối ưu nhất dựa trên nhu cầu sử dụng thực tế.
+                    <?php echo __('about_value_2_desc', 'Không chỉ bán hàng, chúng tôi đồng hành cùng khách hàng để đưa ra giải pháp cấu hình phần cứng tối ưu nhất dựa trên nhu cầu sử dụng thực tế.'); ?>
                 </p>
             </div>
             <!-- Value 3 -->
@@ -79,9 +78,9 @@
                 <div class="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
                     <span class="material-symbols-outlined">volunteer_activism</span>
                 </div>
-                <h3 class="text-xl font-bold text-primary mb-3">Dịch Vụ Tận Tâm</h3>
+                <h3 class="text-xl font-bold text-primary mb-3"><?php echo __('about_value_3_title', 'Dịch Vụ Tận Tâm'); ?></h3>
                 <p class="text-on-surface-variant text-sm leading-relaxed">
-                    Hỗ trợ kỹ thuật trọn đời, chính sách đổi trả nhanh chóng và thời gian xử lý bảo hành tối ưu giúp quý khách tuyệt đối an tâm khi mua sắm.
+                    <?php echo __('about_value_3_desc', 'Hỗ trợ kỹ thuật trọn đời, chính sách đổi trả nhanh chóng và thời gian xử lý bảo hành tối ưu giúp quý khách tuyệt đối an tâm khi mua sắm.'); ?>
                 </p>
             </div>
         </div>
@@ -95,7 +94,7 @@
                 <?php echo __('vision_title', 'Tầm Nhìn'); ?>
             </h3>
             <p class="text-on-surface-variant leading-relaxed">
-                Trở thành biểu tượng uy tín hàng đầu trong lĩnh vực phân phối linh kiện phần cứng và thiết bị công nghệ cao tại Việt Nam. Đồng thời, xây dựng một hệ sinh thái hỗ trợ tối đa cho các nhà phát triển phần mềm, thiết kế đồ họa, người dùng chuyên nghiệp và cộng đồng game thủ.
+                <?php echo __('about_vision_desc', 'Trở thành biểu tượng uy tín hàng đầu trong lĩnh vực phân phối linh kiện phần cứng và thiết bị công nghệ cao tại Việt Nam. Đồng thời, xây dựng một hệ sinh thái hỗ trợ tối đa cho các nhà phát triển phần mềm, thiết kế đồ họa, người dùng chuyên nghiệp và cộng đồng game thủ.'); ?>
             </p>
         </div>
         
@@ -105,7 +104,7 @@
                 <?php echo __('mission_title', 'Sứ Mệnh'); ?>
             </h3>
             <p class="text-on-surface-variant leading-relaxed">
-                Mang những công nghệ và phần cứng máy tính hiện đại nhất thế giới tiếp cận người dùng Việt Nam với chi phí hợp lý. Chúng tôi không ngừng nâng cao trải nghiệm khách hàng bằng sự tận tụy, chân thành và chất lượng sản phẩm chuẩn mực.
+                <?php echo __('about_mission_desc', 'Mang những công nghệ và phần cứng máy tính hiện đại nhất thế giới tiếp cận người dùng Việt Nam với chi phí hợp lý. Chúng tôi không ngừng nâng cao trải nghiệm khách hàng bằng sự tận tụy, chân thành và chất lượng sản phẩm chuẩn mực.'); ?>
             </p>
         </div>
     </div>

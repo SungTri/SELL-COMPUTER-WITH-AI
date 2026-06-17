@@ -605,4 +605,16 @@ return [
     // Testimonials Keys
     'testimonial_tag' => 'What Customers Say',
     'testimonial_title' => 'Real reviews from <span class="text-secondary">customers</span>',
+
+    // Detailed About Page Keys
+    'about_banner_title' => 'Shaping the Future of <br> <span class="text-secondary-container bg-clip-text">Vietnamese Technology</span>',
+    'about_banner_desc' => 'TechExpert is proud to be a leading retail network and consultant for custom PC building, Workstations, and premium Gaming PCs. We create optimized hardware solutions for your needs.',
+    'about_value_1_title' => 'Ultimate Quality',
+    'about_value_1_desc' => 'Every component and product sold undergoes rigorous testing. We strictly say NO to counterfeit and low-quality goods.',
+    'about_value_2_title' => 'Expert Consultation',
+    'about_value_2_desc' => 'We don\'t just sell products; we partner with clients to deliver optimized hardware configurations tailored to their actual usage needs.',
+    'about_value_3_title' => 'Dedicated Service',
+    'about_value_3_desc' => 'Lifetime tech support, flexible return policy, and fast warranty processing ensure your absolute peace of mind when shopping.',
+    'about_vision_desc' => 'Become the leading trusted symbol in distributing high-tech hardware components in Vietnam. We aim to build an ecosystem that supports developers, graphics designers, professionals, and gamers.',
+    'about_mission_desc' => 'Bring the world\'s latest computer hardware technology to Vietnamese users at reasonable costs. We constantly improve customer experience with dedication, sincerity, and standard quality.',
 ];
