@@ -114,6 +114,7 @@ return [
     
     // Products tab
     'trending_title' => 'Dành Cho Bạn',
+    'trending_subtitle' => 'Được yêu thích nhất',
     'tab_new' => 'Mới Nhất',
     'tab_best' => 'Bán Chạy',
     'tab_featured' => 'Nổi Bật',

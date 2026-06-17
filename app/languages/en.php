@@ -114,6 +114,7 @@ return [
     
     // Products tab
     'trending_title' => 'For You',
+    'trending_subtitle' => 'Most Popular',
     'tab_new' => 'New Arrivals',
     'tab_best' => 'Best Sellers',
     'tab_featured' => 'Featured',
