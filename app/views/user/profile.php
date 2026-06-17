@@ -447,16 +447,16 @@
         <?php elseif($data['tab'] == 'promotions'): ?>
         <section class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
-                <h2 class="font-h3 text-h3 text-on-surface mb-2">Mã giảm giá đã lưu</h2>
-                <p class="text-outline text-sm">Các mã giảm giá bạn đã thu thập từ cửa hàng.</p>
+                <h2 class="font-h3 text-h3 text-on-surface mb-2"><?php echo __('saved_vouchers_title', 'Mã giảm giá đã lưu'); ?></h2>
+                <p class="text-outline text-sm"><?php echo __('saved_vouchers_desc', 'Các mã giảm giá bạn đã thu thập từ cửa hàng.'); ?></p>
             </div>
             
             <?php if(empty($data['saved_vouchers'])): ?>
                 <div class="bg-surface-container-lowest p-12 rounded-3xl border border-outline-variant/50 shadow-sm text-center">
                     <span class="material-symbols-outlined text-[48px] text-outline/30 mb-4">confirmation_number</span>
-                    <h3 class="font-bold text-on-surface mb-2">Chưa có mã giảm giá nào</h3>
-                    <p class="text-outline text-sm mb-6">Hãy quay lại trang chủ để săn các mã giảm giá hấp dẫn!</p>
-                    <a href="<?php echo URLROOT; ?>" class="inline-block px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-secondary transition-all">SĂN MÃ NGAY</a>
+                    <h3 class="font-bold text-on-surface mb-2"><?php echo __('vouchers_empty', 'Chưa có mã giảm giá nào'); ?></h3>
+                    <p class="text-outline text-sm mb-6"><?php echo __('vouchers_empty_desc', 'Hãy quay lại trang chủ để săn các mã giảm giá hấp dẫn!'); ?></p>
+                    <a href="<?php echo URLROOT; ?>" class="inline-block px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-secondary transition-all"><?php echo __('hunt_vouchers_btn', 'SĂN MÃ NGAY'); ?></a>
                 </div>
             <?php else: ?>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -470,18 +470,18 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-1">
                                 <h3 class="font-bold text-primary truncate text-sm uppercase tracking-wider"><?php echo $voucher['code']; ?></h3>
-                                <span class="text-[10px] font-bold text-on-surface-variant/40">Hạn: <?php echo date('d/m/y', strtotime($voucher['end_date'])); ?></span>
+                                <span class="text-[10px] font-bold text-on-surface-variant/40"><?php echo __('expiry_label', 'Hạn:'); ?> <?php echo date('d/m/y', strtotime($voucher['end_date'])); ?></span>
                             </div>
                             <p class="text-[11px] text-on-surface-variant/60 line-clamp-1 mb-3"><?php echo $voucher['description']; ?></p>
                             
                             <div class="flex items-center justify-between">
                                 <button onclick="copyVoucherToProfile(this, '<?php echo $voucher['code']; ?>')" class="text-[10px] font-bold text-secondary hover:underline flex items-center gap-1 uppercase">
-                                    <span class="material-symbols-outlined !text-[12px]">content_copy</span> Sao chép
+                                    <span class="material-symbols-outlined !text-[12px]">content_copy</span> <?php echo __('copy_btn', 'Sao chép'); ?>
                                 </button>
                                 <?php if($voucher['usage_status'] == 0): ?>
-                                    <span class="px-2 py-1 bg-surface-container text-[8px] font-black text-primary/30 rounded-lg uppercase">Đã dùng</span>
+                                    <span class="px-2 py-1 bg-surface-container text-[8px] font-black text-primary/30 rounded-lg uppercase"><?php echo __('voucher_used', 'Đã dùng'); ?></span>
                                 <?php else: ?>
-                                    <a href="<?php echo URLROOT; ?>" class="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-[9px] font-bold hover:bg-secondary transition-all">DÙNG NGAY</a>
+                                    <a href="<?php echo URLROOT; ?>" class="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-[9px] font-bold hover:bg-secondary transition-all"><?php echo __('use_now_btn', 'DÙNG NGAY'); ?></a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -495,7 +495,7 @@
             <?php endif; ?>
 
             <div class="pt-8 border-t border-outline-variant/20">
-                <h2 class="font-h4 text-h4 text-on-surface mb-6 italic uppercase tracking-tighter">Thông báo khuyến mãi khác</h2>
+                <h2 class="font-h4 text-h4 text-on-surface mb-6 italic uppercase tracking-tighter"><?php echo __('other_promo_notifications', 'Thông báo khuyến mãi khác'); ?></h2>
                 <div class="space-y-4">
                     <?php 
                     $hasPromoNotis = false;
@@ -515,7 +515,7 @@
                         </div>
                     <?php endforeach; ?>
                     <?php if (!$hasPromoNotis): ?>
-                        <p class="text-xs text-outline italic">Không có thông báo khuyến mãi mới.</p>
+                        <p class="text-xs text-outline italic"><?php echo __('no_new_promo_notifications', 'Không có thông báo khuyến mãi mới.'); ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -525,7 +525,7 @@
         function copyVoucherToProfile(btn, code) {
             navigator.clipboard.writeText(code).then(() => {
                 const originalContent = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-outlined !text-[12px]">check</span> ĐÃ CHÉP';
+                btn.innerHTML = '<span class="material-symbols-outlined !text-[12px]">check</span> <?php echo __('copied_btn', 'ĐÃ CHÉP'); ?>';
                 btn.classList.add('text-green-500');
                 setTimeout(() => {
                     btn.innerHTML = originalContent;

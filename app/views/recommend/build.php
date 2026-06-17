@@ -126,6 +126,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const currentLang = '<?php echo $_SESSION['lang'] ?? 'vi'; ?>';
     let currentBuild = {};
     let allModalProducts = [];
     const components = <?php 
@@ -300,7 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 1. CPU vs Mainboard Socket Check
         if (cpuSpecs && mainboardSpecs) {
             if (cpuSpecs.socket && mainboardSpecs.socket && cpuSpecs.socket !== mainboardSpecs.socket) {
-                warnings.push(`<strong>CPU & Mainboard lệch socket:</strong> CPU dùng <strong>${cpuSpecs.socket}</strong> nhưng Mainboard dùng <strong>${mainboardSpecs.socket}</strong>.`);
+                warnings.push(currentLang === 'en' 
+                    ? `<strong>Socket mismatch:</strong> CPU uses <strong>${cpuSpecs.socket}</strong> but Mainboard uses <strong>${mainboardSpecs.socket}</strong>.`
+                    : `<strong>CPU & Mainboard lệch socket:</strong> CPU dùng <strong>${cpuSpecs.socket}</strong> nhưng Mainboard dùng <strong>${mainboardSpecs.socket}</strong>.`);
                 hasConflict = true;
             }
         }
@@ -308,7 +311,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 2. Mainboard vs RAM Type Check
         if (mainboardSpecs && ramSpecs) {
             if (mainboardSpecs.ramType && ramSpecs.ramType && mainboardSpecs.ramType !== ramSpecs.ramType) {
-                warnings.push(`<strong>Lệch chuẩn RAM:</strong> Mainboard hỗ trợ <strong>${mainboardSpecs.ramType}</strong> nhưng RAM chọn là <strong>${ramSpecs.ramType}</strong>.`);
+                warnings.push(currentLang === 'en'
+                    ? `<strong>RAM mismatch:</strong> Mainboard supports <strong>${mainboardSpecs.ramType}</strong> but RAM selected is <strong>${ramSpecs.ramType}</strong>.`
+                    : `<strong>Lệch chuẩn RAM:</strong> Mainboard hỗ trợ <strong>${mainboardSpecs.ramType}</strong> nhưng RAM chọn là <strong>${ramSpecs.ramType}</strong>.`);
                 hasConflict = true;
             }
         }
@@ -316,7 +321,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 3. VGA vs PSU Wattage Check
         if (vgaSpecs && psuSpecs) {
             if (vgaSpecs.recommendedPsu && psuSpecs.psuWattage && psuSpecs.psuWattage < vgaSpecs.recommendedPsu) {
-                warnings.push(`<strong>Nguồn yếu (PSU):</strong> VGA khuyến nghị nguồn tối thiểu <strong>${vgaSpecs.recommendedPsu}W</strong> nhưng PSU chọn là <strong>${psuSpecs.psuWattage}W</strong>.`);
+                warnings.push(currentLang === 'en'
+                    ? `<strong>Weak PSU:</strong> VGA recommends a minimum of <strong>${vgaSpecs.recommendedPsu}W</strong> but PSU selected is <strong>${psuSpecs.psuWattage}W</strong>.`
+                    : `<strong>Nguồn yếu (PSU):</strong> VGA khuyến nghị nguồn tối thiểu <strong>${vgaSpecs.recommendedPsu}W</strong> nhưng PSU chọn là <strong>${psuSpecs.psuWattage}W</strong>.`);
                 hasConflict = true;
             }
         }
@@ -340,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
             compCard.className = 'mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 animate-in fade-in duration-300';
             compIcon.className = 'material-symbols-outlined text-[24px] text-amber-600';
             compIcon.textContent = 'warning';
-            compTitle.textContent = 'Xung đột tương thích!';
+            compTitle.textContent = currentLang === 'en' ? 'Compatibility conflict!' : 'Xung đột tương thích!';
             
             warnings.forEach(msg => {
                 const li = document.createElement('li');
@@ -352,10 +359,12 @@ document.addEventListener('DOMContentLoaded', function() {
             compCard.className = 'mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-950 animate-in fade-in duration-300';
             compIcon.className = 'material-symbols-outlined text-[24px] text-green-600';
             compIcon.textContent = 'check_circle';
-            compTitle.textContent = 'Cấu hình tương thích tốt!';
+            compTitle.textContent = currentLang === 'en' ? 'Great compatibility!' : 'Cấu hình tương thích tốt!';
             
             const li = document.createElement('li');
-            li.textContent = 'Tất cả linh kiện đã chọn tương thích và hoạt động ổn định với nhau.';
+            li.textContent = currentLang === 'en' 
+                ? 'All selected components are compatible and will work together smoothly.' 
+                : 'Tất cả linh kiện đã chọn tương thích và hoạt động ổn định với nhau.';
             compMessages.appendChild(li);
             return false;
         }
@@ -427,7 +436,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const hasConflicts = checkCompatibility();
         if (hasConflicts) {
-            const proceed = confirm('Cấu hình linh kiện PC hiện tại có xung đột tương thích. Bạn có chắc chắn vẫn muốn thêm tất cả các sản phẩm này vào giỏ hàng không?');
+            const proceed = confirm(currentLang === 'en' 
+                ? 'The current PC configuration has compatibility conflicts. Are you sure you want to add all these products to your cart?' 
+                : 'Cấu hình linh kiện PC hiện tại có xung đột tương thích. Bạn có chắc chắn vẫn muốn thêm tất cả các sản phẩm này vào giỏ hàng không?');
             if (!proceed) return;
         }
 

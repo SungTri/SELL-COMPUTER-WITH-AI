@@ -31,7 +31,15 @@
                                     <img src="<?php echo get_product_image($product['main_image']); ?>" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=Product'">
                                 </div>
                                 <h3 class="text-lg font-black text-primary tracking-tighter mb-2 line-clamp-2"><?php echo $product['name']; ?></h3>
-                                <p class="text-2xl font-black text-secondary mb-6"><?php echo number_format($product['price'], 0, ',', '.'); ?> đ</p>
+                                <p class="text-2xl font-black text-secondary mb-6">
+                                    <?php 
+                                    if (($_SESSION['lang'] ?? 'vi') === 'en') {
+                                        echo number_format($product['price'], 0, '.', ',') . 'đ';
+                                    } else {
+                                        echo number_format($product['price'], 0, ',', '.') . 'đ';
+                                    }
+                                    ?>
+                                </p>
                                 <a href="<?php echo URLROOT; ?>/cart/add/<?php echo $product['id']; ?>" class="w-full py-4 bg-primary text-on-primary rounded-2xl font-black text-sm hover:bg-secondary transition-all flex items-center justify-center gap-2">
                                     <?php echo __('add_to_cart', 'THÊM VÀO GIỎ'); ?> <span class="material-symbols-outlined !text-[18px]">shopping_cart</span>
                                 </a>

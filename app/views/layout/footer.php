@@ -1391,9 +1391,9 @@
                     updateCartCount(data.cart_count);
                     
                     // Optional: Show a beautiful toast notification
-                    showToast(data.message || 'Đã thêm vào giỏ hàng', 'success');
+                    showToast(data.message || (currentLang === 'vi' ? 'Đã thêm vào giỏ hàng' : 'Added to cart successfully'), 'success');
                 } else {
-                    showToast(data.message || 'Lỗi khi thêm vào giỏ hàng', 'error');
+                    showToast(data.message || (currentLang === 'vi' ? 'Lỗi khi thêm vào giỏ hàng' : 'Failed to add to cart'), 'error');
                 }
             } catch (error) {
                 console.error('Error adding to cart:', error);
