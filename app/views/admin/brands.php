@@ -6,10 +6,15 @@
         <h1 class="text-h2 font-bold text-primary">Quản lý thương hiệu</h1>
         
         <div class="flex items-center gap-6">
-            <div class="relative w-80 md:w-96">
+            <form action="<?php echo URLROOT; ?>/admin/brands" method="GET" class="relative w-80 md:w-96">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input id="brand-search-input" class="w-full pl-12 pr-4 py-2.5 bg-[#F3F4F6] rounded-full border-none text-body-md focus:ring-2 focus:ring-secondary/20 transition-all outline-none" placeholder="Tìm tên thương hiệu, mô tả..." type="text"/>
-            </div>
+                <input id="brand-search-input" name="search" value="<?php echo htmlspecialchars($data['filters']['search'] ?? ''); ?>" class="w-full pl-12 pr-4 py-2.5 bg-[#F3F4F6] rounded-full border-none text-body-md focus:ring-2 focus:ring-secondary/20 transition-all outline-none" placeholder="Tìm tên thương hiệu, mô tả..." type="text"/>
+                <?php if(!empty($data['filters']['search'])): ?>
+                    <a href="<?php echo URLROOT; ?>/admin/brands" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-error transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </a>
+                <?php endif; ?>
+            </form>
             <a href="<?php echo URLROOT; ?>/admin/addBrand" class="px-6 py-2.5 bg-primary text-white rounded-lg text-[14px] font-bold hover:bg-secondary transition-all flex items-center gap-2 shadow-md">
                 <span class="material-symbols-outlined text-[20px]">add</span> Thêm thương hiệu
             </a>
@@ -86,6 +91,52 @@
                     <?php endif; ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination -->
+            <?php if ($data['pagination']['total_pages'] > 1): ?>
+            <div class="px-8 py-5 border-t border-outline-variant flex flex-col md:flex-row items-center justify-between gap-4 bg-white">
+                <span class="text-[14px] text-on-surface-variant whitespace-nowrap flex-shrink-0">Hiển thị <?php echo $data['pagination']['start_record']; ?> - <?php echo $data['pagination']['end_record']; ?> trên tổng số <?php echo $data['pagination']['total_records']; ?> thương hiệu</span>
+                <div class="flex flex-wrap gap-2 items-center justify-center">
+                    <?php 
+                    $pageParam = '?';
+                    if (!empty($data['filters']['search'])) $pageParam .= 'search=' . urlencode($data['filters']['search']) . '&';
+                    $pageParam .= 'page=';
+                    ?>
+                    
+                    <?php if($data['pagination']['current_page'] > 1): ?>
+                        <a href="<?php echo URLROOT; ?>/admin/brands<?php echo $pageParam . ($data['pagination']['current_page'] - 1); ?>" class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors flex-shrink-0">
+                            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                        </a>
+                    <?php endif; ?>
+                    
+                    <?php 
+                    $totalPages = $data['pagination']['total_pages'];
+                    $currentPage = $data['pagination']['current_page'];
+                    $range = 2; // Số trang hiển thị xung quanh trang hiện tại
+                    
+                    for ($i = 1; $i <= $totalPages; $i++) {
+                        if ($i == 1 || $i == $totalPages || ($i >= $currentPage - $range && $i <= $currentPage + $range)) {
+                            if ($i == $currentPage) {
+                                echo '<button class="w-8 h-8 rounded bg-primary text-white font-bold text-[14px] flex-shrink-0">' . $i . '</button>';
+                            } else {
+                                echo '<a href="' . URLROOT . '/admin/brands' . $pageParam . $i . '" class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center font-bold text-[14px] hover:bg-surface-container transition-colors flex-shrink-0">' . $i . '</a>';
+                            }
+                        } elseif ($i == 2 && $currentPage - $range > 2) {
+                            echo '<span class="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-[14px] flex-shrink-0">...</span>';
+                        } elseif ($i == $totalPages - 1 && $currentPage + $range < $totalPages - 1) {
+                            echo '<span class="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-[14px] flex-shrink-0">...</span>';
+                        }
+                    }
+                    ?>
+                    
+                    <?php if($data['pagination']['current_page'] < $data['pagination']['total_pages']): ?>
+                        <a href="<?php echo URLROOT; ?>/admin/brands<?php echo $pageParam . ($data['pagination']['current_page'] + 1); ?>" class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors flex-shrink-0">
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </main>
@@ -124,53 +175,15 @@ function confirmDelete(id, name) {
     }
 }
 
-// Frontend Real-time Search Logic
+// Search Form Auto-submit when cleared
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('brand-search-input');
-    const tableRows = document.querySelectorAll('tbody tr[id^="brand-row-"]');
-    const tbody = document.querySelector('tbody');
-    const emptyRow = document.querySelector('tbody tr td[colspan="4"]')?.parentNode;
-
-    function filterBrands() {
-        const query = searchInput.value.toLowerCase().trim();
-        let visibleCount = 0;
-
-        tableRows.forEach(row => {
-            const nameEl = row.querySelector('.text-\\[14px\\]');
-            const descEl = row.querySelector('.text-\\[13px\\]');
-            
-            const nameText = nameEl ? nameEl.textContent.toLowerCase() : '';
-            const descText = descEl ? descEl.textContent.toLowerCase() : '';
-
-            if (nameText.includes(query) || descText.includes(query)) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                this.form.submit();
             }
         });
-
-        // Handle empty search results state
-        let tempEmpty = document.getElementById('temp-empty-row');
-        if (visibleCount === 0 && tableRows.length > 0) {
-            if (!tempEmpty) {
-                tempEmpty = document.createElement('tr');
-                tempEmpty.id = 'temp-empty-row';
-                tempEmpty.innerHTML = `<td colspan="4" class="px-8 py-10 text-center text-on-surface-variant font-medium">Không tìm thấy thương hiệu nào khớp với "${searchInput.value}".</td>`;
-                tbody.appendChild(tempEmpty);
-            } else {
-                tempEmpty.style.display = '';
-                tempEmpty.querySelector('td').textContent = `Không tìm thấy thương hiệu nào khớp với "${searchInput.value}".`;
-            }
-            if (emptyRow) emptyRow.style.display = 'none';
-        } else {
-            if (tempEmpty) tempEmpty.style.display = 'none';
-            if (emptyRow && tableRows.length === 0) emptyRow.style.display = '';
-        }
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', filterBrands);
     }
 });
 </script>

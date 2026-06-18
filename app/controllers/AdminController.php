@@ -1363,10 +1363,31 @@ class AdminController extends Controller {
     // --- Brand Management ---
     
     public function brands() {
-        $brands = $this->adminModel->getAdminBrands();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 10;
+        
+        if ($page < 1) $page = 1;
+        $offset = ($page - 1) * $limit;
+        
+        $brands = $this->adminModel->getAdminBrandsPaginated($search, $limit, $offset);
+        $totalBrands = $this->adminModel->getBrandsCount($search);
+        $totalPages = ceil($totalBrands / $limit);
+        
         $data = [
-            'title' => 'Quản lý thương hiệu',
-            'brands' => $brands
+            'title' => 'Quản lý thương hiệu - TechExpert',
+            'brands' => $brands,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_records' => $totalBrands,
+                'limit' => $limit,
+                'start_record' => ($totalBrands > 0) ? $offset + 1 : 0,
+                'end_record' => min($offset + $limit, $totalBrands)
+            ],
+            'filters' => [
+                'search' => $search
+            ]
         ];
         $this->view('admin/brands', $data);
     }

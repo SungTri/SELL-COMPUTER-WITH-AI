@@ -364,6 +364,39 @@ class AdminModel {
         return $this->db->resultSet();
     }
 
+    public function getAdminBrandsPaginated($search = '', $limit = 10, $offset = 0) {
+        if (!empty($search)) {
+            $this->db->query("
+                SELECT b.*, (SELECT COUNT(*) FROM products WHERE brand_id = b.id) as product_count 
+                FROM brands b 
+                WHERE b.name LIKE :search OR b.description LIKE :search
+                ORDER BY b.name ASC
+                LIMIT :limit OFFSET :offset
+            ");
+            $this->db->bind(':search', '%' . $search . '%');
+        } else {
+            $this->db->query("
+                SELECT b.*, (SELECT COUNT(*) FROM products WHERE brand_id = b.id) as product_count 
+                FROM brands b 
+                ORDER BY b.name ASC
+                LIMIT :limit OFFSET :offset
+            ");
+        }
+        $this->db->bind(':limit', (int)$limit, PDO::PARAM_INT);
+        $this->db->bind(':offset', (int)$offset, PDO::PARAM_INT);
+        return $this->db->resultSet();
+    }
+
+    public function getBrandsCount($search = '') {
+        if (!empty($search)) {
+            $this->db->query("SELECT COUNT(*) as total FROM brands WHERE name LIKE :search OR description LIKE :search");
+            $this->db->bind(':search', '%' . $search . '%');
+        } else {
+            $this->db->query("SELECT COUNT(*) as total FROM brands");
+        }
+        return $this->db->single()['total'];
+    }
+
     public function getBrandById($id) {
         $this->db->query("SELECT * FROM brands WHERE id = :id");
         $this->db->bind(':id', $id);
