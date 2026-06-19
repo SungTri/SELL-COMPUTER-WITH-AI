@@ -78,6 +78,9 @@
                         <button onclick="confirmResetChat()" class="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-all text-white flex items-center justify-center group" title="<?php echo __('chatbot_reset_title', 'Làm mới cuộc hội thoại'); ?>">
                             <span class="material-symbols-outlined text-xl group-hover:rotate-180 transition-transform duration-500">refresh</span>
                         </button>
+                        <button onclick="toggleMaximizeChat()" id="btn-maximize-chat" class="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-all text-white flex items-center justify-center" title="<?php echo __('chatbot_expand', 'Mở rộng giao diện'); ?>">
+                            <span class="material-symbols-outlined text-xl" id="icon-maximize-chat">open_in_full</span>
+                        </button>
                         <button onclick="toggleChat()" class="p-2 hover:bg-white/10 active:scale-95 rounded-lg transition-all text-white flex items-center justify-center" title="Minimize">
                             <span class="material-symbols-outlined text-xl">stat_minus_1</span>
                         </button>
@@ -191,6 +194,12 @@
         #chatMessages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         #chatMessages { overflow-x: hidden; padding: 20px 24px !important; }
         #chatWindow.show { display: flex; opacity: 1; transform: translateY(0); }
+        #chatWindow.maximized {
+            width: 850px;
+            height: 800px;
+            max-height: calc(100vh - 120px);
+            max-width: calc(100vw - 48px);
+        }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -238,6 +247,32 @@
                 chatWindow.classList.remove('show');
                 setTimeout(() => chatWindow.classList.add('hidden'), 300);
                 sessionStorage.setItem('chat_open', 'false');
+            }
+        }
+
+        function toggleMaximizeChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const btnMaximize = document.getElementById('btn-maximize-chat');
+            const iconMaximize = document.getElementById('icon-maximize-chat');
+            
+            if (chatWindow.classList.contains('maximized')) {
+                chatWindow.classList.remove('maximized');
+                if (btnMaximize) {
+                    btnMaximize.title = currentLang === 'vi' ? 'Mở rộng giao diện' : 'Expand interface';
+                }
+                if (iconMaximize) {
+                    iconMaximize.innerText = 'open_in_full';
+                }
+                sessionStorage.setItem('chat_maximized', 'false');
+            } else {
+                chatWindow.classList.add('maximized');
+                if (btnMaximize) {
+                    btnMaximize.title = currentLang === 'vi' ? 'Thu nhỏ giao diện' : 'Collapse interface';
+                }
+                if (iconMaximize) {
+                    iconMaximize.innerText = 'close_fullscreen';
+                }
+                sessionStorage.setItem('chat_maximized', 'true');
             }
         }
 
@@ -325,7 +360,7 @@
             const messages = document.getElementById('chatMessages');
             const liveChatBanner = document.getElementById('liveChatBanner');
 
-            if (messages && oldMode) {
+            if (messages && oldMode && oldMode !== mode) {
                 // Save current content of the old mode
                 sessionStorage.setItem('chat_history_' + oldMode, messages.innerHTML);
             }
@@ -868,11 +903,33 @@
             const messages = document.getElementById('chatMessages');
             const msgDiv = document.createElement('div');
             
-            let formattedText = text;
-            if (!(text.includes('<a') || text.includes('<strong>'))) {
+            // 1. Parse and extract Product Tags FIRST from the raw text (only for bot messages)
+            const products = [];
+            let cleanText = text;
+            if (sender !== 'user') {
+                const productRegex = /\[PRODUCT:(\d+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^\]]+)\]/g;
+                let match;
+                while ((match = productRegex.exec(text)) !== null) {
+                    products.push({
+                        id: match[1],
+                        name: match[2],
+                        price: match[3],
+                        image: match[4],
+                        link: match[5]
+                    });
+                }
+                // Remove tags from raw text
+                cleanText = text.replace(/\[PRODUCT:[^\]]+\]/g, '');
+                // Clean up consecutive multiple newlines left behind by the tags
+                cleanText = cleanText.replace(/\n{3,}/g, '\n\n').trim();
+            }
+
+            // 2. Format markdown and raw URLs on the cleaned/user text
+            let formattedText = cleanText;
+            if (!(formattedText.includes('<a') || formattedText.includes('<strong>'))) {
                 formattedText = formattedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                formattedText = formattedText.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
-                formattedText = formattedText.replace(/(?<!href=")(https?:\/\/[^\s\]\)\>]+)/g, '<a href="$1" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
+                formattedText = formattedText.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
+                formattedText = formattedText.replace(/(?<!href=")(https?:\/\/[^\s\]\)\>]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
                 formattedText = formattedText.replace(/\n/g, '<br>');
             }
             
@@ -885,24 +942,6 @@
                     </div>
                 `;
             } else {
-                // Parse Product Tags
-                const productRegex = /\[PRODUCT:(\d+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^\]]+)\]/g;
-                const products = [];
-                let match;
-                
-                while ((match = productRegex.exec(text)) !== null) {
-                    products.push({
-                        id: match[1],
-                        name: match[2],
-                        price: match[3],
-                        image: match[4],
-                        link: match[5]
-                    });
-                }
-
-                // Remove tags from text for cleaner display
-                const cleanText = formattedText.replace(/\[PRODUCT:[^\]]+\]/g, '');
-
                 msgDiv.className = 'flex gap-3 max-w-[90%] chatbot-bubble-in w-full';
                 let productsHtml = '';
                 
@@ -925,7 +964,7 @@
                                                     <span class="material-symbols-outlined text-[12px]">add_shopping_cart</span>
                                                     ${currentLang === 'vi' ? 'MUA' : 'ADD'}
                                                 </button>
-                                                <a href="${p.link}" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all flex-shrink-0">
+                                                <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all flex-shrink-0">
                                                     <span class="material-symbols-outlined text-[16px]">visibility</span>
                                                 </a>
                                             </div>
@@ -951,7 +990,7 @@
                     </div>
                     <div class="flex flex-col gap-1 w-full">
                         <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
-                            <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${cleanText}</p>
+                            <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
                             ${productsHtml}
                             <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${time}</span>
                         </div>
@@ -1023,6 +1062,11 @@
 
             if (isOpen === 'true' && chatWindow) {
                 toggleChat();
+            }
+
+            const isMaximized = sessionStorage.getItem('chat_maximized');
+            if (isMaximized === 'true' && chatWindow) {
+                toggleMaximizeChat();
             }
 
             // check active session

@@ -506,23 +506,94 @@ NHIỆM VỤ CỦA BẠN:
                 $targetCategoryIds[] = 4;
             }
 
-            if (!empty($targetCategoryIds)) {
+            $isPCBuildRequest = false;
+            if (preg_match('/(build|dung|lap|tu van|cau hinh|bo pc|tron bo|combo|dan pc|dan may|lap rap|choi game|gaming|do hoa|do hoạ|render)/i', $normMessage)
+                && !in_array(1, $targetCategoryIds)) {
+                $isPCBuildRequest = true;
+            }
+
+            if ($isPCBuildRequest) {
+                // Fetch all building components (CPU, RAM, VGA, Motherboard, Storage, Cooling, Case, PSU, Monitor) sorted by category and price
+                $db->query("SELECT p.id, p.name, p.price, p.main_image, p.category_id, c.name as category 
+                            FROM products p 
+                            LEFT JOIN categories c ON p.category_id = c.id 
+                            WHERE p.status = 1 AND p.category_id IN (5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17)
+                            ORDER BY p.category_id ASC, p.price DESC");
+            } else if (!empty($targetCategoryIds)) {
                 $idsStr = implode(',', array_map('intval', $targetCategoryIds));
-                $db->query("SELECT p.id, p.name, p.price, p.main_image, c.name as category 
+                $db->query("SELECT p.id, p.name, p.price, p.main_image, p.category_id, c.name as category 
                             FROM products p 
                             LEFT JOIN categories c ON p.category_id = c.id 
                             WHERE p.status = 1 AND p.category_id IN ($idsStr)
                             ORDER BY p.id DESC 
                             LIMIT 35");
             } else {
-                $db->query("SELECT p.id, p.name, p.price, p.main_image, c.name as category 
-                            FROM products p 
-                            LEFT JOIN categories c ON p.category_id = c.id 
-                            WHERE p.status = 1 AND (p.category_id = 2 OR p.category_id IN (5, 6, 7, 9, 10, 12, 13, 15))
-                            ORDER BY p.id DESC 
-                            LIMIT 50");
+                // Fetch balanced catalog: all building components + top 8 products from other categories (Laptop, Desktop, Accessories)
+                $db->query("SELECT id, name, price, main_image, category_id, category
+                            FROM (
+                                SELECT p.id, p.name, p.price, p.main_image, c.name as category, p.category_id,
+                                       ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY p.price DESC) as rn
+                                FROM products p
+                                LEFT JOIN categories c ON p.category_id = c.id
+                                WHERE p.status = 1
+                            ) t
+                            WHERE (category_id IN (5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17))
+                               OR (category_id IN (1, 2, 4) AND rn <= 8)
+                            ORDER BY category_id ASC, price DESC");
             }
             $products = $db->resultSet();
+
+            // Apply budget filtering if a PC building request with a budget is detected
+            $budget = $this->parseBudget($message);
+            if ($budget !== null && $isPCBuildRequest) {
+                $limits = [
+                    5  => 0.20, // CPU
+                    16 => 0.20, // AMD CPU
+                    17 => 0.20, // Intel CPU
+                    9  => 0.20, // Mainboard
+                    6  => 0.15, // RAM
+                    7  => 0.30, // VGA
+                    10 => 0.10, // Storage
+                    15 => 0.10, // SSD
+                    11 => 0.10, // Cooler
+                    12 => 0.10, // Case
+                    13 => 0.08, // PSU
+                    14 => 0.15  // Monitor
+                ];
+                
+                $filteredProducts = [];
+                $categoryGrouped = [];
+                
+                foreach ($products as $p) {
+                    $catId = intval($p['category_id']);
+                    $categoryGrouped[$catId][] = $p;
+                }
+                
+                foreach ($categoryGrouped as $catId => $catProducts) {
+                    $limitPercent = $limits[$catId] ?? 1.0;
+                    $maxPriceAllowed = $budget * $limitPercent;
+                    
+                    $valid = [];
+                    foreach ($catProducts as $p) {
+                        if (floatval($p['price']) <= $maxPriceAllowed) {
+                            $valid[] = $p;
+                        }
+                    }
+                    
+                    if (empty($valid)) {
+                        // Fallback to the 3 cheapest products in this category
+                        usort($catProducts, function($a, $b) {
+                            return floatval($a['price']) <=> floatval($b['price']);
+                        });
+                        $valid = array_slice($catProducts, 0, 3);
+                    }
+                    
+                    foreach ($valid as $p) {
+                        $filteredProducts[] = $p;
+                    }
+                }
+                $products = $filteredProducts;
+            }
             
             $baseUrl = URLROOT . "/product/detail/";
             
@@ -557,7 +628,7 @@ MANDATORY COMPATIBILITY AUDIT RULES:
 
 BUDGET OPTIMIZATION & SMART LINKING RULES:
 1. Analyze Customer Budget:
-   - If the customer specifies a budget (e.g. 15 million VND, 20M, or a price range): Carefully select and combine components whose TOTAL cost is closest to but DOES NOT exceed their budget (allowing a 5-10% buffer below the budget limit).
+    - If the customer specifies a budget (e.g. 15 million VND, 20M, 200M, or a price range): Carefully select and combine components whose TOTAL cost is closest to but DOES NOT exceed their budget by more than 5-10%. For example, if the budget is 200 million, the total cost MUST be between 180 million and 210 million VND. Under no circumstances should you propose a configuration of 300 million or 340 million and then apologize to the customer. You must sum the prices of your recommended components carefully before responding!
    - If they search for a single component within a budget (e.g. \"SSD around 1 million VND\"), scan the product list to find SSD/HDD items priced near 1 million and recommend the best options.
 2. Smart Markdown Links in Text:
    - When mentioning a specific component in your text explanation, embed its product link using standard Markdown: `[Product Name](Product Link)`. E.g., \"I recommend the [CPU Intel Core i5 12400F](http://localhost/.../product/detail/12) for its excellent price-to-performance ratio...\".
@@ -597,7 +668,7 @@ QUY TẮC KIỂM TRA ĐỘ TƯƠNG THÍCH BẮT BUỘC:
 
 QUY TẮC TỐI ƯU HÓA NGÂN SÁCH & LIÊN KẾT THÔNG MINH:
 1. Phân tích Ngân sách của Khách hàng:
-   - Nếu khách hàng đưa ra ngân sách cụ thể (Ví dụ: 15 triệu, 20 triệu, hoặc khoảng giá): Hãy tính toán và chọn lọc cấu hình linh kiện có TỔNG GIÁ TRỊ sát nhất với ngân sách nhưng KHÔNG VƯỢT QUÁ (được phép dao động dưới ngân sách tầm 5-10%, tránh việc đề xuất cấu hình vượt quá ví tiền của khách hàng).
+    - Nếu khách hàng đưa ra ngân sách cụ thể (Ví dụ: 15 triệu, 20 triệu, 200 triệu, hoặc khoảng giá): Hãy tính toán và chọn lọc cấu hình linh kiện có TỔNG GIÁ TRỊ sát nhất với ngân sách. Tổng chi phí của cấu hình TUYỆT ĐỐI không được vượt quá ngân sách quá 5-10%. Ví dụ, nếu ngân sách là 200 triệu, tổng chi phí phải nằm trong khoảng từ 180 triệu đến tối đa 210-220 triệu VNĐ. TUYỆT ĐỐI KHÔNG ĐƯỢC phép đề xuất cấu hình lên tới 300 triệu hay 340 triệu rồi xin lỗi khách hàng. Hãy tự cộng nhẩm thật kỹ giá tiền của từng linh kiện trước khi đưa ra câu trả lời!
    - Nếu khách hàng tìm kiếm một linh kiện đơn lẻ (Ví dụ: \"ổ cứng tầm 1 triệu\"), hãy quét danh sách sản phẩm để tìm các sản phẩm thuộc danh mục SSD/HDD có mức giá dao động quanh 1 triệu và gợi ý các tùy chọn tốt nhất.
 2. Gợi ý Liên kết Thông minh trong Lời thoại (Markdown Links):
    - Khi tư vấn hoặc nhắc đến một linh kiện cụ thể trong bài phân tích của bạn, hãy lồng ghép link của sản phẩm đó dưới dạng link Markdown chuẩn: `[Tên linh kiện](Đường dẫn liên kết)`. Ví dụ: \"Em đề xuất anh/chị chọn bộ vi xử lý [CPU Intel Core i5 12400F](http://localhost/.../product/detail/12) vì nó có giá rẻ mà hiệu năng cực kỳ tốt...\".
@@ -634,21 +705,30 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             foreach ($rawHistory as $chat) {
                 $q = $chat['question'];
                 $a = $chat['answer'];
+                if ($q === null || $a === null || trim($q) === '' || trim($a) === '') {
+                    continue;
+                }
                 if ($mode === 'shop') {
                     if (strpos($q, '[SHOP] ') === 0) {
-                        $filteredHistory[] = [
-                            'question' => substr($q, 7),
-                            'answer' => strpos($a, '[SHOP] ') === 0 ? substr($a, 7) : $a
-                        ];
+                        $qClean = substr($q, 7);
+                        $aClean = strpos($a, '[SHOP] ') === 0 ? substr($a, 7) : $a;
+                        if (trim($qClean) !== '' && trim($aClean) !== '') {
+                            $filteredHistory[] = [
+                                'question' => $qClean,
+                                'answer' => $aClean
+                            ];
+                        }
                     }
                 } else {
                     if (strpos($q, '[AI] ') === 0 || strpos($q, '[SHOP] ') !== 0) {
                         $qClean = strpos($q, '[AI] ') === 0 ? substr($q, 5) : $q;
                         $aClean = strpos($a, '[AI] ') === 0 ? substr($a, 5) : $a;
-                        $filteredHistory[] = [
-                            'question' => $qClean,
-                            'answer' => $aClean
-                        ];
+                        if (trim($qClean) !== '' && trim($aClean) !== '') {
+                            $filteredHistory[] = [
+                                'question' => $qClean,
+                                'answer' => $aClean
+                            ];
+                        }
                     }
                 }
             }
@@ -670,14 +750,18 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             $sessionHistory = $_SESSION[$sessionKey] ?? [];
             $sessionHistory = array_slice($sessionHistory, -5);
             foreach ($sessionHistory as $chat) {
-                $history[] = [
-                    'role' => 'user',
-                    'parts' => [['text' => $chat['question']]]
-                ];
-                $history[] = [
-                    'role' => 'model',
-                    'parts' => [['text' => $chat['answer']]]
-                ];
+                $q = $chat['question'] ?? '';
+                $a = $chat['answer'] ?? '';
+                if (trim($q) !== '' && trim($a) !== '') {
+                    $history[] = [
+                        'role' => 'user',
+                        'parts' => [['text' => $q]]
+                    ];
+                    $history[] = [
+                        'role' => 'model',
+                        'parts' => [['text' => $a]]
+                    ];
+                }
             }
         }
 
@@ -788,6 +872,7 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
         
         $bestMatch = null;
         $maxScore = 0;
+        $bestMatchedKeywordsCount = 0;
         
         $stopWordsRaw = [
             'của', 'và', 'là', 'có', 'không', 'thì', 'làm', 'gì', 'bị', 'được', 'cho', 'tôi', 'bạn', 'ở', 'thế', 'nào', 'cả', 'đến', 'đi', 'ra', 'với', 'trong', 'ngoài', 'này', 'kia', 'đó', 'như', 'để', 'tại', 'về', 'cái', 'hay', 'cho', 'nha', 'ạ', 'da', 'dạ',
@@ -797,8 +882,20 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             return $this->removeAccents(mb_strtolower($w));
         }, $stopWordsRaw);
         
+        $currentLang = $_SESSION['lang'] ?? 'vi';
+        
         foreach ($faqs as $faq) {
             $question = mb_strtolower(trim($faq['question']));
+            
+            // Language filtering: check for Vietnamese accented characters
+            $isFaqVietnamese = (bool)preg_match('/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/iu', $faq['question']);
+            if ($currentLang === 'vi' && !$isFaqVietnamese) {
+                continue;
+            }
+            if ($currentLang === 'en' && $isFaqVietnamese) {
+                continue;
+            }
+            
             $normQuestion = $this->removeAccents($question);
             
             // 1. Exact match gets highest score
@@ -810,6 +907,7 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             $score = 0;
             $keywordsStr = $faq['keywords'] ?? '';
             $keywords = explode(',', $keywordsStr);
+            $matchedKeywordsCount = 0;
             
             foreach ($keywords as $kw) {
                 $kw = trim(mb_strtolower($kw));
@@ -819,6 +917,7 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
                 if (mb_strpos(" " . $normMessage . " ", " " . $normKw . " ") !== false || mb_strpos(" " . $messageClean . " ", " " . $kw . " ") !== false) {
                     $scoreVal = (mb_strlen($normKw) >= 5) ? 15 : 8;
                     $score += $scoreVal;
+                    $matchedKeywordsCount++;
                 }
             }
             
@@ -843,11 +942,14 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             if ($totalScore > $maxScore) {
                 $maxScore = $totalScore;
                 $bestMatch = $faq['answer'];
+                $bestMatchedKeywordsCount = $matchedKeywordsCount;
             }
         }
         
-        // High confidence threshold (keyword score >= 20)
-        if ($maxScore >= 20 && $bestMatch !== null) {
+        // High confidence threshold:
+        // - At least 2 distinct keywords must match
+        // - AND the total score must be >= 35
+        if ($bestMatch !== null && $maxScore >= 35 && $bestMatchedKeywordsCount >= 2) {
             return $bestMatch;
         }
         
@@ -863,5 +965,26 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
             $db->bind(':answer', $data['answer']);
             $db->execute();
         } catch (Exception $e) {}
+    }
+
+    private function parseBudget($message) {
+        $messageClean = mb_strtolower(trim($message));
+        $normMessage = $this->removeAccents($messageClean);
+
+        // Match patterns like "200 trieu", "15 trieu", "200tr", "15tr", "200 million", "200m"
+        if (preg_match('/(\d+)\s*(trieu|tr|million|m\b)/i', $normMessage, $matches)) {
+            $num = intval($matches[1]);
+            if ($num > 0) {
+                return $num * 1000000;
+            }
+        }
+        
+        // Match raw numbers with dots or commas, e.g. 200.000.000 or 15000000
+        $cleanedMessage = preg_replace('/[,.]/', '', $normMessage);
+        if (preg_match('/(\d{6,10})/', $cleanedMessage, $matches)) {
+            return intval($matches[1]);
+        }
+
+        return null;
     }
 }

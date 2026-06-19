@@ -36,6 +36,8 @@ return [
     'chatbot_intro' => 'Tell me your budget (e.g. <strong>20 million</strong>), I will help you select the best and most compatible parts!',
     'chatbot_placeholder' => 'Type your question...',
     'chatbot_typing' => 'TechExpert is typing...',
+    'chatbot_expand' => 'Expand interface',
+    'chatbot_collapse' => 'Collapse interface',
     'add_to_cart' => 'ADD TO CART',
     'compare_now' => 'COMPARE NOW',
     'clear_all' => 'CLEAR ALL',

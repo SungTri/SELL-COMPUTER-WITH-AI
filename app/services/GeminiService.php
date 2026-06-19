@@ -52,9 +52,11 @@ class GeminiService {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
 
         if ($httpCode === 200) {
@@ -65,6 +67,9 @@ class GeminiService {
             return "AI không trả về nội dung hoặc bị chặn nội dung.";
         }
         $errorMsg = "API Error: Code $httpCode";
+        if ($curlError) {
+            $errorMsg .= " (cURL Error: $curlError)";
+        }
         if ($response) {
             $errData = json_decode($response, true);
             $errorMsg .= " - " . ($errData['error']['message'] ?? 'Unknown error');
@@ -83,10 +88,12 @@ class GeminiService {
             "models/gemini-3.5-flash"
         ];
 
+        $lastError = "";
         foreach ($fallbackModels as $modelName) {
             try {
                 return $this->callGemini($modelName, $payload);
             } catch (Exception $e) {
+                $lastError = $e->getMessage();
                 continue;
             }
         }
@@ -97,9 +104,15 @@ class GeminiService {
             $ch = curl_init($listUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             $listResponse = curl_exec($ch);
+            $curlErrorList = curl_error($ch);
             $listData = json_decode($listResponse, true);
             curl_close($ch);
+
+            if ($curlErrorList) {
+                $lastError .= " (ListModels cURL Error: $curlErrorList)";
+            }
 
             if (isset($listData['models'])) {
                 foreach ($listData['models'] as $m) {
@@ -110,13 +123,16 @@ class GeminiService {
                         try {
                             return $this->callGemini($modelName, $payload);
                         } catch (Exception $e) {
+                            $lastError = $e->getMessage();
                             continue;
                         }
                     }
                 }
             }
-        } catch (Exception $ex) {}
+        } catch (Exception $ex) {
+            $lastError .= " (ListModels exception: " . $ex->getMessage() . ")";
+        }
 
-        throw new Exception("Tất cả các mô hình AI đều không phản hồi.");
+        throw new Exception("Tất cả các mô hình AI đều không phản hồi. Lỗi gần nhất: " . $lastError);
     }
 }

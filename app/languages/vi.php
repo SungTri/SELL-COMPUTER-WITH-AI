@@ -36,6 +36,8 @@ return [
     'chatbot_intro' => 'Hãy cho tôi biết ngân sách của bạn (Ví dụ: <strong>20 triệu</strong>), tôi sẽ giúp bạn chọn những linh kiện tốt nhất và tương thích nhất!',
     'chatbot_placeholder' => 'Nhập câu hỏi của bạn...',
     'chatbot_typing' => 'TechExpert đang trả lời...',
+    'chatbot_expand' => 'Mở rộng giao diện',
+    'chatbot_collapse' => 'Thu nhỏ giao diện',
     'add_to_cart' => 'THÊM GIỎ HÀNG',
     'compare_now' => 'SO SÁNH NGAY',
     'clear_all' => 'XÓA TẤT CẢ',
