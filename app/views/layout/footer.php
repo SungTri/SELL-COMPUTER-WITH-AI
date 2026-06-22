@@ -930,8 +930,8 @@
             let formattedText = cleanText;
             if (!(formattedText.includes('<a') || formattedText.includes('<strong>'))) {
                 formattedText = formattedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                formattedText = formattedText.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
-                formattedText = formattedText.replace(/(?<!href=")(https?:\/\/[^\s\]\)\>]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
+                formattedText = formattedText.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
+                formattedText = formattedText.replace(/(?<!href=")(https?:\/\/[^\s\]\)\>]+)/g, '<a href="$1" class="text-blue-600 dark:text-blue-400 font-bold underline hover:text-blue-800">$1</a>');
                 formattedText = formattedText.replace(/\n/g, '<br>');
             }
             
@@ -966,7 +966,7 @@
                                                     <span class="material-symbols-outlined text-[12px]">add_shopping_cart</span>
                                                     ${currentLang === 'vi' ? 'MUA' : 'ADD'}
                                                 </button>
-                                                <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all flex-shrink-0">
+                                                <a href="${p.link}" class="w-8 h-8 bg-white dark:bg-zinc-800 border border-outline-variant/20 dark:border-outline-variant/10 text-gray-400 rounded-lg flex items-center justify-center hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-all flex-shrink-0">
                                                     <span class="material-symbols-outlined text-[16px]">visibility</span>
                                                 </a>
                                             </div>
