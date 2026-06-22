@@ -918,8 +918,10 @@
                         link: match[5]
                     });
                 }
-                // Remove tags from raw text
-                cleanText = text.replace(/\[PRODUCT:[^\]]+\]/g, '');
+                // Replace tags with their name and price for display in the text list
+                cleanText = text.replace(/\[PRODUCT:(\d+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^\]]+)\]/g, '**$2** ($3)');
+                // Fallback: Remove any malformed product tags completely
+                cleanText = cleanText.replace(/\[PRODUCT:[^\]]+\]/g, '');
                 // Clean up consecutive multiple newlines left behind by the tags
                 cleanText = cleanText.replace(/\n{3,}/g, '\n\n').trim();
             }
