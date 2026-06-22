@@ -508,6 +508,10 @@ NHIỆM VỤ CỦA BẠN:
                 $targetCategoryIds[] = 19;
                 $targetCategoryIds[] = 20;
             }
+            // Arm màn hình
+            if (preg_match('/(arm|gia do|gia tre|gia do man hinh|gia tre man hinh)/i', $normMessage)) {
+                $targetCategoryIds[] = 8;
+            }
 
             $isPCBuildRequest = false;
             if (preg_match('/(build|dung|lap|tu van|cau hinh|bo pc|tron bo|combo|dan pc|dan may|lap rap|choi game|gaming|do hoa|do hoạ|render)/i', $normMessage)
@@ -541,7 +545,7 @@ NHIỆM VỤ CỦA BẠN:
                                 WHERE p.status = 1
                             ) t
                             WHERE (category_id IN (5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17))
-                               OR (category_id IN (1, 2, 4, 18, 19, 20) AND rn <= 8)
+                               OR (category_id IN (1, 2, 4, 8, 18, 19, 20) AND rn <= 8)
                             ORDER BY category_id ASC, price DESC");
             }
             $products = $db->resultSet();
