@@ -205,6 +205,12 @@ return [
     'Vỏ Case' => 'Vỏ Case',
     'Nguồn (PSU)' => 'Nguồn (PSU)',
     'Màn hình' => 'Màn hình',
+    'Bàn phím' => 'Bàn phím',
+    'Chuột Máy Tính' => 'Chuột Máy Tính',
+    'Lót Chuột (Pad Chuột)' => 'Lót Chuột (Pad Chuột)',
+    'Dây cáp kết nối' => 'Dây cáp kết nối',
+    'Kem tản nhiệt & Dụng cụ' => 'Kem tản nhiệt & Dụng cụ',
+    'Thiết bị mạng' => 'Thiết bị mạng',
     
     // Category page / Catalog UI
     'home_breadcrumb' => 'Trang chủ',

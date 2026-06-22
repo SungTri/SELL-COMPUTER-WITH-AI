@@ -205,6 +205,12 @@ return [
     'Vỏ Case' => 'PC Cases',
     'Nguồn (PSU)' => 'Power Supplies (PSU)',
     'Màn hình' => 'Monitors',
+    'Bàn phím' => 'Keyboards',
+    'Chuột Máy Tính' => 'Computer Mice',
+    'Lót Chuột (Pad Chuột)' => 'Mouse Pads',
+    'Dây cáp kết nối' => 'Connecting Cables',
+    'Kem tản nhiệt & Dụng cụ' => 'Thermal Paste & Tools',
+    'Thiết bị mạng' => 'Network Equipment',
     
     // Category page / Catalog UI
     'home_breadcrumb' => 'Home',
