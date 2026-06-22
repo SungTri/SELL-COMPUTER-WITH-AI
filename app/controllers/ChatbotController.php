@@ -504,6 +504,9 @@ NHIỆM VỤ CỦA BẠN:
             // Phụ kiện / Chuột / Bàn phím
             if (preg_match('/(chuot|phim|ban phim|mouse|keyboard|tai nghe|headset|lot chuot|phu kien)/i', $normMessage)) {
                 $targetCategoryIds[] = 4;
+                $targetCategoryIds[] = 18;
+                $targetCategoryIds[] = 19;
+                $targetCategoryIds[] = 20;
             }
 
             $isPCBuildRequest = false;
@@ -538,7 +541,7 @@ NHIỆM VỤ CỦA BẠN:
                                 WHERE p.status = 1
                             ) t
                             WHERE (category_id IN (5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17))
-                               OR (category_id IN (1, 2, 4) AND rn <= 8)
+                               OR (category_id IN (1, 2, 4, 18, 19, 20) AND rn <= 8)
                             ORDER BY category_id ASC, price DESC");
             }
             $products = $db->resultSet();
