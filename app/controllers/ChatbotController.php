@@ -501,12 +501,15 @@ NHIỆM VỤ CỦA BẠN:
             if (preg_match('/(man hinh|monitor|hien thi|hz)/i', $normMessage)) {
                 $targetCategoryIds[] = 14;
             }
-            // Phụ kiện / Chuột / Bàn phím
-            if (preg_match('/(chuot|phim|ban phim|mouse|keyboard|tai nghe|headset|lot chuot|phu kien)/i', $normMessage)) {
+            // Phụ kiện / Chuột / Bàn phím / Cáp / Kem / Thiết bị mạng
+            if (preg_match('/(chuot|phim|ban phim|mouse|keyboard|tai nghe|headset|lot chuot|phu kien|cap|hdmi|displayport|paste|keo tan nhiet|kem tan nhiet|tua vit|tua vit|vit|day rut|day thit|wifi|mang|lan|router)/i', $normMessage)) {
                 $targetCategoryIds[] = 4;
                 $targetCategoryIds[] = 18;
                 $targetCategoryIds[] = 19;
                 $targetCategoryIds[] = 20;
+                $targetCategoryIds[] = 21;
+                $targetCategoryIds[] = 22;
+                $targetCategoryIds[] = 23;
             }
             // Arm màn hình
             if (preg_match('/(arm|gia do|gia tre|gia do man hinh|gia tre man hinh)/i', $normMessage)) {
@@ -545,7 +548,7 @@ NHIỆM VỤ CỦA BẠN:
                                 WHERE p.status = 1
                             ) t
                             WHERE (category_id IN (5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17))
-                               OR (category_id IN (1, 2, 4, 8, 18, 19, 20) AND rn <= 8)
+                               OR (category_id IN (1, 2, 4, 8, 18, 19, 20, 21, 22, 23) AND rn <= 8)
                             ORDER BY category_id ASC, price DESC");
             }
             $products = $db->resultSet();
