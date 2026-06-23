@@ -62,7 +62,7 @@
                 </a>
                 <?php endforeach; ?>
             </div>
-            <a href="<?php echo URLROOT; ?>/admin/exportOrders?status=<?php echo $data['filters']['status']; ?>&search=<?php echo urlencode($data['filters']['search']); ?>" class="px-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/80 rounded-xl text-[13px] font-bold transition-all flex items-center gap-2 shadow-sm">
+            <a href="<?php echo URLROOT; ?>/admin/exportOrders?status=<?php echo $data['filters']['status']; ?>&search=<?php echo urlencode($data['filters']['search']); ?>" class="px-4 py-2 bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900/50 hover:bg-green-600 hover:text-white dark:hover:bg-green-500 dark:hover:text-white rounded-xl text-[13px] font-bold transition-all flex items-center gap-2 shadow-sm active:scale-[0.98]">
                 <span class="material-symbols-outlined text-[18px]">download</span>
                 <span>Xuất danh sách</span>
             </a>

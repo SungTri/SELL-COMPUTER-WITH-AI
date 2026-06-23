@@ -983,7 +983,7 @@ class AdminController extends Controller {
         $status = $_GET['status'] ?? '';
         $search = $_GET['search'] ?? '';
         
-        // Lấy tất cả dữ liệu (không giới hạn pagination) cho CSV
+        // Lấy tất cả dữ liệu (không giới hạn pagination)
         $orders = $this->adminModel->getAllOrders($status, $search, 100000, 0);
         
         $statusMapping = [
@@ -996,32 +996,168 @@ class AdminController extends Controller {
             'cancelled' => 'Đã hủy'
         ];
 
-        // Đặt header để tải file CSV
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=danh_sach_don_hang_' . date('Y-m-d_H-i') . '.csv');
-        
-        // Mở output stream
-        $output = fopen('php://output', 'w');
-        
-        // Fix lỗi font tiếng Việt (BOM)
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-        
-        // Ghi tiêu đề cột
-        fputcsv($output, ['Mã đơn hàng', 'Khách hàng', 'Ngày đặt', 'Tổng tiền', 'Phương thức thanh toán', 'Trạng thái']);
-        
-        // Ghi dữ liệu
+        // Tính toán các số liệu KPI khái quát
+        $totalOrdersCount = count($orders);
+        $totalRevenueSum = 0;
+        $pendingCount = 0;
+        $processingCount = 0;
+        $completedCount = 0;
+        $cancelledCount = 0;
+
         foreach ($orders as $order) {
-            fputcsv($output, [
-                $order['id'],
-                $order['customer'] ?? 'Khách lẻ',
-                date('d/m/Y H:i', strtotime($order['date'])),
-                $order['total'],
-                $order['payment_method'],
-                $statusMapping[strtolower($order['status'])] ?? 'Không rõ'
-            ]);
+            $orderStatus = strtolower($order['status']);
+            if ($orderStatus !== 'cancelled' && $orderStatus !== 'pending') {
+                $totalRevenueSum += $order['total'];
+            }
+            if ($orderStatus === 'pending') {
+                $pendingCount++;
+            } elseif ($orderStatus === 'processing') {
+                $processingCount++;
+            } elseif ($orderStatus === 'cancelled') {
+                $cancelledCount++;
+            } else {
+                $completedCount++; // delivered, shipped, completed
+            }
+        }
+
+        // Thiết lập header xuất file Excel chuyên nghiệp .xls
+        header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+        header("Content-Disposition: attachment; filename=danh_sach_don_hang_" . date('Y-m-d_H-i') . ".xls");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        
+        // Khởi dựng HTML cấu trúc Excel XML hỗ trợ hiển thị lưới Gridlines và font chữ đẹp mắt
+        echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+        echo '<head>';
+        echo '<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
+        echo '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Danh sách đơn hàng</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->';
+        echo '<style>';
+        echo 'body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #334155; margin: 20px; }';
+        echo 'table { border-collapse: collapse; margin-bottom: 25px; width: 100%; }';
+        echo 'th { background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; text-align: left; font-size: 13px; }';
+        echo 'td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; font-size: 13px; color: #475569; }';
+        echo '.bold { font-weight: bold; }';
+        echo '.title { font-size: 22px; font-weight: bold; color: #0f172a; padding-bottom: 5px; }';
+        echo '.subtitle { font-size: 12px; color: #64748b; padding-bottom: 15px; }';
+        echo '.section-header { background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #3b82f6; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 4px; }';
+        echo '.kpi-table { width: 100%; border: none; margin-bottom: 30px; }';
+        echo '.kpi-card { background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; }';
+        echo '.kpi-title { font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px; }';
+        echo '.kpi-value { font-size: 20px; font-weight: bold; color: #0284c7; }';
+        echo '.zebra-row { background-color: #f8fafc; }';
+        echo '</style>';
+        echo '</head>';
+        echo '<body>';
+        
+        // Tiêu đề lớn
+        echo '<table style="border:none; margin-bottom:10px;">';
+        echo '<tr><td style="border:none; padding:0;" colspan="8"><div class="title" style="font-size: 22px; font-weight: bold; color: #0f172a;">BÁO CÁO DANH SÁCH QUẢN LÝ ĐƠN HÀNG</div></td></tr>';
+        $filterDesc = 'Tất cả trạng thái';
+        if (!empty($status)) {
+            $filterDesc = 'Trạng thái: ' . ($statusMapping[strtolower($status)] ?? $status);
+        }
+        if (!empty($search)) {
+            $filterDesc .= ' | Từ khóa tìm kiếm: "' . htmlspecialchars($search) . '"';
+        }
+        echo '<tr><td style="border:none; padding:0; padding-bottom:15px;" colspan="8"><div class="subtitle" style="font-size: 12px; color: #64748b;">Hệ thống bán hàng TechExpert | Bộ lọc: ' . $filterDesc . ' | Ngày lập: ' . date('d/m/Y H:i:s') . '</div></td></tr>';
+        echo '</table>';
+        
+        // I. KPI Summary Cards
+        echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">I. THÔNG TIN KHÁI QUÁT ĐƠN HÀNG</div>';
+        echo '<table class="kpi-table" style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+        echo '<tr>';
+        echo '<td align="center" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; text-align: center; font-size: 11px; color: #475569; font-weight: bold; text-transform: uppercase; width: 16%;">Tổng số đơn</td>';
+        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 8px 12px; text-align: center; font-size: 11px; color: #0369a1; font-weight: bold; text-transform: uppercase; width: 20%;">Doanh thu lọc được</td>';
+        echo '<td align="center" style="background-color: #fffbeb; border: 1px solid #fef3c7; padding: 8px 12px; text-align: center; font-size: 11px; color: #b45309; font-weight: bold; text-transform: uppercase; width: 16%;">Đơn chờ xử lý</td>';
+        echo '<td align="center" style="background-color: #eff6ff; border: 1px solid #dbeafe; padding: 8px 12px; text-align: center; font-size: 11px; color: #1d4ed8; font-weight: bold; text-transform: uppercase; width: 16%;">Đơn đang xử lý</td>';
+        echo '<td align="center" style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 8px 12px; text-align: center; font-size: 11px; color: #047857; font-weight: bold; text-transform: uppercase; width: 16%;">Đơn thành công</td>';
+        echo '<td align="center" style="background-color: #fef2f2; border: 1px solid #fee2e2; padding: 8px 12px; text-align: center; font-size: 11px; color: #b91c1c; font-weight: bold; text-transform: uppercase; width: 16%;">Đơn đã hủy</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td align="center" style="background-color: #ffffff; border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0f172a;">' . number_format($totalOrdersCount) . '</td>';
+        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0284c7;">' . number_format($totalRevenueSum, 0, ',', '.') . ' ₫</td>';
+        echo '<td align="center" style="background-color: #fffbeb; border: 1px solid #fef3c7; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #d97706;">' . number_format($pendingCount) . '</td>';
+        echo '<td align="center" style="background-color: #eff6ff; border: 1px solid #dbeafe; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #2563eb;">' . number_format($processingCount) . '</td>';
+        echo '<td align="center" style="background-color: #ecfdf5; border: 1px solid #d1fae5; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #059669;">' . number_format($completedCount) . '</td>';
+        echo '<td align="center" style="background-color: #fef2f2; border: 1px solid #fee2e2; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #dc2626;">' . number_format($cancelledCount) . '</td>';
+        echo '</tr>';
+        echo '</table>';
+        
+        // II. Chi tiết danh sách đơn hàng
+        echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">II. CHI TIẾT DANH SÁCH ĐƠN HÀNG</div>';
+        echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+        
+        echo '<tr>';
+        echo '<th align="center" style="width: 10%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Mã đơn hàng</th>';
+        echo '<th align="center" style="width: 10%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Mã người dùng</th>';
+        echo '<th align="center" style="width: 20%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Mã giao dịch</th>';
+        echo '<th align="left" style="width: 20%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Khách hàng</th>';
+        echo '<th align="center" style="width: 14%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Ngày đặt</th>';
+        echo '<th align="right" style="width: 10%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Tổng tiền</th>';
+        echo '<th align="center" style="width: 8%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Thanh toán</th>';
+        echo '<th align="center" style="width: 8%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Trạng thái</th>';
+        echo '</tr>';
+        
+        $zebra = false;
+        foreach ($orders as $order) {
+            $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+            
+            // Khởi tạo mã giao dịch giống view hiển thị
+            $items = $this->adminModel->getOrderItems($order['id']);
+            $firstItem = !empty($items) ? $items[0] : null;
+            $prodInfo = "";
+            if ($firstItem) {
+                $productId = isset($firstItem['product_id']) ? $firstItem['product_id'] : $firstItem['id'];
+                $prodInfo = "P" . $productId . "x" . $firstItem['quantity'];
+                if (count($items) > 1) {
+                    $prodInfo .= "+";
+                }
+            }
+            $userId = $order['user_id'] ?? 0;
+            $orderTime = !empty($order['date']) ? strtotime($order['date']) : time();
+            $timeStr = date('mdHi', $orderTime); // MMDDHHMM
+
+            $transactionCode = "DH" . $order['id'];
+            if ($userId) {
+                $transactionCode .= "-U" . $userId;
+            }
+            if ($prodInfo) {
+                $transactionCode .= "-" . $prodInfo;
+            }
+            $transactionCode .= "-" . $timeStr;
+
+            $statusLower = strtolower($order['status']);
+            $statusText = $statusMapping[$statusLower] ?? 'Không rõ';
+            
+            // Set styles dynamically for order status
+            $statusColor = "#059669"; // Green (delivered, completed, shipped)
+            if ($statusLower === 'pending') {
+                $statusColor = "#d97706"; // Orange
+            } elseif ($statusLower === 'processing') {
+                $statusColor = "#2563eb"; // Blue
+            } elseif ($statusLower === 'shipping') {
+                $statusColor = "#0891b2"; // Cyan
+            } elseif ($statusLower === 'cancelled') {
+                $statusColor = "#dc2626"; // Red
+            }
+
+            echo '<tr>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-weight: bold; font-size: 13px;">#' . $order['id'] . '</td>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-weight: bold; color: #4f46e5; font-family: monospace; font-size: 13px;">U' . $userId . '</td>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-family: monospace; font-size: 13px;">' . htmlspecialchars($transactionCode) . '</td>';
+            echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-weight: bold; color: #1e293b; font-size: 13px;">' . htmlspecialchars($order['customer'] ?? 'Khách lẻ') . '</td>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px;">' . date('d/m/Y H:i', strtotime($order['date'])) . '</td>';
+            echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-weight: bold; color: #0453cd; font-size: 13px;">' . number_format($order['total'], 0, ',', '.') . ' ₫</td>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px;">' . htmlspecialchars($order['payment_method']) . '</td>';
+            echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px; font-weight: bold; color: ' . $statusColor . ';">' . htmlspecialchars($statusText) . '</td>';
+            echo '</tr>';
+            
+            $zebra = !$zebra;
         }
         
-        fclose($output);
+        echo '</table>';
+        echo '</body>';
+        echo '</html>';
         exit();
     }
 
