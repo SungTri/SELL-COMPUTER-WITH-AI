@@ -7,6 +7,11 @@ class FeedbackController extends Controller {
         $this->feedbackModel = $this->model('FeedbackModel');
     }
 
+    public function index() {
+        header('Location: ' . URLROOT . '/page/contact');
+        exit();
+    }
+
     /**
      * Gửi ý kiến góp ý
      */

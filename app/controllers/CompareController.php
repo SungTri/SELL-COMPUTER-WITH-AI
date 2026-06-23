@@ -1,5 +1,7 @@
 <?php
 class CompareController extends Controller {
+    private $productModel;
+
     public function __construct() {
         $this->productModel = $this->model('ProductModel');
         if (!isset($_SESSION['compare_list'])) {

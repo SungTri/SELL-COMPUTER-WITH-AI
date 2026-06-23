@@ -9,6 +9,10 @@ class RecommendController extends Controller {
         $this->categoryModel = $this->model('CategoryModel');
     }
 
+    public function index() {
+        $this->build();
+    }
+
     public function build() {
         // Define components needed for a build
         $components = [

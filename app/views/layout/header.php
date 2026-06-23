@@ -10,7 +10,7 @@
     $metaDesc = $data['meta_description'] ?? ($data['app_settings']['meta_description'] ?? 'Chuyên cung cấp linh kiện máy tính cao cấp');
     $metaKeys = $data['meta_keywords'] ?? ($data['app_settings']['meta_keywords'] ?? 'pc, laptop, linh kien');
     
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $requestUri = strtok($_SERVER['REQUEST_URI'] ?? '', '?');
     $canonicalUrl = $protocol . $host . $requestUri;
