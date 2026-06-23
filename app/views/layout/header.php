@@ -198,7 +198,7 @@
                 <a href="<?php echo URLROOT; ?>" class="group flex items-center gap-3">
                     <div class="relative">
                         <?php if(!empty($data['app_settings']['store_logo'])): ?>
-                            <img src="<?php echo $data['app_settings']['store_logo']; ?>" alt="Logo" class="h-10 w-auto max-w-[160px] object-contain group-hover:scale-105 transition-transform duration-500">
+                            <img src="<?php echo $data['app_settings']['store_logo']; ?>" alt="Logo" class="h-10 w-auto max-w-[160px] rounded-xl object-contain group-hover:scale-105 transition-transform duration-500">
                         <?php else: ?>
                             <div class="w-10 h-10 bg-primary text-on-primary rounded-xl flex items-center justify-center font-bold text-xl group-hover:rotate-[10deg] transition-transform duration-500 shadow-lg shadow-primary/20">
                                 <?php echo substr($data['app_settings']['store_name'] ?? 'M', 0, 1); ?>
