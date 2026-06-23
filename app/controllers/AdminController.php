@@ -1890,6 +1890,12 @@ class AdminController extends Controller {
         // I. KPI Cards
         echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #3b82f6; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">I. DOANH THU & CHỈ SỐ KPI CHÍNH</div>';
         echo '<table class="kpi-table" style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+        echo '<colgroup>';
+        echo '<col style="width: 25%;">';
+        echo '<col style="width: 25%;">';
+        echo '<col style="width: 25%;">';
+        echo '<col style="width: 25%;">';
+        echo '</colgroup>';
         echo '<tr>';
         echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng doanh thu</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($revenue, 0, ',', '.') . ' ₫</div></td>';
         echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng đơn hàng</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($ordersCount, 0, ',', '.') . '</div></td>';
@@ -1901,7 +1907,11 @@ class AdminController extends Controller {
         // II. Phân tích doanh thu theo hãng
         if ($type === 'all' || $type === 'brand') {
             echo '<div class="section-header">II. PHÂN TÍCH DOANH THU THEO HÃNG</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 60%;">';
+            echo '<col style="width: 40%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 50%;">Tên hãng sản xuất</th>';
             echo '<th style="width: 50%;" class="text-right">Doanh thu đạt được</th>';
@@ -1921,7 +1931,11 @@ class AdminController extends Controller {
         // III. Phân tích doanh thu theo Tuần
         if ($type === 'all' || $type === 'week') {
             echo '<div class="section-header">III. DOANH THU THEO TUẦN (8 tuần gần nhất)</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 60%;">';
+            echo '<col style="width: 40%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 50%;">Khoảng thời gian</th>';
             echo '<th style="width: 50%;" class="text-right">Doanh thu</th>';
@@ -1941,7 +1955,11 @@ class AdminController extends Controller {
         // IV. Phân tích doanh thu theo Tháng
         if ($type === 'all' || $type === 'month') {
             echo '<div class="section-header">IV. DOANH THU THEO THÁNG</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 60%;">';
+            echo '<col style="width: 40%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 50%;">Khoảng thời gian</th>';
             echo '<th style="width: 50%;" class="text-right">Doanh thu</th>';
@@ -1961,7 +1979,11 @@ class AdminController extends Controller {
         // V. Phân tích doanh thu theo Năm
         if ($type === 'all' || $type === 'year') {
             echo '<div class="section-header">V. DOANH THU THEO NĂM</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 60%;">';
+            echo '<col style="width: 40%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 50%;">Khoảng thời gian</th>';
             echo '<th style="width: 50%;" class="text-right">Doanh thu</th>';
@@ -1981,7 +2003,13 @@ class AdminController extends Controller {
         // VI. Top Selling Products
         if ($type === 'all' || $type === 'product') {
             echo '<div class="section-header">VI. TOP 50 SẢN PHẨM BÁN CHẠY NHẤT</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 12%;">';
+            echo '<col style="width: 53%;">';
+            echo '<col style="width: 20%;">';
+            echo '<col style="width: 15%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 15%;" class="text-center">Mã sản phẩm</th>';
             echo '<th style="width: 50%;">Tên sản phẩm</th>';
@@ -2006,7 +2034,13 @@ class AdminController extends Controller {
         // VII. Top Customers
         if ($type === 'all' || $type === 'customer') {
             echo '<div class="section-header">VII. TOP 50 KHÁCH HÀNG TIÊU BIỂU</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 25%;">';
+            echo '<col style="width: 40%;">';
+            echo '<col style="width: 15%;">';
+            echo '<col style="width: 20%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 30%;">Họ tên khách hàng</th>';
             echo '<th style="width: 40%;">Địa chỉ Email</th>';
@@ -2031,7 +2065,13 @@ class AdminController extends Controller {
         // VIII. Low Stock
         if ($type === 'all' || $type === 'low_stock') {
             echo '<div class="section-header">VIII. SẢN PHẨM SẮP HẾT HÀNG (Tồn kho dưới 5)</div>';
-            echo '<table style="width: 100%;">';
+            echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
+            echo '<colgroup>';
+            echo '<col style="width: 12%;">';
+            echo '<col style="width: 53%;">';
+            echo '<col style="width: 20%;">';
+            echo '<col style="width: 15%;">';
+            echo '</colgroup>';
             echo '<tr>';
             echo '<th style="width: 15%;" class="text-center">Mã sản phẩm</th>';
             echo '<th style="width: 50%;">Tên sản phẩm</th>';
