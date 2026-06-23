@@ -8,15 +8,15 @@
         <h1 class="text-h2 font-bold text-slate-800 dark:text-white">Quản lý Sản phẩm</h1>
         
         <div class="flex items-center gap-8">
-            <form method="GET" action="<?php echo URLROOT; ?>/admin/products" class="relative w-96">
+            <form method="GET" action="<?php echo URLROOT; ?>/admin/products" class="w-96 flex items-center bg-slate-100 dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-800/80 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
                 <?php if(!empty($data['filters']['category'])): ?>
                     <input type="hidden" name="category" value="<?php echo $data['filters']['category']; ?>">
                 <?php endif; ?>
                 <?php if(!empty($data['filters']['brand'])): ?>
                     <input type="hidden" name="brand" value="<?php echo $data['filters']['brand']; ?>">
                 <?php endif; ?>
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500">search</span>
-                <input name="search" value="<?php echo $data['filters']['search']; ?>" class="w-full pl-12 pr-4 py-2.5 bg-slate-100 dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-800 rounded-xl text-body-md focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/20 transition-all outline-none" placeholder="Tìm tên sản phẩm, mã ID..." type="text"/>
+                <span class="material-symbols-outlined text-slate-400 dark:text-zinc-500 text-[20px] select-none flex-shrink-0">search</span>
+                <input name="search" value="<?php echo $data['filters']['search']; ?>" class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-slate-400/70 ml-2 py-0" placeholder="Tìm tên sản phẩm, mã ID..." type="text"/>
             </form>
             <div class="flex items-center gap-5 border-l border-slate-200 dark:border-zinc-850 pl-8 ml-2">
                 <!-- Notifications -->
@@ -44,9 +44,9 @@
                 <div class="flex items-center gap-4">
                     <form action="<?php echo URLROOT; ?>/admin/products" method="GET" id="filterForm" class="flex items-center gap-4">
                         <!-- Search (Duplicate in form for sync) -->
-                        <div class="relative w-72">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 text-[20px]">search</span>
-                            <input name="search" value="<?php echo $data['filters']['search']; ?>" class="w-full pl-11 pr-4 py-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl text-[14px] focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" placeholder="Tìm tên, mã..." type="text"/>
+                        <div class="w-72 flex items-center bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+                            <span class="material-symbols-outlined text-slate-400 dark:text-zinc-500 text-[18px] select-none flex-shrink-0">search</span>
+                            <input name="search" value="<?php echo $data['filters']['search']; ?>" class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-slate-400/70 ml-2 py-0" placeholder="Tìm tên, mã..." type="text"/>
                         </div>
 
                         <!-- Category Filter -->
