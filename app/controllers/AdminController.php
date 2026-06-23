@@ -2889,8 +2889,8 @@ class AdminController extends Controller {
                                 <tr>
                                     <td class="text-center">' . $idx++ . '</td>
                                     <td class="bold">' . htmlspecialchars($p['name']) . '</td>
-                                    <td class="text-right">' . number_format($p['total_revenue'], 0, ',', '.') . ' đ</td>
-                                    <td class="text-center">' . $p['total_qty'] . '</td>
+                                    <td class="text-right">' . number_format($p['sold_count'] * $p['price'], 0, ',', '.') . ' đ</td>
+                                    <td class="text-center">' . $p['sold_count'] . '</td>
                                 </tr>';
             }
             if (empty($topProducts)) {
