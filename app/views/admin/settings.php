@@ -149,12 +149,13 @@
                     <div class="p-8 text-center">
                         <div class="w-full aspect-video bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center mb-6 overflow-hidden group relative">
                             <?php if (!empty($data['settings']['store_logo'])): ?>
-                                <img src="<?php echo $data['settings']['store_logo']; ?>" alt="Logo" class="max-w-full max-h-full object-contain">
+                                <img id="logoPreviewImg" src="<?php echo $data['settings']['store_logo']; ?>" alt="Logo" class="max-w-full max-h-full object-contain">
                             <?php else: ?>
-                                <div class="text-gray-400">
+                                <div id="logoPlaceholder" class="text-gray-400">
                                     <span class="material-symbols-outlined text-4xl mb-2">add_photo_alternate</span>
                                     <p class="text-sm">Chưa có logo</p>
                                 </div>
+                                <img id="logoPreviewImg" class="max-w-full max-h-full object-contain hidden" alt="Logo">
                             <?php endif; ?>
                             <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <label for="logo_input" class="bg-white text-gray-800 px-4 py-2 rounded-lg font-bold text-sm cursor-pointer hover:bg-gray-100 transition-colors">Thay đổi</label>
@@ -177,6 +178,27 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.getElementById('logo_input').addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('logoPreviewImg');
+                const placeholder = document.getElementById('logoPlaceholder');
+                if (img) {
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                }
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
     </div>
 </main>
