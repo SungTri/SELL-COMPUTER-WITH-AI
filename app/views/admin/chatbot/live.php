@@ -4,19 +4,18 @@
 <!-- Main Content Area with overflow-hidden for chat application layout -->
 <main class="flex-1 w-full flex flex-col h-screen overflow-hidden bg-[#F8F9FB]">
     <!-- Header -->
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 shrink-0">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 shrink-0 z-40">
         <h1 class="text-h2 font-bold text-primary">Hỗ trợ trực tuyến</h1>
         
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-4 border-l border-outline-variant pl-6">
-                <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
+        <div class="flex items-center gap-8">
+            <!-- Notifications -->
+            <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
 
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
-                    <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
-                    <div class="text-right">
-                        <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
-                        <p class="text-[12px] text-on-surface-variant">Quản trị viên</p>
-                    </div>
+            <div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
+                <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
+                <div class="text-right">
+                    <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
+                    <p class="text-[12px] text-on-surface-variant">Quản trị viên</p>
                 </div>
             </div>
         </div>
@@ -42,9 +41,11 @@
             </div>
 
             <!-- Search Session -->
-            <div class="p-4 border-b border-outline-variant relative">
-                <span class="material-symbols-outlined absolute left-7 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input type="text" id="sessionSearch" oninput="filterSessions()" placeholder="Tìm kiếm khách hàng..." class="w-full pl-10 pr-4 py-2.5 bg-[#F8F9FB] border border-[#E1E3E6] rounded-xl text-sm outline-none focus:border-primary transition-all"/>
+            <div class="p-4 border-b border-outline-variant">
+                <div class="w-full flex items-center bg-[#F8F9FB] dark:bg-zinc-950 border border-[#E1E3E6] dark:border-zinc-800 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-secondary/20 transition-all">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[20px] select-none flex-shrink-0">search</span>
+                    <input type="text" id="sessionSearch" oninput="filterSessions()" placeholder="Tìm kiếm khách hàng..." class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 py-0"/>
+                </div>
             </div>
 
             <!-- Session List Scroll Container -->

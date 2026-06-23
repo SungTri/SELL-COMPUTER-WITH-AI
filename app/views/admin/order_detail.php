@@ -4,7 +4,7 @@
 <!-- Main Content Area -->
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
     <!-- Header -->
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10 print:hidden">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40 print:hidden">
         <div class="flex items-center gap-4">
             <a href="<?php echo URLROOT; ?>/admin/orders" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-all">
                 <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
@@ -12,18 +12,26 @@
             <h1 class="text-h2 font-bold text-primary">Chi tiết Đơn hàng #<?php echo $data['order']['id']; ?></h1>
         </div>
         
-        <div class="flex items-center gap-4">
-            <button onclick="exportInvoicePDF()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[14px] font-bold hover:bg-red-600 hover:text-white transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Xuất PDF
-            </button>
-            <button onclick="window.print()" class="px-4 py-2 bg-white border border-outline-variant rounded-lg text-[14px] font-bold hover:bg-surface-container transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">print</span> In đơn hàng
-            </button>
-            <div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
-                <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
-                <div class="text-right">
-                    <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
-                    <p class="text-[12px] text-on-surface-variant">Quản trị viên</p>
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-4">
+                <button onclick="exportInvoicePDF()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[14px] font-bold hover:bg-red-600 hover:text-white transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Xuất PDF
+                </button>
+                <button onclick="window.print()" class="px-4 py-2 bg-white border border-outline-variant rounded-lg text-[14px] font-bold hover:bg-surface-container transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">print</span> In đơn hàng
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-5 border-l border-outline-variant pl-8 ml-2">
+                <!-- Notifications -->
+                <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
+
+                <div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
+                    <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
+                    <div class="text-right">
+                        <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
+                        <p class="text-[12px] text-on-surface-variant">Quản trị viên</p>
+                    </div>
                 </div>
             </div>
         </div>

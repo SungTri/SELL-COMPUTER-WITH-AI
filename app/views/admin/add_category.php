@@ -2,7 +2,7 @@
 <?php require_once VIEWS . '/layout/admin_sidebar.php'; ?>
 
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <div class="flex items-center gap-4">
             <a href="<?php echo URLROOT; ?>/admin/categories" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-all">
                 <span class="material-symbols-outlined">arrow_back</span>

@@ -2,16 +2,28 @@
 <?php require_once VIEWS . '/layout/admin_sidebar.php'; ?>
 
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <div>
             <h1 class="text-h2 font-bold text-primary">Thư viện ảnh</h1>
             <p class="text-[13px] text-on-surface-variant">Quản lý, tải lên và kiểm tra mức độ sử dụng của các tệp đa phương tiện</p>
         </div>
         
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-8">
             <span class="px-4 py-2 bg-primary/10 text-primary rounded-lg text-[13px] font-bold">
                 Tổng số tệp: <span id="total-count-badge"><?php echo count($data['files']); ?></span>
             </span>
+            <div class="flex items-center gap-5 border-l border-outline-variant pl-8 ml-2">
+                <!-- Notifications -->
+                <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
+
+                <div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
+                    <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
+                    <div class="text-right">
+                        <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
+                        <p class="text-[12px] text-on-surface-variant">Quản trị viên</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -64,13 +76,13 @@
                     </div>
 
                     <!-- Search -->
-                    <form method="GET" action="" class="relative w-full sm:w-80 flex gap-2">
+                    <form method="GET" action="" class="w-full sm:w-80 flex items-center bg-[#F8F9FB] dark:bg-zinc-950 border border-outline-variant dark:border-zinc-800 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-primary/20 transition-all relative">
                         <input type="hidden" name="category" value="<?php echo htmlspecialchars($data['category']); ?>">
-                        <span class="material-symbols-outlined absolute left-3 top-3 text-[20px] text-on-surface-variant">search</span>
-                        <input type="text" name="search" value="<?php echo htmlspecialchars($data['search']); ?>" placeholder="Tìm kiếm tên ảnh..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F8F9FB] border border-outline-variant text-[14px] text-primary placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[20px] select-none flex-shrink-0">search</span>
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($data['search']); ?>" placeholder="Tìm kiếm tên ảnh..." class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 py-0 pr-6">
                         <?php if(!empty($data['search'])): ?>
-                            <a href="?category=<?php echo htmlspecialchars($data['category']); ?>" class="absolute right-3 top-3 text-on-surface-variant hover:text-primary">
-                                <span class="material-symbols-outlined text-[20px]">close</span>
+                            <a href="?category=<?php echo htmlspecialchars($data['category']); ?>" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary flex items-center">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
                             </a>
                         <?php endif; ?>
                     </form>
