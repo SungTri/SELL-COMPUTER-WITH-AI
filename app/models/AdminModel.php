@@ -8,7 +8,7 @@ class AdminModel {
     }
 
     public function getTotalRevenue($startDate = null, $endDate = null) {
-        $sql = "SELECT SUM(total_amount) as total FROM orders WHERE order_status != 'cancelled'";
+        $sql = "SELECT SUM(total_amount) as total FROM orders WHERE order_status NOT IN ('cancelled', 'pending')";
         if ($startDate && $endDate) {
             $sql .= " AND ordered_at BETWEEN :start AND :end";
         }
@@ -22,7 +22,7 @@ class AdminModel {
     }
 
     public function getTotalOrders($startDate = null, $endDate = null) {
-        $sql = "SELECT COUNT(*) as total FROM orders WHERE 1=1";
+        $sql = "SELECT COUNT(*) as total FROM orders WHERE order_status NOT IN ('cancelled', 'pending')";
         if ($startDate && $endDate) {
             $sql .= " AND ordered_at BETWEEN :start AND :end";
         }
@@ -690,7 +690,7 @@ class AdminModel {
             SELECT SUM(o.total_amount) as total 
             FROM orders o
             JOIN customers c ON o.customer_id = c.id
-            WHERE c.user_id = :user_id AND o.order_status != 'cancelled'
+            WHERE c.user_id = :user_id AND o.order_status NOT IN ('cancelled', 'pending')
         ");
         $this->db->bind(':user_id', $userId);
         $result = $this->db->single();
@@ -809,7 +809,7 @@ class AdminModel {
                 DATE_FORMAT(ordered_at, '%m/%Y') as month,
                 SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled'
+            WHERE order_status NOT IN ('cancelled', 'pending')
             GROUP BY DATE_FORMAT(ordered_at, '%m/%Y')
             ORDER BY ordered_at DESC
             LIMIT 6
@@ -849,7 +849,7 @@ class AdminModel {
                 DATE_FORMAT(ordered_at, :format) as label,
                 SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled' 
+            WHERE order_status NOT IN ('cancelled', 'pending') 
             AND ordered_at BETWEEN :start AND :end
             GROUP BY label
             ORDER BY ordered_at ASC
@@ -1041,7 +1041,7 @@ class AdminModel {
         $this->db->query("
             SELECT SUM(total_amount) as total 
             FROM orders 
-            WHERE order_status != 'cancelled' 
+            WHERE order_status NOT IN ('cancelled', 'pending') 
             AND DATE(ordered_at) = CURRENT_DATE()
         ");
         $result = $this->db->single();
@@ -1057,7 +1057,7 @@ class AdminModel {
                 FROM order_items oi
                 JOIN products p ON oi.product_id = p.id
                 JOIN orders o ON oi.order_id = o.id
-                WHERE o.order_status != 'cancelled'";
+                WHERE o.order_status NOT IN ('cancelled', 'pending')";
         if ($startDate && $endDate) {
             $sql .= " AND o.ordered_at BETWEEN :start AND :end";
         }
@@ -1080,7 +1080,7 @@ class AdminModel {
         $this->db->query("
             SELECT COUNT(*) as orders, SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled' 
+            WHERE order_status NOT IN ('cancelled', 'pending') 
             AND MONTH(ordered_at) = MONTH(CURRENT_DATE()) 
             AND YEAR(ordered_at) = YEAR(CURRENT_DATE())
         ");
@@ -1090,7 +1090,7 @@ class AdminModel {
         $this->db->query("
             SELECT COUNT(*) as orders, SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled' 
+            WHERE order_status NOT IN ('cancelled', 'pending') 
             AND MONTH(ordered_at) = MONTH(STR_TO_DATE(DATE_FORMAT(NOW() ,'%Y-%m-01'),'%Y-%m-%d') - INTERVAL 1 MONTH)
             AND YEAR(ordered_at) = YEAR(STR_TO_DATE(DATE_FORMAT(NOW() ,'%Y-%m-01'),'%Y-%m-%d') - INTERVAL 1 MONTH)
         ");
@@ -1129,7 +1129,7 @@ class AdminModel {
             FROM customers c
             JOIN users u ON c.user_id = u.id
             JOIN orders o ON c.id = o.customer_id
-            WHERE o.order_status != 'cancelled'";
+            WHERE o.order_status NOT IN ('cancelled', 'pending')";
         if ($startDate && $endDate) {
             $sql .= " AND o.ordered_at BETWEEN :start AND :end";
         }
@@ -1151,7 +1151,7 @@ class AdminModel {
         $this->db->query("
             SELECT DATE(ordered_at) as date, SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled' AND ordered_at >= DATE_SUB(CURRENT_DATE(), INTERVAL :days DAY)
+            WHERE order_status NOT IN ('cancelled', 'pending') AND ordered_at >= DATE_SUB(CURRENT_DATE(), INTERVAL :days DAY)
             GROUP BY DATE(ordered_at)
             ORDER BY date ASC
         ");
@@ -1178,7 +1178,7 @@ class AdminModel {
             JOIN products p ON oi.product_id = p.id
             JOIN brands b ON p.brand_id = b.id
             JOIN orders o ON oi.order_id = o.id
-            WHERE o.order_status != 'cancelled'";
+            WHERE o.order_status NOT IN ('cancelled', 'pending')";
         if ($startDate && $endDate) {
             $sql .= " AND o.ordered_at BETWEEN :start AND :end";
         }
@@ -1201,7 +1201,7 @@ class AdminModel {
                 DATE_SUB(DATE(ordered_at), INTERVAL WEEKDAY(ordered_at) DAY) as week_start,
                 SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled' 
+            WHERE order_status NOT IN ('cancelled', 'pending') 
             AND ordered_at >= DATE_SUB(CURRENT_DATE(), INTERVAL :weeks WEEK)
             GROUP BY week_label
             ORDER BY week_start ASC
@@ -1301,7 +1301,7 @@ class AdminModel {
                 DATE_FORMAT(ordered_at, '%Y') as year,
                 SUM(total_amount) as revenue
             FROM orders
-            WHERE order_status != 'cancelled'
+            WHERE order_status NOT IN ('cancelled', 'pending')
             GROUP BY YEAR(ordered_at)
             ORDER BY year DESC
         ");
