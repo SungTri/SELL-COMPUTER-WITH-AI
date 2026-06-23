@@ -2024,40 +2024,36 @@ class AdminController extends Controller {
         echo '</table>';
         
         // I. KPI Cards
-        echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #3b82f6; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">I. DOANH THU & CHỈ SỐ KPI CHÍNH</div>';
+        echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">I. DOANH THU & CHỈ SỐ KPI CHÍNH</div>';
         echo '<table class="kpi-table" style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-        echo '<colgroup>';
-        echo '<col style="width: 25%;">';
-        echo '<col style="width: 25%;">';
-        echo '<col style="width: 25%;">';
-        echo '<col style="width: 25%;">';
-        echo '</colgroup>';
         echo '<tr>';
-        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng doanh thu</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($revenue, 0, ',', '.') . ' ₫</div></td>';
-        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng đơn hàng</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($ordersCount, 0, ',', '.') . '</div></td>';
-        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng sản phẩm</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($inventoryCount, 0, ',', '.') . '</div></td>';
-        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng khách hàng</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($usersCount, 0, ',', '.') . '</div></td>';
+        echo '<td align="center" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; text-align: center; font-size: 11px; color: #475569; font-weight: bold; text-transform: uppercase; width: 25%;">Tổng doanh thu</td>';
+        echo '<td align="center" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; text-align: center; font-size: 11px; color: #475569; font-weight: bold; text-transform: uppercase; width: 25%;">Tổng đơn hàng</td>';
+        echo '<td align="center" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; text-align: center; font-size: 11px; color: #475569; font-weight: bold; text-transform: uppercase; width: 25%;">Tổng sản phẩm</td>';
+        echo '<td align="center" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; text-align: center; font-size: 11px; color: #475569; font-weight: bold; text-transform: uppercase; width: 25%;">Tổng khách hàng</td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<td align="center" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0284c7;">' . number_format($revenue, 0, ',', '.') . ' ₫</td>';
+        echo '<td align="center" style="background-color: #ffffff; border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0f172a;">' . number_format($ordersCount, 0, ',', '.') . '</td>';
+        echo '<td align="center" style="background-color: #ffffff; border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0f172a;">' . number_format($inventoryCount, 0, ',', '.') . '</td>';
+        echo '<td align="center" style="background-color: #ffffff; border: 1px solid #cbd5e1; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #0f172a;">' . number_format($usersCount, 0, ',', '.') . '</td>';
         echo '</tr>';
         echo '</table>';
         
         // II. Phân tích doanh thu theo hãng
         if ($type === 'all' || $type === 'brand') {
-            echo '<div class="section-header">II. PHÂN TÍCH DOANH THU THEO HÃNG</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">II. PHÂN TÍCH DOANH THU THEO HÃNG</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 60%;">';
-            echo '<col style="width: 40%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="left" style="width: 60%; text-align: left;">Tên hãng sản xuất</th>';
-            echo '<th align="right" style="width: 40%; text-align: right;">Doanh thu đạt được</th>';
+            echo '<th align="left" style="width: 60%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Tên hãng sản xuất</th>';
+            echo '<th align="right" style="width: 40%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Doanh thu đạt được</th>';
             echo '</tr>';
             $zebra = false;
             foreach ($revenueByBrand as $brand) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="left" style="text-align: left;">' . htmlspecialchars($brand['label']) . '</td>';
-                echo '<td align="right" class="bold" style="text-align: right; color: #0453cd;">' . number_format($brand['value'], 0, ',', '.') . ' ₫</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px;">' . htmlspecialchars($brand['label']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-weight: bold; color: #0453cd; font-size: 13px;">' . number_format($brand['value'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2066,22 +2062,18 @@ class AdminController extends Controller {
         
         // III. Phân tích doanh thu theo Tuần
         if ($type === 'all' || $type === 'week') {
-            echo '<div class="section-header">III. DOANH THU THEO TUẦN (8 tuần gần nhất)</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">III. DOANH THU THEO TUẦN (8 tuần gần nhất)</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 60%;">';
-            echo '<col style="width: 40%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="left" style="width: 60%; text-align: left;">Khoảng thời gian</th>';
-            echo '<th align="right" style="width: 40%; text-align: right;">Doanh thu</th>';
+            echo '<th align="left" style="width: 60%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Khoảng thời gian</th>';
+            echo '<th align="right" style="width: 40%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Doanh thu</th>';
             echo '</tr>';
             $zebra = false;
             foreach ($revenueByWeek as $week) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="left" style="text-align: left;">' . htmlspecialchars($week['label']) . '</td>';
-                echo '<td align="right" class="bold" style="text-align: right;">' . number_format($week['revenue'], 0, ',', '.') . ' ₫</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px;">' . htmlspecialchars($week['label']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-weight: bold; color: #0453cd; font-size: 13px;">' . number_format($week['revenue'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2090,22 +2082,18 @@ class AdminController extends Controller {
         
         // IV. Phân tích doanh thu theo Tháng
         if ($type === 'all' || $type === 'month') {
-            echo '<div class="section-header">IV. DOANH THU THEO THÁNG</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">IV. DOANH THU THEO THÁNG</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 60%;">';
-            echo '<col style="width: 40%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="left" style="width: 60%; text-align: left;">Khoảng thời gian</th>';
-            echo '<th align="right" style="width: 40%; text-align: right;">Doanh thu</th>';
+            echo '<th align="left" style="width: 60%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Khoảng thời gian</th>';
+            echo '<th align="right" style="width: 40%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Doanh thu</th>';
             echo '</tr>';
             $zebra = false;
             foreach ($revenueByMonth as $month) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="left" style="text-align: left;">Tháng ' . htmlspecialchars($month['month']) . '</td>';
-                echo '<td align="right" class="bold" style="text-align: right;">' . number_format($month['revenue'], 0, ',', '.') . ' ₫</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px;">Tháng ' . htmlspecialchars($month['month']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-weight: bold; color: #0453cd; font-size: 13px;">' . number_format($month['revenue'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2114,22 +2102,18 @@ class AdminController extends Controller {
         
         // V. Phân tích doanh thu theo Năm
         if ($type === 'all' || $type === 'year') {
-            echo '<div class="section-header">V. DOANH THU THEO NĂM</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">V. DOANH THU THEO NĂM</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 60%;">';
-            echo '<col style="width: 40%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="left" style="width: 60%; text-align: left;">Khoảng thời gian</th>';
-            echo '<th align="right" style="width: 40%; text-align: right;">Doanh thu</th>';
+            echo '<th align="left" style="width: 60%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Khoảng thời gian</th>';
+            echo '<th align="right" style="width: 40%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Doanh thu</th>';
             echo '</tr>';
             $zebra = false;
             foreach ($revenueByYear as $year) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="left" style="text-align: left;">Năm ' . htmlspecialchars($year['year']) . '</td>';
-                echo '<td align="right" class="bold" style="text-align: right;">' . number_format($year['revenue'], 0, ',', '.') . ' ₫</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px;">Năm ' . htmlspecialchars($year['year']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-weight: bold; color: #0453cd; font-size: 13px;">' . number_format($year['revenue'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2138,29 +2122,23 @@ class AdminController extends Controller {
         
         // VI. Top Selling Products
         if ($type === 'all' || $type === 'product') {
-            echo '<div class="section-header">VI. TOP 50 SẢN PHẨM BÁN CHẠY NHẤT</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">VI. TOP 50 SẢN PHẨM BÁN CHẠY NHẤT</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 15%;">';
-            echo '<col style="width: 50%;">';
-            echo '<col style="width: 20%;">';
-            echo '<col style="width: 15%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="center" style="width: 15%; text-align: center;">Mã sản phẩm</th>';
-            echo '<th align="left" style="width: 50%; text-align: left;">Tên sản phẩm</th>';
-            echo '<th align="right" style="width: 20%; text-align: right;">Đơn giá</th>';
-            echo '<th align="center" style="width: 15%; text-align: center;">Số lượng bán ra</th>';
+            echo '<th align="center" style="width: 15%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Mã sản phẩm</th>';
+            echo '<th align="left" style="width: 50%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Tên sản phẩm</th>';
+            echo '<th align="right" style="width: 20%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Đơn giá</th>';
+            echo '<th align="center" style="width: 15%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Số lượng bán ra</th>';
             echo '</tr>';
             
             $zebra = false;
             foreach ($topProducts as $prod) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="center" style="text-align: center;">' . htmlspecialchars($prod['id']) . '</td>';
-                echo '<td align="left" class="bold" style="color: #111827; text-align: left;">' . htmlspecialchars($prod['name']) . '</td>';
-                echo '<td align="right" style="text-align: right;">' . number_format($prod['price'], 0, ',', '.') . ' ₫</td>';
-                echo '<td align="center" class="bold" style="text-align: center; color: #0453cd;">' . htmlspecialchars($prod['sold_count']) . '</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px;">' . htmlspecialchars($prod['id']) . '</td>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-weight: bold; color: #1e293b; font-size: 13px;">' . htmlspecialchars($prod['name']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-size: 13px;">' . number_format($prod['price'], 0, ',', '.') . ' ₫</td>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-weight: bold; color: #0453cd; font-size: 13px;">' . htmlspecialchars($prod['sold_count']) . '</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2169,29 +2147,23 @@ class AdminController extends Controller {
         
         // VII. Top Customers
         if ($type === 'all' || $type === 'customer') {
-            echo '<div class="section-header">VII. TOP 50 KHÁCH HÀNG TIÊU BIỂU</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">VII. TOP 50 KHÁCH HÀNG TIÊU BIỂU</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 25%;">';
-            echo '<col style="width: 40%;">';
-            echo '<col style="width: 15%;">';
-            echo '<col style="width: 20%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="left" style="width: 25%; text-align: left;">Họ tên khách hàng</th>';
-            echo '<th align="left" style="width: 40%; text-align: left;">Địa chỉ Email</th>';
-            echo '<th align="center" style="width: 15%; text-align: center;">Số đơn thành công</th>';
-            echo '<th align="center" style="width: 20%; text-align: center;">Tổng chi tiêu</th>';
+            echo '<th align="left" style="width: 25%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Họ tên khách hàng</th>';
+            echo '<th align="left" style="width: 40%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Địa chỉ Email</th>';
+            echo '<th align="center" style="width: 15%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Số đơn thành công</th>';
+            echo '<th align="center" style="width: 20%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Tổng chi tiêu</th>';
             echo '</tr>';
             
             $zebra = false;
             foreach ($topCustomers as $cust) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="left" class="bold" style="text-align: left;">' . htmlspecialchars($cust['name']) . '</td>';
-                echo '<td align="left" style="text-align: left;">' . htmlspecialchars($cust['email']) . '</td>';
-                echo '<td align="center" style="text-align: center;">' . htmlspecialchars($cust['order_count']) . '</td>';
-                echo '<td align="center" class="bold" style="text-align: center; color: #059669;">' . number_format($cust['total_spent'], 0, ',', '.') . ' ₫</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-weight: bold; color: #1e293b; font-size: 13px;">' . htmlspecialchars($cust['name']) . '</td>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px;">' . htmlspecialchars($cust['email']) . '</td>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px;">' . htmlspecialchars($cust['order_count']) . '</td>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-weight: bold; color: #059669; font-size: 13px;">' . number_format($cust['total_spent'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2200,29 +2172,23 @@ class AdminController extends Controller {
         
         // VIII. Low Stock
         if ($type === 'all' || $type === 'low_stock') {
-            echo '<div class="section-header">VIII. SẢN PHẨM SẮP HẾT HÀNG (Tồn kho dưới 5)</div>';
+            echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #16a34a; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">VIII. SẢN PHẨM SẮP HẾT HÀNG (Tồn kho dưới 5)</div>';
             echo '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
-            echo '<colgroup>';
-            echo '<col style="width: 15%;">';
-            echo '<col style="width: 50%;">';
-            echo '<col style="width: 20%;">';
-            echo '<col style="width: 15%;">';
-            echo '</colgroup>';
             echo '<tr>';
-            echo '<th align="center" style="width: 15%; text-align: center;">Mã sản phẩm</th>';
-            echo '<th align="left" style="width: 50%; text-align: left;">Tên sản phẩm</th>';
-            echo '<th align="right" style="width: 20%; text-align: right;">Đơn giá</th>';
-            echo '<th align="center" style="width: 15%; text-align: center;">Số lượng tồn kho</th>';
+            echo '<th align="center" style="width: 15%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Mã sản phẩm</th>';
+            echo '<th align="left" style="width: 50%; text-align: left; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Tên sản phẩm</th>';
+            echo '<th align="right" style="width: 20%; text-align: right; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Đơn giá</th>';
+            echo '<th align="center" style="width: 15%; text-align: center; background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; font-size: 13px;">Số lượng tồn kho</th>';
             echo '</tr>';
             
             $zebra = false;
             foreach ($lowStockProducts as $low) {
-                $class = $zebra ? ' class="zebra-row"' : '';
-                echo '<tr' . $class . '>';
-                echo '<td align="center" style="text-align: center;">' . htmlspecialchars($low['id']) . '</td>';
-                echo '<td align="left" style="color: #374151; text-align: left;">' . htmlspecialchars($low['name']) . '</td>';
-                echo '<td align="right" style="text-align: right;">' . number_format($low['price'], 0, ',', '.') . ' ₫</td>';
-                echo '<td align="center" class="alert-stock" style="text-align: center;">' . htmlspecialchars($low['stock']) . ' sản phẩm</td>';
+                $zebraBg = $zebra ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+                echo '<tr>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px;">' . htmlspecialchars($low['id']) . '</td>';
+                echo '<td align="left" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; font-size: 13px; color: #374151;">' . htmlspecialchars($low['name']) . '</td>';
+                echo '<td align="right" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: right; font-size: 13px;">' . number_format($low['price'], 0, ',', '.') . ' ₫</td>';
+                echo '<td align="center" style="' . $zebraBg . ' border: 1px solid #cbd5e1; padding: 10px 12px; text-align: center; font-size: 13px; color: #991b1b; font-weight: bold; background-color: #fef2f2;">' . htmlspecialchars($low['stock']) . ' sản phẩm</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
