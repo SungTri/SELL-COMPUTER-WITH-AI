@@ -579,13 +579,14 @@ class AdminModel {
 
     public function addVoucher($data) {
         $this->db->query("
-            INSERT INTO vouchers (code, description, discount_percentage, discount_amount, start_date, end_date, status) 
-            VALUES (:code, :description, :discount_percentage, :discount_amount, :start_date, :end_date, :status)
+            INSERT INTO vouchers (code, description, discount_percentage, discount_amount, is_freeship, start_date, end_date, status) 
+            VALUES (:code, :description, :discount_percentage, :discount_amount, :is_freeship, :start_date, :end_date, :status)
         ");
         $this->db->bind(':code', $data['code']);
         $this->db->bind(':description', $data['description']);
         $this->db->bind(':discount_percentage', $data['discount_percentage']);
         $this->db->bind(':discount_amount', $data['discount_amount']);
+        $this->db->bind(':is_freeship', $data['is_freeship'] ?? 0);
         $this->db->bind(':start_date', $data['start_date']);
         $this->db->bind(':end_date', $data['end_date']);
         $this->db->bind(':status', $data['status']);
@@ -599,6 +600,7 @@ class AdminModel {
                 description = :description, 
                 discount_percentage = :discount_percentage, 
                 discount_amount = :discount_amount, 
+                is_freeship = :is_freeship, 
                 start_date = :start_date, 
                 end_date = :end_date, 
                 status = :status 
@@ -608,6 +610,7 @@ class AdminModel {
         $this->db->bind(':description', $data['description']);
         $this->db->bind(':discount_percentage', $data['discount_percentage']);
         $this->db->bind(':discount_amount', $data['discount_amount']);
+        $this->db->bind(':is_freeship', $data['is_freeship'] ?? 0);
         $this->db->bind(':start_date', $data['start_date']);
         $this->db->bind(':end_date', $data['end_date']);
         $this->db->bind(':status', $data['status']);

@@ -79,11 +79,17 @@
                                 </td>
                                 <td class="px-8 py-5">
                                     <div class="text-[14px] font-bold text-on-surface">
-                                        <?php 
-                                            if ($v['discount_percentage']) echo $v['discount_percentage'] . '%';
-                                            if ($v['discount_percentage'] && $v['discount_amount']) echo ' + ';
-                                            if ($v['discount_amount']) echo number_format($v['discount_amount'], 0, ',', '.') . 'đ';
-                                        ?>
+                                        <?php if (!empty($v['is_freeship']) && $v['is_freeship'] == 1): ?>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-bold border border-emerald-200">
+                                                <span class="material-symbols-outlined text-[16px]">local_shipping</span> Miễn phí vận chuyển
+                                            </span>
+                                        <?php else: ?>
+                                            <?php 
+                                                if ($v['discount_percentage']) echo $v['discount_percentage'] . '%';
+                                                if ($v['discount_percentage'] && $v['discount_amount']) echo ' + ';
+                                                if ($v['discount_amount']) echo number_format($v['discount_amount'], 0, ',', '.') . 'đ';
+                                            ?>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                                 <td class="px-8 py-5">

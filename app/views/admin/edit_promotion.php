@@ -47,6 +47,30 @@
 
                 <section class="bg-white p-8 rounded-2xl border border-outline-variant shadow-sm space-y-6">
                     <h2 class="text-h3 font-bold text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined">category</span> Loại khuyến mãi
+                    </h2>
+                    
+                    <div class="flex gap-4 p-1.5 bg-surface-container-low rounded-xl border border-outline-variant">
+                        <label class="flex-1">
+                            <input type="radio" name="promo_type" value="discount" <?php echo ($v['is_freeship'] != 1) ? 'checked' : ''; ?> class="hidden peer" onchange="togglePromoType()">
+                            <div class="py-3 text-center rounded-lg text-[13px] font-bold cursor-pointer transition-all peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-sm flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">payments</span> Giảm giá
+                            </div>
+                        </label>
+                        <label class="flex-1">
+                            <input type="radio" name="promo_type" value="freeship" <?php echo ($v['is_freeship'] == 1) ? 'checked' : ''; ?> class="hidden peer" onchange="togglePromoType()">
+                            <div class="py-3 text-center rounded-lg text-[13px] font-bold cursor-pointer transition-all peer-checked:bg-emerald-100 peer-checked:text-emerald-700 peer-checked:shadow-sm flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">local_shipping</span> Miễn phí vận chuyển
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Hidden checkbox for is_freeship -->
+                    <input type="checkbox" name="is_freeship" id="is_freeship_checkbox" class="hidden" <?php echo ($v['is_freeship'] == 1) ? 'checked' : ''; ?>>
+                </section>
+
+                <section id="discount_section" class="bg-white p-8 rounded-2xl border border-outline-variant shadow-sm space-y-6 transition-all <?php echo ($v['is_freeship'] == 1) ? 'hidden' : ''; ?>">
+                    <h2 class="text-h3 font-bold text-primary flex items-center gap-2">
                         <span class="material-symbols-outlined">payments</span> Giá trị giảm giá
                     </h2>
                     
@@ -54,13 +78,26 @@
                         <div class="space-y-1.5">
                             <label class="text-[14px] font-bold text-on-surface">Giảm theo %</label>
                             <div class="relative">
-                                <input type="number" name="discount_percentage" value="<?php echo $v['discount_percentage']; ?>" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
+                                <input type="number" name="discount_percentage" id="discount_percentage" value="<?php echo $v['discount_percentage']; ?>" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
                                 <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-on-surface-variant">%</span>
                             </div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-[14px] font-bold text-on-surface">Giảm tiền mặt (đ)</label>
-                            <input type="number" name="discount_amount" value="<?php echo (int)$v['discount_amount']; ?>" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
+                            <input type="number" name="discount_amount" id="discount_amount" value="<?php echo (int)$v['discount_amount']; ?>" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Freeship Info Banner (shown when freeship is selected) -->
+                <section id="freeship_section" class="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 shadow-sm space-y-3 <?php echo ($v['is_freeship'] != 1) ? 'hidden' : ''; ?> transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-emerald-600 text-[28px]">local_shipping</span>
+                        </div>
+                        <div>
+                            <h3 class="text-[15px] font-bold text-emerald-800">Miễn phí vận chuyển</h3>
+                            <p class="text-[12px] text-emerald-600">Khách hàng sẽ được miễn phí toàn bộ phí vận chuyển khi áp dụng mã này.</p>
                         </div>
                     </div>
                 </section>
@@ -112,6 +149,27 @@
 function confirmDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa mã khuyến mãi này? Thao tác này không thể hoàn tác.')) {
         window.location.href = '<?php echo URLROOT; ?>/admin/deletePromotion/' + id;
+    }
+}
+
+function togglePromoType() {
+    const promoType = document.querySelector('input[name="promo_type"]:checked').value;
+    const discountSection = document.getElementById('discount_section');
+    const freeshipSection = document.getElementById('freeship_section');
+    const freeshipCheckbox = document.getElementById('is_freeship_checkbox');
+    const discountPercentage = document.getElementById('discount_percentage');
+    const discountAmount = document.getElementById('discount_amount');
+
+    if (promoType === 'freeship') {
+        discountSection.classList.add('hidden');
+        freeshipSection.classList.remove('hidden');
+        freeshipCheckbox.checked = true;
+        if (discountPercentage) discountPercentage.value = '';
+        if (discountAmount) discountAmount.value = '';
+    } else {
+        discountSection.classList.remove('hidden');
+        freeshipSection.classList.add('hidden');
+        freeshipCheckbox.checked = false;
     }
 }
 </script>

@@ -801,6 +801,7 @@ class AdminController extends Controller {
                 'description' => trim($_POST['description']),
                 'discount_percentage' => !empty($_POST['discount_percentage']) ? $_POST['discount_percentage'] : null,
                 'discount_amount' => !empty($_POST['discount_amount']) ? $_POST['discount_amount'] : null,
+                'is_freeship' => isset($_POST['is_freeship']) ? 1 : 0,
                 'start_date' => !empty($_POST['start_date']) ? $_POST['start_date'] : null,
                 'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null,
                 'status' => $_POST['status'] ?? 1,
@@ -808,8 +809,14 @@ class AdminController extends Controller {
             ];
 
             if (empty($data['code'])) $data['errors']['code'] = 'Vui lòng nhập mã code';
-            if (empty($data['discount_percentage']) && empty($data['discount_amount'])) {
-                $data['errors']['discount'] = 'Vui lòng nhập ít nhất một loại giảm giá';
+            if (empty($data['discount_percentage']) && empty($data['discount_amount']) && !$data['is_freeship']) {
+                $data['errors']['discount'] = 'Vui lòng nhập ít nhất một loại giảm giá hoặc chọn miễn phí vận chuyển';
+            }
+
+            // If freeship is selected, clear discount fields
+            if ($data['is_freeship']) {
+                $data['discount_percentage'] = null;
+                $data['discount_amount'] = null;
             }
 
             if (empty($data['errors'])) {
@@ -847,6 +854,7 @@ class AdminController extends Controller {
                 'description' => trim($_POST['description']),
                 'discount_percentage' => !empty($_POST['discount_percentage']) ? $_POST['discount_percentage'] : null,
                 'discount_amount' => !empty($_POST['discount_amount']) ? $_POST['discount_amount'] : null,
+                'is_freeship' => isset($_POST['is_freeship']) ? 1 : 0,
                 'start_date' => !empty($_POST['start_date']) ? $_POST['start_date'] : null,
                 'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null,
                 'status' => $_POST['status'] ?? 1,
@@ -854,6 +862,12 @@ class AdminController extends Controller {
             ];
 
             if (empty($data['code'])) $data['errors']['code'] = 'Vui lòng nhập mã code';
+
+            // If freeship is selected, clear discount fields
+            if ($data['is_freeship']) {
+                $data['discount_percentage'] = null;
+                $data['discount_amount'] = null;
+            }
 
             if (empty($data['errors'])) {
                 if ($this->adminModel->updateVoucher($data)) {
