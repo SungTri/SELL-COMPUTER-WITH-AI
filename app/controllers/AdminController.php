@@ -1861,40 +1861,40 @@ class AdminController extends Controller {
         echo '<meta http-equiv="content-type" content="text/html; charset=UTF-8">';
         echo '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Báo cáo TechExpert</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->';
         echo '<style>';
-        echo 'body { font-family: "Segoe UI", Arial, sans-serif; color: #191c1e; }';
-        echo 'table { border-collapse: collapse; margin-bottom: 25px; }';
-        echo 'th { background-color: #0453cd; color: #ffffff; font-weight: bold; border: 1px solid #c7c6ca; padding: 10px 12px; text-align: left; font-size: 13px; }';
-        echo 'td { border: 1px solid #e1e2e4; padding: 8px 10px; text-align: left; font-size: 13px; }';
+        echo 'body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: #334155; margin: 20px; }';
+        echo 'table { border-collapse: collapse; margin-bottom: 25px; width: 100%; }';
+        echo 'th { background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; padding: 12px 14px; text-align: left; font-size: 13px; }';
+        echo 'td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; font-size: 13px; color: #475569; }';
         echo '.text-right { text-align: right; }';
         echo '.text-center { text-align: center; }';
         echo '.bold { font-weight: bold; }';
-        echo '.title { font-size: 22px; font-weight: bold; color: #0453cd; padding-bottom: 5px; }';
-        echo '.subtitle { font-size: 12px; color: #46474a; padding-bottom: 15px; }';
-        echo '.section-header { background-color: #edeef0; color: #0453cd; font-size: 14px; font-weight: bold; border-left: 4px solid #0453cd; padding: 8px 12px; margin-top: 10px; margin-bottom: 15px; }';
+        echo '.title { font-size: 22px; font-weight: bold; color: #0f172a; padding-bottom: 5px; }';
+        echo '.subtitle { font-size: 12px; color: #64748b; padding-bottom: 15px; }';
+        echo '.section-header { background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #3b82f6; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 4px; }';
         echo '.kpi-table { width: 100%; border: none; margin-bottom: 30px; }';
-        echo '.kpi-card { background-color: #f3f4f6; border: 1px solid #c7c6ca; padding: 15px; text-align: center; }';
-        echo '.kpi-title { font-size: 11px; color: #46474a; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }';
-        echo '.kpi-value { font-size: 18px; font-weight: bold; color: #0453cd; }';
-        echo '.zebra-row { background-color: #f9fafb; }';
-        echo '.alert-stock { color: #ba1a1a; font-weight: bold; }';
+        echo '.kpi-card { background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; }';
+        echo '.kpi-title { font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px; }';
+        echo '.kpi-value { font-size: 20px; font-weight: bold; color: #0284c7; }';
+        echo '.zebra-row { background-color: #f8fafc; }';
+        echo '.alert-stock { color: #991b1b; font-weight: bold; background-color: #fef2f2; }';
         echo '</style>';
         echo '</head>';
         echo '<body>';
         
         // Tiêu đề lớn
         echo '<table style="border:none; margin-bottom:10px;">';
-        echo '<tr><td style="border:none; padding:0;" colspan="4"><div class="title">BÁO CÁO THỐNG KÊ DOANH THU CHI TIẾT</div></td></tr>';
-        echo '<tr><td style="border:none; padding:0; padding-bottom:15px;" colspan="4"><div class="subtitle">Hệ thống bán hàng TechExpert | Ngày lập báo cáo: ' . date('d/m/Y H:i:s') . '</div></td></tr>';
+        echo '<tr><td style="border:none; padding:0;" colspan="4"><div class="title" style="font-size: 22px; font-weight: bold; color: #0f172a;">BÁO CÁO THỐNG KÊ DOANH THU CHI TIẾT</div></td></tr>';
+        echo '<tr><td style="border:none; padding:0; padding-bottom:15px;" colspan="4"><div class="subtitle" style="font-size: 12px; color: #64748b;">Hệ thống bán hàng TechExpert | Ngày lập báo cáo: ' . date('d/m/Y H:i:s') . '</div></td></tr>';
         echo '</table>';
         
         // I. KPI Cards
-        echo '<div class="section-header">I. DOANH THU & CHỈ SỐ KPI CHÍNH</div>';
-        echo '<table class="kpi-table" style="width: 100%;">';
+        echo '<div class="section-header" style="background-color: #f8fafc; color: #0f172a; font-size: 14px; font-weight: bold; border-left: 5px solid #3b82f6; padding: 10px 15px; margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">I. DOANH THU & CHỈ SỐ KPI CHÍNH</div>';
+        echo '<table class="kpi-table" style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">';
         echo '<tr>';
-        echo '<td class="kpi-card" style="width: 25%;"><div class="kpi-title">Tổng doanh thu</div><div class="kpi-value">' . number_format($revenue, 0, ',', '.') . ' ₫</div></td>';
-        echo '<td class="kpi-card" style="width: 25%;"><div class="kpi-title">Tổng đơn hàng</div><div class="kpi-value">' . number_format($ordersCount, 0, ',', '.') . '</div></td>';
-        echo '<td class="kpi-card" style="width: 25%;"><div class="kpi-title">Tổng sản phẩm</div><div class="kpi-value">' . number_format($inventoryCount, 0, ',', '.') . '</div></td>';
-        echo '<td class="kpi-card" style="width: 25%;"><div class="kpi-title">Tổng khách hàng</div><div class="kpi-value">' . number_format($usersCount, 0, ',', '.') . '</div></td>';
+        echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng doanh thu</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($revenue, 0, ',', '.') . ' ₫</div></td>';
+        echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng đơn hàng</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($ordersCount, 0, ',', '.') . '</div></td>';
+        echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng sản phẩm</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($inventoryCount, 0, ',', '.') . '</div></td>';
+        echo '<td style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 18px; text-align: center; width: 25%;"><div class="kpi-title" style="font-size: 11px; color: #0369a1; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px;">Tổng khách hàng</div><div class="kpi-value" style="font-size: 20px; font-weight: bold; color: #0284c7;">' . number_format($usersCount, 0, ',', '.') . '</div></td>';
         echo '</tr>';
         echo '</table>';
         
