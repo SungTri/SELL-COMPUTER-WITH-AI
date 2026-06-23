@@ -74,28 +74,28 @@
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-slate-400 dark:text-zinc-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/60">
-                            <th class="px-8 py-4">ID</th>
-                            <th class="px-8 py-4">MÃ NGƯỜI DÙNG</th>
-                            <th class="px-8 py-4">MÃ GIAO DỊCH</th>
-                            <th class="px-8 py-4">KHÁCH HÀNG</th>
-                            <th class="px-8 py-4">NGÀY ĐẶT</th>
-                            <th class="px-8 py-4">TỔNG TIỀN</th>
-                            <th class="px-8 py-4">THANH TOÁN</th>
-                            <th class="px-8 py-4">TRẠNG THÁI</th>
-                            <th class="px-8 py-4 text-center">HÀNH ĐỘNG</th>
+                            <th class="px-4 py-4">ID</th>
+                            <th class="px-4 py-4">MÃ NGƯỜI DÙNG</th>
+                            <th class="px-4 py-4">MÃ GIAO DỊCH</th>
+                            <th class="px-4 py-4">KHÁCH HÀNG</th>
+                            <th class="px-4 py-4">NGÀY ĐẶT</th>
+                            <th class="px-4 py-4">TỔNG TIỀN</th>
+                            <th class="px-4 py-4">THANH TOÁN</th>
+                            <th class="px-4 py-4">TRẠNG THÁI</th>
+                            <th class="px-4 py-4 text-center">HÀNH ĐỘNG</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-zinc-800">
                         <?php if(empty($data['orders'])): ?>
                         <tr>
-                            <td colspan="9" class="px-8 py-10 text-center text-slate-400 dark:text-zinc-500">Không tìm thấy đơn hàng nào phù hợp.</td>
+                            <td colspan="9" class="px-4 py-10 text-center text-slate-400 dark:text-zinc-500">Không tìm thấy đơn hàng nào phù hợp.</td>
                         </tr>
                         <?php else: ?>
                             <?php foreach($data['orders'] as $order): ?>
                             <tr class="hover:bg-slate-50/50 dark:hover:bg-zinc-950/20 transition-colors group">
-                                <td class="px-8 py-5 font-bold text-slate-800 dark:text-white">#<?php echo $order['raw_id']; ?></td>
-                                <td class="px-8 py-5 font-bold text-indigo-600 dark:text-indigo-400 font-mono text-[13px]">U<?php echo $order['user_id']; ?></td>
-                                <td class="px-8 py-5 font-mono text-[13px] text-slate-600 dark:text-zinc-300">
+                                <td class="px-4 py-5 font-bold text-slate-800 dark:text-white">#<?php echo $order['raw_id']; ?></td>
+                                <td class="px-4 py-5 font-bold text-indigo-600 dark:text-indigo-400 font-mono text-[13px]">U<?php echo $order['user_id']; ?></td>
+                                <td class="px-4 py-5 font-mono text-[13px] text-slate-600 dark:text-zinc-300">
                                     <div class="flex items-center gap-2">
                                         <span><?php echo $order['transaction_code']; ?></span>
                                         <button onclick="copyToClipboard('<?php echo $order['transaction_code']; ?>', this)" class="text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors flex items-center justify-center p-1 rounded hover:bg-slate-100 dark:hover:bg-zinc-800 print:hidden" title="Sao chép">
@@ -103,7 +103,7 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5">
+                                <td class="px-4 py-5">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100/30 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-[11px] shrink-0">
                                             <?php 
@@ -114,10 +114,10 @@
                                         <span class="text-[14px] font-semibold text-slate-700 dark:text-zinc-300"><?php echo $order['customer']; ?></span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-slate-400 dark:text-zinc-500 text-[13px]"><?php echo $order['date']; ?></td>
-                                <td class="px-8 py-5 font-extrabold text-indigo-600 dark:text-indigo-400 text-[14px] whitespace-nowrap"><?php echo $order['total']; ?> đ</td>
-                                <td class="px-8 py-5 text-slate-500 dark:text-zinc-300 text-[13px] font-medium"><?php echo $order['payment_method']; ?></td>
-                                <td class="px-8 py-5">
+                                <td class="px-4 py-5 text-slate-400 dark:text-zinc-500 text-[13px]"><?php echo $order['date']; ?></td>
+                                <td class="px-4 py-5 font-extrabold text-indigo-600 dark:text-indigo-400 text-[14px] whitespace-nowrap"><?php echo $order['total']; ?> đ</td>
+                                <td class="px-4 py-5 text-slate-500 dark:text-zinc-300 text-[13px] font-medium"><?php echo $order['payment_method']; ?></td>
+                                <td class="px-4 py-5">
                                     <?php 
                                     $badgeClass = 'badge-pending';
                                     if ($order['status'] === 'delivered') $badgeClass = 'badge-delivered';
@@ -128,9 +128,12 @@
                                         <?php echo $order['status_text']; ?>
                                     </span>
                                 </td>
-                                <td class="px-8 py-5 text-center">
+                                <td class="px-4 py-5 text-center flex items-center justify-center gap-2">
                                     <a href="<?php echo URLROOT; ?>/admin/orderDetail/<?php echo $order['raw_id']; ?>" class="inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-zinc-800 rounded-xl text-[13px] font-bold text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white dark:hover:text-white hover:border-indigo-600 dark:hover:border-indigo-500 transition-all shadow-sm">
                                         Chi tiết
+                                    </a>
+                                    <a href="<?php echo URLROOT; ?>/admin/orderPDF/<?php echo $order['raw_id']; ?>" target="_blank" class="inline-flex items-center justify-center w-8 h-8 border border-red-200 dark:border-red-900/50 rounded-xl text-red-600 dark:text-red-400 bg-white dark:bg-zinc-900 hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-all shadow-sm active:scale-[0.95]" title="Xuất hóa đơn PDF">
+                                        <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
                                     </a>
                                 </td>
                             </tr>
