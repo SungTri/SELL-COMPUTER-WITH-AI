@@ -7,7 +7,7 @@
     <header class="h-20 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800/80 flex items-center justify-between px-10 sticky top-0 z-40 transition-colors duration-200">
         <h1 class="text-h2 font-bold text-slate-800 dark:text-white">Quản lý Đơn hàng</h1>
         
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-8">
             <form method="GET" action="<?php echo URLROOT; ?>/admin/orders" class="relative w-96">
                 <?php if(!empty($data['filters']['status'])): ?>
                     <input type="hidden" name="status" value="<?php echo $data['filters']['status']; ?>">
@@ -15,11 +15,11 @@
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500">search</span>
                 <input name="search" value="<?php echo $data['filters']['search']; ?>" class="w-full pl-12 pr-4 py-2.5 bg-slate-100 dark:bg-zinc-950 border border-slate-200/50 dark:border-zinc-800 rounded-xl text-body-md focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/20 transition-all outline-none" placeholder="Tìm tên khách, mã đơn..." type="text"/>
             </form>
-            <div class="flex items-center gap-4 border-l border-slate-200 dark:border-zinc-850 pl-6">
+            <div class="flex items-center gap-5 border-l border-slate-200 dark:border-zinc-850 pl-8 ml-2">
                 <!-- Notifications -->
                 <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
                 
-                <div class="flex items-center gap-3 pl-6 border-l border-slate-200 dark:border-zinc-850">
+                <div class="flex items-center gap-4 pl-8 border-l border-slate-200 dark:border-zinc-850">
                     <div class="text-right">
                         <p class="text-[14px] font-bold text-slate-800 dark:text-white"><?php echo $_SESSION['user_name'] ?? 'Admin TechExpert'; ?></p>
                         <p class="text-[12px] text-slate-400 dark:text-zinc-500 font-medium">Quản trị viên</p>

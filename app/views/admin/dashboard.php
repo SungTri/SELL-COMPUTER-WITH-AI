@@ -9,8 +9,8 @@
     <header class="h-20 bg-white dark:bg-neutral-900 border-b border-outline-variant dark:border-neutral-800 flex items-center justify-between px-10 sticky top-0 z-40 transition-colors duration-200">
         <h1 class="text-h2 font-bold text-primary dark:text-white">Báo cáo & Thống kê</h1>
         
-        <div class="flex items-center gap-6 header-actions">
-            <div class="flex items-center gap-3 relative">
+        <div class="flex items-center gap-8 header-actions">
+            <div class="flex items-center gap-5 relative">
                 <!-- Custom Premium Dropdown Select -->
                 <div class="relative inline-block text-left" id="customExportDropdown">
                     <button type="button" id="dropdownTrigger" class="px-4 py-2.5 bg-white dark:bg-neutral-900 border border-outline-variant dark:border-neutral-700 rounded-xl text-[13px] font-bold text-on-surface-variant dark:text-neutral-300 flex items-center justify-between gap-3 hover:bg-surface-container-low dark:hover:bg-neutral-800 hover:border-primary/30 transition-all min-w-[220px] shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
@@ -136,7 +136,7 @@
                 });
             });
             </script>
-            <div class="flex items-center gap-4 border-l border-outline-variant dark:border-neutral-800 pl-6">
+            <div class="flex items-center gap-5 border-l border-outline-variant dark:border-neutral-800 pl-8 ml-2">
                 <!-- Theme Switcher -->
                 <button type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-surface-container-low dark:bg-neutral-800 border border-outline-variant dark:border-neutral-700 flex items-center justify-center text-on-surface-variant dark:text-neutral-300 hover:bg-primary/5 dark:hover:bg-neutral-700/60 transition-all shadow-sm">
                     <span id="themeToggleIcon" class="material-symbols-outlined text-[20px]">dark_mode</span>
@@ -145,7 +145,7 @@
                 <!-- Notifications -->
                 <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
 
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant dark:border-neutral-800">
+                <div class="flex items-center gap-4 pl-6 border-l border-outline-variant dark:border-neutral-800">
                     <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
                     <div class="text-right">
                         <p class="text-[14px] font-bold dark:text-white"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>
