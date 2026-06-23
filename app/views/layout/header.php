@@ -73,8 +73,8 @@
         if (strpos($ogImage, 'http') !== 0) {
             $ogImage = URLROOT . '/' . ltrim($ogImage, '/');
         }
-    } elseif (!empty($data['app_settings']['logo'])) {
-        $ogImage = URLROOT . '/public/images/' . $data['app_settings']['logo'];
+    } elseif (!empty($data['app_settings']['store_logo'])) {
+        $ogImage = $data['app_settings']['store_logo'];
     }
     if (!empty($ogImage)): ?>
     <meta property="og:image" content="<?php echo htmlspecialchars($ogImage); ?>">
@@ -197,8 +197,8 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a href="<?php echo URLROOT; ?>" class="group flex items-center gap-3">
                     <div class="relative">
-                        <?php if(!empty($data['app_settings']['logo'])): ?>
-                            <img src="<?php echo URLROOT . '/public/images/' . $data['app_settings']['logo']; ?>" alt="Logo" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-500">
+                        <?php if(!empty($data['app_settings']['store_logo'])): ?>
+                            <img src="<?php echo $data['app_settings']['store_logo']; ?>" alt="Logo" class="w-10 h-10 rounded-xl object-cover group-hover:scale-110 transition-transform duration-500 shadow-md">
                         <?php else: ?>
                             <div class="w-10 h-10 bg-primary text-on-primary rounded-xl flex items-center justify-center font-bold text-xl group-hover:rotate-[10deg] transition-transform duration-500 shadow-lg shadow-primary/20">
                                 <?php echo substr($data['app_settings']['store_name'] ?? 'M', 0, 1); ?>
