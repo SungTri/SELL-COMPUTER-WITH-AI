@@ -504,15 +504,33 @@ NHIỆM VỤ CỦA BẠN:
             if (preg_match('/(man hinh|monitor|hien thi|hz)/i', $normMessage)) {
                 $targetCategoryIds[] = 14;
             }
-            // Phụ kiện / Chuột / Bàn phím / Cáp / Kem / Thiết bị mạng
-            if (preg_match('/(chuot|phim|ban phim|mouse|keyboard|tai nghe|headset|lot chuot|phu kien|cap|hdmi|displayport|paste|keo tan nhiet|kem tan nhiet|tua vit|tua vit|vit|day rut|day thit|wifi|mang|lan|router)/i', $normMessage)) {
-                $targetCategoryIds[] = 4;
-                $targetCategoryIds[] = 18;
+            // Chuột
+            if (preg_match('/(chuot|mouse)/i', $normMessage)) {
                 $targetCategoryIds[] = 19;
+            }
+            // Bàn phím
+            if (preg_match('/(phim|ban phim|keyboard)/i', $normMessage)) {
+                $targetCategoryIds[] = 18;
+            }
+            // Lót chuột
+            if (preg_match('/(lot chuot|pad)/i', $normMessage)) {
                 $targetCategoryIds[] = 20;
+            }
+            // Cáp kết nối
+            if (preg_match('/(cap|hdmi|displayport)/i', $normMessage)) {
                 $targetCategoryIds[] = 21;
+            }
+            // Kem tản nhiệt & Dụng cụ
+            if (preg_match('/(paste|keo tan nhiet|kem tan nhiet|tua vit|vit|day rut|day thit)/i', $normMessage)) {
                 $targetCategoryIds[] = 22;
+            }
+            // Thiết bị mạng
+            if (preg_match('/(wifi|mang|lan|router)/i', $normMessage)) {
                 $targetCategoryIds[] = 23;
+            }
+            // Tai nghe / Phụ kiện khác
+            if (preg_match('/(tai nghe|headset|phu kien)/i', $normMessage)) {
+                $targetCategoryIds[] = 4;
             }
             // Arm màn hình
             if (preg_match('/(arm|gia do|gia tre|gia do man hinh|gia tre man hinh)/i', $normMessage)) {
@@ -539,7 +557,7 @@ NHIỆM VỤ CỦA BẠN:
                             LEFT JOIN categories c ON p.category_id = c.id 
                             WHERE p.status = 1 AND p.category_id IN ($idsStr)
                             ORDER BY p.id DESC 
-                            LIMIT 35");
+                            LIMIT 100");
             } else {
                 // Fetch balanced catalog: all building components + top 8 products from other categories (Laptop, Desktop, Accessories)
                 $db->query("SELECT id, name, price, main_image, category_id, category
