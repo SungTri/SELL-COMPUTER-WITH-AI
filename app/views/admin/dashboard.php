@@ -6,7 +6,7 @@
 
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB] dark:bg-neutral-950 transition-colors duration-200">
     <!-- Header -->
-    <header class="h-20 bg-white dark:bg-neutral-900 border-b border-outline-variant dark:border-neutral-800 flex items-center justify-between px-10 sticky top-0 z-10 transition-colors duration-200">
+    <header class="h-20 bg-white dark:bg-neutral-900 border-b border-outline-variant dark:border-neutral-800 flex items-center justify-between px-10 sticky top-0 z-40 transition-colors duration-200">
         <h1 class="text-h2 font-bold text-primary dark:text-white">Báo cáo & Thống kê</h1>
         
         <div class="flex items-center gap-6 header-actions">

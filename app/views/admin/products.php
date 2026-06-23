@@ -4,7 +4,7 @@
 <!-- Main Content Area -->
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#f8fafc] dark:bg-zinc-950 transition-colors duration-200">
     <!-- Header -->
-    <header class="h-20 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800/80 flex items-center justify-between px-10 sticky top-0 z-10 transition-colors duration-200">
+    <header class="h-20 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800/80 flex items-center justify-between px-10 sticky top-0 z-40 transition-colors duration-200">
         <h1 class="text-h2 font-bold text-slate-800 dark:text-white">Quản lý Sản phẩm</h1>
         
         <div class="flex items-center gap-6">
