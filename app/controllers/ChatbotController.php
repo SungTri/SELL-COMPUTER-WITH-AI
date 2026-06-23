@@ -68,6 +68,9 @@ class ChatbotController extends Controller {
                         $response = "Lỗi hệ thống: Thư viện CURL chưa được bật trong PHP.ini.";
                     } else {
                         $response = $this->getAIResponse($userMessage, $apiKey, $mode);
+                        if ($mode === 'ai') {
+                            $response = $this->auditCompatibilityFromResponse($response);
+                        }
                     }
                 } catch (Exception $e) {
                     $response = "Lỗi AI: " . $e->getMessage();
@@ -620,7 +623,7 @@ NHIỆM VỤ CỦA BẠN:
             }
 
             $systemPrompt = ($currentLang === 'en')
-                ? "You are the PC BUILDING CONSULTANT of TechExpert.
+                ? "You are the EXPERT PC BUILDING & CUSTOMIZATION CONSULTANT of TechExpert.
 The name of the customer talking to you is: $userName. Address them friendly, personalizing by their name if appropriate.
 NOTE: The store has both PRE-BUILT PCs (Desktop Series) and INDIVIDUAL COMPONENTS (CPU, RAM, VGA, Motherboard...).
 
@@ -636,9 +639,47 @@ MANDATORY COMPATIBILITY AUDIT RULES:
 3. Power Supply (PSU): VGA recommended wattage must be satisfied. E.g. RTX 4070 or above needs at least 750W-850W.
 4. If the user asks for a configuration, always explain why the components are 100% compatible.
 
+EXPERT PC BUILDING & AESTHETICS RULES:
+1. Color & Theme Coordination: If the customer requests a color theme (e.g., 'all-white', 'black-out', 'minimalist RGB', 'aquarium case'), select the case, coolers, and components matching that theme as closely as possible from the product list, or mention setup color coordination guidelines in the text.
+2. Workload & Software Optimization:
+   - Adobe Premiere / After Effects / Photoshop: Recommend at least 32GB RAM, fast NVMe SSD, and Nvidia GPU (for CUDA acceleration).
+   - Blender / 3D Rendering: Prioritize Nvidia RTX GPU (OptiX rendering is crucial).
+   - Esports Games (Valorant, CS2, League of Legends): Prioritize higher single-core CPU frequency.
+   - AAA Games (Cyberpunk, GTA V, Black Myth Wukong): Prioritize high-end VGA (RTX 4060 Ti, 4070, etc.) for Ray Tracing and DLSS.
+3. Game Performance Estimates: Give customers highly specific and realistic FPS estimations based on your configuration recommendation using this benchmark reference database (at Max Settings):
+   - RTX 4060:
+     * Valorant (1080p: ~280 FPS, 2K: ~180 FPS)
+     * League of Legends (1080p: ~350 FPS, 2K: ~240 FPS)
+     * CS2 (1080p: ~220 FPS, 2K: ~140 FPS)
+     * Cyberpunk 2077 (1080p: ~65 FPS | DLSS+FG: ~110 FPS)
+     * Black Myth: Wukong (1080p: ~60 FPS | DLSS+FG: ~95 FPS)
+   - RTX 4070 / RTX 4070 Ti:
+     * Valorant (1080p: ~400 FPS, 2K: ~300 FPS, 4K: ~180 FPS)
+     * League of Legends (1080p: ~500 FPS, 2K: ~400 FPS, 4K: ~260 FPS)
+     * CS2 (1080p: ~320 FPS, 2K: ~240 FPS, 4K: ~120 FPS)
+     * Cyberpunk 2077 (1080p: ~110 FPS, 2K: ~85 FPS | 2K DLSS+FG: ~140 FPS)
+     * Black Myth: Wukong (1080p: ~100 FPS, 2K: ~75 FPS | 2K DLSS+FG: ~125 FPS)
+   - RTX 4080:
+     * Valorant (2K: ~420 FPS, 4K: ~280 FPS)
+     * CS2 (2K: ~380 FPS, 4K: ~180 FPS)
+     * Cyberpunk 2077 (2K: ~125 FPS, 4K: ~65 FPS | 4K DLSS+FG: ~120 FPS)
+     * Black Myth: Wukong (2K: ~115 FPS, 4K: ~60 FPS | 4K DLSS+FG: ~110 FPS)
+   - RTX 4090:
+     * Valorant (2K: ~500 FPS, 4K: ~380 FPS)
+     * CS2 (2K: ~480 FPS, 4K: ~260 FPS)
+     * Cyberpunk 2077 (2K: ~155 FPS, 4K: ~95 FPS | 4K DLSS+FG: ~170 FPS)
+     * Black Myth: Wukong (2K: ~140 FPS, 4K: ~85 FPS | 4K DLSS+FG: ~150 FPS)
+   - GTX 1650 / RX 580 or equivalent (Low-end / Integrated Graphics):
+     * Valorant (1080p: ~120 FPS)
+     * League of Legends (1080p: ~150 FPS)
+     * CS2 (1080p: ~80 FPS)
+     * Cyberpunk 2077 (1080p Low: ~35-40 FPS)
+   - Note: If user asks for a game/GPU not explicitly listed, extrapolate using these benchmarks as relative performance scaling metrics.
+
+
 BUDGET OPTIMIZATION & SMART LINKING RULES:
 1. Analyze Customer Budget:
-    - If the customer specifies a budget (e.g. 15 million VND, 20M, 200M, or a price range): Carefully select and combine components whose TOTAL cost is closest to but DOES NOT exceed their budget by more than 5-10%. For example, if the budget is 200 million, the total cost MUST be between 180 million and 210 million VND. Under no circumstances should you propose a configuration of 300 million or 340 million and then apologize to the customer. You must sum the prices of your recommended components carefully before responding!
+     - If the customer specifies a budget (e.g. 15 million VND, 20M, 200M, or a price range): Carefully select and combine components whose TOTAL cost is closest to but DOES NOT exceed their budget by more than 5-10%. For example, if the budget is 200 million, the total cost MUST be between 180 million and 210 million VND. Under no circumstances should you propose a configuration of 300 million or 340 million and then apologize to the customer. You must sum the prices of your recommended components carefully before responding!
    - If they search for a single component within a budget (e.g. \"SSD around 1 million VND\"), scan the product list to find SSD/HDD items priced near 1 million and recommend the best options.
 2. Smart Markdown Links in Text:
    - When mentioning a specific component in your text explanation, embed its product link using standard Markdown: `[Product Name](Product Link)`. E.g., \"I recommend the [CPU Intel Core i5 12400F](http://localhost/.../product/detail/12) for its excellent price-to-performance ratio...\".
@@ -660,13 +701,13 @@ MANDATORY CONSULTING RULES:
    - List the [PRODUCT:...] tags with full info.
    - Calculate the TOTAL cost at the end.
 7. IMPORTANT NOTE: You must respond in English because the system language is set to English. Only return the direct consulting response to the customer. DO NOT generate any analysis, thinking steps, or planning other than the direct response."
-                : "Bạn là CHUYÊN GIA TƯ VẤN BUILD PC của TechExpert. 
+                : "Bạn là SIÊU CHUYÊN GIA TƯ VẤN BUILD PC của TechExpert. 
 Tên của khách hàng đang nói chuyện với bạn là: $userName. Hãy xưng hô thân thiện, cá nhân hóa theo tên của họ nếu phù hợp (ví dụ chào tên riêng, xưng hô anh/chị nếu biết).
 CHÚ Ý: Cửa hàng có đầy đủ cả MÁY BỘ (Desktop Series) và LINH KIỆN RỜI (CPU, RAM, VGA, Mainboard...).
 
 Dưới đây là danh sách sản phẩm hiện có (COPY CHÍNH XÁC NỘI DUNG TRONG NGOẶC VUÔNG):\n
 $productContext\n
-
+ 
 $cartContext
 $wishlistContext
 
@@ -676,9 +717,47 @@ QUY TẮC KIỂM TRA ĐỘ TƯƠNG THÍCH BẮT BUỘC:
 3. Công suất Nguồn (PSU): Đảm bảo PSU đủ công suất gánh VGA. Ví dụ VGA hiệu năng cao cần nguồn tối thiểu 750W-850W.
 4. Hãy giải thích ngắn gọn và trực quan lý do tại sao cấu hình bạn đề xuất là 100% tương thích tốt với nhau để tạo sự an tâm cho khách hàng.
 
+QUY TẮC PHỐI CẤU HÌNH & THIẾT KẾ SETUP CHUYÊN NGHIỆP:
+1. Đồng bộ Màu sắc & Chủ đề: Nếu khách hàng yêu cầu tone màu (ví dụ: 'PC trắng', 'PC đen', 'RGB bể cá'), hãy ưu tiên chọn Vỏ máy, Tản nhiệt, RAM có màu sắc tương ứng từ danh sách sản phẩm hoặc nhấn mạnh giải pháp setup đẹp mắt trong văn bản tư vấn.
+2. Tối ưu theo Phần mềm & Nhu cầu:
+   - Adobe Premiere / After Effects / Photoshop: Đề xuất tối thiểu 32GB RAM, SSD NVMe tốc độ cao và Card Nvidia (để tận dụng nhân CUDA tăng tốc render).
+   - Blender / Thiết kế 3D: Ưu tiên tối đa cho Card đồ họa Nvidia RTX (để bật tăng tốc OptiX).
+   - Game Esports (Valorant, CS2, LMHT): Ưu tiên CPU có xung nhịp đơn nhân cao và bộ nhớ Cache lớn.
+   - Game AAA (Cyberpunk, GTA V, Black Myth Wukong): Tập trung ngân sách vào VGA dòng cao (RTX 4060 Ti, 4070...) để bật Ray Tracing và DLSS.
+3. Ước lượng FPS & Hiệu năng: Đưa ra thông số FPS dự kiến cụ thể và chân thực cho khách hàng dựa trên cấu hình đề xuất sử dụng cơ sở dữ liệu hiệu năng (ở Thiết lập Cao nhất - Max Settings) bên dưới:
+   - RTX 4060:
+     * Valorant (1080p: ~280 FPS, 2K: ~180 FPS)
+     * Liên Minh Huyền Thoại (1080p: ~350 FPS, 2K: ~240 FPS)
+     * CS2 (1080p: ~220 FPS, 2K: ~140 FPS)
+     * Cyberpunk 2077 (1080p: ~65 FPS | DLSS+FG: ~110 FPS)
+     * Black Myth: Wukong (1080p: ~60 FPS | DLSS+FG: ~95 FPS)
+   - RTX 4070 / RTX 4070 Ti:
+     * Valorant (1080p: ~400 FPS, 2K: ~300 FPS, 4K: ~180 FPS)
+     * Liên Minh Huyền Thoại (1080p: ~500 FPS, 2K: ~400 FPS, 4K: ~260 FPS)
+     * CS2 (1080p: ~320 FPS, 2K: ~240 FPS, 4K: ~120 FPS)
+     * Cyberpunk 2077 (1080p: ~110 FPS, 2K: ~85 FPS | 2K DLSS+FG: ~140 FPS)
+     * Black Myth: Wukong (1080p: ~100 FPS, 2K: ~75 FPS | 2K DLSS+FG: ~125 FPS)
+   - RTX 4080:
+     * Valorant (2K: ~420 FPS, 4K: ~280 FPS)
+     * CS2 (2K: ~380 FPS, 4K: ~180 FPS)
+     * Cyberpunk 2077 (2K: ~125 FPS, 4K: ~65 FPS | 4K DLSS+FG: ~120 FPS)
+     * Black Myth: Wukong (2K: ~115 FPS, 4K: ~60 FPS | 4K DLSS+FG: ~110 FPS)
+   - RTX 4090:
+     * Valorant (2K: ~500 FPS, 4K: ~380 FPS)
+     * CS2 (2K: ~480 FPS, 4K: ~260 FPS)
+     * Cyberpunk 2077 (2K: ~155 FPS, 4K: ~95 FPS | 4K DLSS+FG: ~170 FPS)
+     * Black Myth: Wukong (2K: ~140 FPS, 4K: ~85 FPS | 4K DLSS+FG: ~150 FPS)
+   - GTX 1650 / RX 580 hoặc tương đương (Phổ thông / Đồ họa tích hợp):
+     * Valorant (1080p: ~120 FPS)
+     * Liên Minh Huyền Thoại (1080p: ~150 FPS)
+     * CS2 (1080p: ~80 FPS)
+     * Cyberpunk 2077 (1080p Thấp: ~35-40 FPS)
+   - Lưu ý: Nếu khách hàng hỏi về game hoặc card đồ họa khác không có trong danh sách, hãy tự suy luận hiệu năng tương đối dựa trên các mốc tham chiếu này.
+
+
 QUY TẮC TỐI ƯU HÓA NGÂN SÁCH & LIÊN KẾT THÔNG MINH:
 1. Phân tích Ngân sách của Khách hàng:
-    - Nếu khách hàng đưa ra ngân sách cụ thể (Ví dụ: 15 triệu, 20 triệu, 200 triệu, hoặc khoảng giá): Hãy tính toán và chọn lọc cấu hình linh kiện có TỔNG GIÁ TRỊ sát nhất với ngân sách. Tổng chi phí của cấu hình TUYỆT ĐỐI không được vượt quá ngân sách quá 5-10%. Ví dụ, nếu ngân sách là 200 triệu, tổng chi phí phải nằm trong khoảng từ 180 triệu đến tối đa 210-220 triệu VNĐ. TUYỆT ĐỐI KHÔNG ĐƯỢC phép đề xuất cấu hình lên tới 300 triệu hay 340 triệu rồi xin lỗi khách hàng. Hãy tự cộng nhẩm thật kỹ giá tiền của từng linh kiện trước khi đưa ra câu trả lời!
+     - Nếu khách hàng đưa ra ngân sách cụ thể (Ví dụ: 15 triệu, 20 triệu, 200 triệu, hoặc khoảng giá): Hãy tính toán và chọn lọc cấu hình linh kiện có TỔNG GIÁ TRỊ sát nhất với ngân sách. Tổng chi phí của cấu hình TUYỆT ĐỐI không được vượt quá ngân sách quá 5-10%. Ví dụ, nếu ngân sách là 200 triệu, tổng chi phí phải nằm trong khoảng từ 180 triệu đến tối đa 210-220 triệu VNĐ. TUYỆT ĐỐI KHÔNG ĐƯỢC phép đề xuất cấu hình lên tới 300 triệu hay 340 triệu rồi xin lỗi khách hàng. Hãy tự cộng nhẩm thật kỹ giá tiền của từng linh kiện trước khi đưa ra câu trả lời!
    - Nếu khách hàng tìm kiếm một linh kiện đơn lẻ (Ví dụ: \"ổ cứng tầm 1 triệu\"), hãy quét danh sách sản phẩm để tìm các sản phẩm thuộc danh mục SSD/HDD có mức giá dao động quanh 1 triệu và gợi ý các tùy chọn tốt nhất.
 2. Gợi ý Liên kết Thông minh trong Lời thoại (Markdown Links):
    - Khi tư vấn hoặc nhắc đến một linh kiện cụ thể trong bài phân tích của bạn, hãy lồng ghép link của sản phẩm đó dưới dạng link Markdown chuẩn: `[Tên linh kiện](Đường dẫn liên kết)`. Ví dụ: \"Em đề xuất anh/chị chọn bộ vi xử lý [CPU Intel Core i5 12400F](http://localhost/.../product/detail/12) vì nó có giá rẻ mà hiệu năng cực kỳ tốt...\".
@@ -996,5 +1075,179 @@ QUY TẮC TƯ VẤN BẮT BUỘC:
         }
 
         return null;
+    }
+
+    private function getProductSpecs($product) {
+        if (!$product) return null;
+        $name = mb_strtoupper($product['name']);
+        $shortDesc = mb_strtoupper($product['short_description'] ?? '');
+        $detailedDesc = mb_strtoupper($product['detailed_description'] ?? '');
+        $fullText = $name . ' ' . $shortDesc . ' ' . $detailedDesc;
+
+        $socket = null;
+        $ramType = null;
+        $psuWattage = null;
+        $recommendedPsu = null;
+
+        // 1. Determine Socket
+        if (strpos($fullText, 'LGA1700') !== false || strpos($fullText, 'LGA 1700') !== false || 
+            strpos($fullText, 'INTEL CPU SERIES A1') !== false || strpos($fullText, 'INTEL CPU SERIES B2') !== false || strpos($fullText, 'INTEL CPU SERIES C3') !== false || 
+            strpos($fullText, 'ASUS MAINBOARD SERIES A1') !== false || strpos($fullText, 'ASUS MAINBOARD SERIES B2') !== false || strpos($fullText, 'ASUS MAINBOARD SERIES C3') !== false || 
+            strpos($fullText, 'MSI MAINBOARD SERIES A1') !== false || strpos($fullText, 'MSI MAINBOARD SERIES B2') !== false || strpos($fullText, 'MSI MAINBOARD SERIES C3') !== false) {
+            $socket = 'LGA1700';
+        } elseif (strpos($fullText, 'AM5') !== false || strpos($fullText, 'AMD CPU SERIES') !== false || 
+                  strpos($fullText, 'ASUS MAINBOARD SERIES D4') !== false || strpos($fullText, 'ASUS MAINBOARD SERIES E5') !== false || 
+                  strpos($fullText, 'MSI MAINBOARD SERIES D4') !== false || strpos($fullText, 'MSI MAINBOARD SERIES E5') !== false) {
+            $socket = 'AM5';
+        } elseif (strpos($fullText, 'AM4') !== false) {
+            $socket = 'AM4';
+        } elseif (strpos($fullText, 'LGA1200') !== false) {
+            $socket = 'LGA1200';
+        } elseif (strpos($fullText, 'LGA1151') !== false) {
+            $socket = 'LGA1151';
+        }
+
+        // 2. Determine RAM DDR Type
+        if (strpos($fullText, 'DDR5') !== false || 
+            strpos($fullText, 'RAM SERIES A1') !== false || strpos($fullText, 'RAM SERIES B2') !== false || strpos($fullText, 'RAM SERIES C3') !== false) {
+            $ramType = 'DDR5';
+        } elseif (strpos($fullText, 'DDR4') !== false || 
+                  strpos($fullText, 'RAM SERIES D4') !== false || strpos($fullText, 'RAM SERIES E5') !== false) {
+            $ramType = 'DDR4';
+        } else {
+            if ($socket === 'LGA1700' || $socket === 'AM5') {
+                $ramType = 'DDR5';
+            } else {
+                $ramType = 'DDR4';
+            }
+        }
+
+        // 3. Determine PSU Wattage
+        if (preg_match('/(\d+)\s*W/', $name, $matches)) {
+            $psuWattage = intval($matches[1]);
+        } else {
+            if (preg_match('/(\d+)\s*W/', $fullText, $matches)) {
+                $psuWattage = intval($matches[1]);
+            }
+        }
+
+        // 4. Determine VGA Recommended PSU Wattage
+        if (strpos($fullText, 'RTX 4090') !== false || strpos($fullText, 'RX 7950') !== false || strpos($fullText, 'VGA SERIES A1') !== false) {
+            $recommendedPsu = 850;
+        } elseif (strpos($fullText, 'RTX 4080') !== false || strpos($fullText, 'VGA SERIES B2') !== false) {
+            $recommendedPsu = 750;
+        } elseif (strpos($fullText, 'RTX 4070') !== false || strpos($fullText, 'VGA SERIES C3') !== false || strpos($fullText, 'RTX 3080') !== false) {
+            $recommendedPsu = 650;
+        } elseif (strpos($fullText, 'RTX 4060') !== false || strpos($fullText, 'VGA SERIES D4') !== false || strpos($fullText, 'VGA SERIES E5') !== false || strpos($fullText, 'RTX 3060') !== false) {
+            $recommendedPsu = 550;
+        } else {
+            if (intval($product['category_id']) === 7) {
+                $recommendedPsu = 500;
+            }
+        }
+
+        return [
+            'socket' => $socket,
+            'ramType' => $ramType,
+            'psuWattage' => $psuWattage,
+            'recommendedPsu' => $recommendedPsu
+        ];
+    }
+
+    private function auditCompatibilityFromResponse($response) {
+        if (!preg_match_all('/\[PRODUCT:(\d+)\|/i', $response, $matches)) {
+            return $response;
+        }
+
+        $productIds = array_unique(array_map('intval', $matches[1]));
+        if (empty($productIds)) {
+            return $response;
+        }
+
+        $db = new Database();
+        $idsStr = implode(',', $productIds);
+        $db->query("SELECT p.id, p.name, p.short_description, p.detailed_description, p.category_id, p.price 
+                    FROM products p 
+                    WHERE p.id IN ($idsStr)");
+        $products = $db->resultSet();
+
+        $cpu = null;
+        $mb = null;
+        $ram = null;
+        $vga = null;
+        $psu = null;
+
+        foreach ($products as $p) {
+            $catId = intval($p['category_id']);
+            if ($catId === 5) {
+                $cpu = $p;
+            } elseif ($catId === 9) {
+                $mb = $p;
+            } elseif ($catId === 6) {
+                $ram = $p;
+            } elseif ($catId === 7) {
+                $vga = $p;
+            } elseif ($catId === 13) {
+                $psu = $p;
+            }
+        }
+
+        $cpuSpecs = $cpu ? $this->getProductSpecs($cpu) : null;
+        $mainboardSpecs = $mb ? $this->getProductSpecs($mb) : null;
+        $ramSpecs = $ram ? $this->getProductSpecs($ram) : null;
+        $vgaSpecs = $vga ? $this->getProductSpecs($vga) : null;
+        $psuSpecs = $psu ? $this->getProductSpecs($psu) : null;
+
+        $warnings = [];
+        $hasConflict = false;
+
+        $currentLang = $_SESSION['lang'] ?? 'vi';
+
+        // 1. CPU vs Mainboard Socket Check
+        if ($cpuSpecs && $mainboardSpecs) {
+            if ($cpuSpecs['socket'] && $mainboardSpecs['socket'] && $cpuSpecs['socket'] !== $mainboardSpecs['socket']) {
+                $warnings[] = ($currentLang === 'en')
+                    ? "<strong>Socket mismatch:</strong> CPU uses <strong>{$cpuSpecs['socket']}</strong> but Mainboard uses <strong>{$mainboardSpecs['socket']}</strong>."
+                    : "<strong>CPU & Mainboard lệch socket:</strong> CPU dùng <strong>{$cpuSpecs['socket']}</strong> nhưng Mainboard dùng <strong>{$mainboardSpecs['socket']}</strong>.";
+                $hasConflict = true;
+            }
+        }
+
+        // 2. Mainboard vs RAM Type Check
+        if ($mainboardSpecs && $ramSpecs) {
+            if ($mainboardSpecs['ramType'] && $ramSpecs['ramType'] && $mainboardSpecs['ramType'] !== $ramSpecs['ramType']) {
+                $warnings[] = ($currentLang === 'en')
+                    ? "<strong>RAM mismatch:</strong> Mainboard supports <strong>{$mainboardSpecs['ramType']}</strong> but RAM selected is <strong>{$ramSpecs['ramType']}</strong>."
+                    : "<strong>Lệch chuẩn RAM:</strong> Mainboard hỗ trợ <strong>{$mainboardSpecs['ramType']}</strong> nhưng RAM chọn là <strong>{$ramSpecs['ramType']}</strong>.";
+                $hasConflict = true;
+            }
+        }
+
+        // 3. VGA vs PSU Wattage Check
+        if ($vgaSpecs && $psuSpecs) {
+            if ($vgaSpecs['recommendedPsu'] && $psuSpecs['psuWattage'] && $psuSpecs['psuWattage'] < $vgaSpecs['recommendedPsu']) {
+                $warnings[] = ($currentLang === 'en')
+                    ? "<strong>Weak PSU:</strong> VGA recommends a minimum of <strong>{$vgaSpecs['recommendedPsu']}W</strong> but PSU selected is <strong>{$psuSpecs['psuWattage']}W</strong>."
+                    : "<strong>Nguồn yếu (PSU):</strong> VGA khuyến nghị nguồn tối thiểu <strong>{$vgaSpecs['recommendedPsu']}W</strong> nhưng PSU chọn là <strong>{$psuSpecs['psuWattage']}W</strong>.";
+                $hasConflict = true;
+            }
+        }
+
+        $activeChecksCount = ($cpu && $mb ? 1 : 0) + ($mb && $ram ? 1 : 0) + ($vga && $psu ? 1 : 0);
+        if ($activeChecksCount === 0) {
+            return $response;
+        }
+
+        if ($hasConflict) {
+            $msgStr = implode(';', $warnings);
+            $response .= "\n\n[COMPATIBILITY:warning|{$msgStr}]";
+        } else {
+            $msgStr = ($currentLang === 'en')
+                ? "All selected components are compatible and will work together smoothly."
+                : "Tất cả linh kiện đã chọn tương thích và hoạt động ổn định với nhau.";
+            $response .= "\n\n[COMPATIBILITY:success|{$msgStr}]";
+        }
+
+        return $response;
     }
 }

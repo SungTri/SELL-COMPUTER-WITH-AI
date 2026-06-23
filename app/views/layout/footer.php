@@ -903,10 +903,12 @@
             const messages = document.getElementById('chatMessages');
             const msgDiv = document.createElement('div');
             
-            // 1. Parse and extract Product Tags FIRST from the raw text (only for bot messages)
+            // 1. Parse and extract Product & Compatibility Tags FIRST from the raw text (only for bot messages)
             const products = [];
+            let compatibilityHtml = '';
             let cleanText = text;
             if (sender !== 'user') {
+                // Parse products
                 const productRegex = /\[PRODUCT:(\d+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^\]]+)\]/g;
                 let match;
                 while ((match = productRegex.exec(text)) !== null) {
@@ -922,6 +924,41 @@
                 cleanText = text.replace(/\[PRODUCT:(\d+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^\]]+)\]/g, '**$2** ($3)');
                 // Fallback: Remove any malformed product tags completely
                 cleanText = cleanText.replace(/\[PRODUCT:[^\]]+\]/g, '');
+
+                // Parse compatibility
+                const compRegex = /\[COMPATIBILITY:(success|warning)\|([^\]]+)\]/i;
+                const compMatch = compRegex.exec(cleanText);
+                if (compMatch) {
+                    const status = compMatch[1];
+                    const messagesList = compMatch[2].split(';');
+                    
+                    if (status === 'success') {
+                        compatibilityHtml = `
+                            <div class="mt-4 p-4 rounded-2xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800/40 text-green-800 dark:text-green-300 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in duration-300">
+                                <span class="material-symbols-outlined text-[20px] text-green-600 dark:text-green-400 shrink-0">check_circle</span>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm leading-tight">${currentLang === 'vi' ? 'Cấu hình tương thích tốt!' : 'Great compatibility!'}</h4>
+                                    <p class="mt-1 text-[11px] font-medium leading-normal">${messagesList[0]}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        compatibilityHtml = `
+                            <div class="mt-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 text-amber-900 dark:text-amber-300 text-xs font-semibold flex flex-col gap-2 animate-in fade-in duration-300">
+                                <div class="flex items-center gap-2 font-black border-b border-amber-200 dark:border-amber-800/30 pb-1.5 shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-amber-600 dark:text-amber-400 shrink-0">warning</span>
+                                    <span class="font-bold text-sm leading-tight">${currentLang === 'vi' ? 'Xung đột tương thích!' : 'Compatibility conflict!'}</span>
+                                </div>
+                                <ul class="list-disc list-inside space-y-1 font-medium leading-relaxed pl-1 text-[11px]">
+                                    ${messagesList.map(msg => `<li>${msg}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }
+                // Remove compatibility tag completely
+                cleanText = cleanText.replace(/\[COMPATIBILITY:[^\]]+\]/gi, '');
+
                 // Clean up consecutive multiple newlines left behind by the tags
                 cleanText = cleanText.replace(/\n{3,}/g, '\n\n').trim();
             }
@@ -993,6 +1030,7 @@
                     <div class="flex flex-col gap-1 w-full">
                         <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
                             <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
+                            ${compatibilityHtml}
                             ${productsHtml}
                             <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${time}</span>
                         </div>
