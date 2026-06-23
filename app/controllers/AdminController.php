@@ -2045,7 +2045,7 @@ class AdminController extends Controller {
             echo '<th align="left" style="width: 25%; text-align: left;">Họ tên khách hàng</th>';
             echo '<th align="left" style="width: 40%; text-align: left;">Địa chỉ Email</th>';
             echo '<th align="center" style="width: 15%; text-align: center;">Số đơn thành công</th>';
-            echo '<th align="right" style="width: 20%; text-align: right;">Tổng chi tiêu</th>';
+            echo '<th align="center" style="width: 20%; text-align: center;">Tổng chi tiêu</th>';
             echo '</tr>';
             
             $zebra = false;
@@ -2055,7 +2055,7 @@ class AdminController extends Controller {
                 echo '<td align="left" class="bold" style="text-align: left;">' . htmlspecialchars($cust['name']) . '</td>';
                 echo '<td align="left" style="text-align: left;">' . htmlspecialchars($cust['email']) . '</td>';
                 echo '<td align="center" style="text-align: center;">' . htmlspecialchars($cust['order_count']) . '</td>';
-                echo '<td align="right" class="bold" style="text-align: right; color: #059669;">' . number_format($cust['total_spent'], 0, ',', '.') . ' ₫</td>';
+                echo '<td align="center" class="bold" style="text-align: center; color: #059669;">' . number_format($cust['total_spent'], 0, ',', '.') . ' ₫</td>';
                 echo '</tr>';
                 $zebra = !$zebra;
             }
@@ -2952,7 +2952,7 @@ class AdminController extends Controller {
                                 <tr>
                                     <th style="width: 10%;" class="text-center">STT</th>
                                     <th>Khách hàng</th>
-                                    <th style="width: 30%;" class="text-right">Tổng chi tiêu</th>
+                                    <th style="width: 30%;" class="text-center">Tổng chi tiêu</th>
                                     <th style="width: 20%;" class="text-center">Số đơn</th>
                                 </tr>
                             </thead>
@@ -2963,7 +2963,7 @@ class AdminController extends Controller {
                                 <tr>
                                     <td class="text-center">' . $idx++ . '</td>
                                     <td class="bold">' . htmlspecialchars($c['name'] ?? 'Khách lẻ') . '</td>
-                                    <td class="text-right">' . number_format($c['total_spent'], 0, ',', '.') . ' đ</td>
+                                    <td class="text-center">' . number_format($c['total_spent'], 0, ',', '.') . ' đ</td>
                                     <td class="text-center">' . $c['order_count'] . '</td>
                                 </tr>';
             }
