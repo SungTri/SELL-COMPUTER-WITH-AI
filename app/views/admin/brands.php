@@ -2,13 +2,13 @@
 <?php require_once VIEWS . '/layout/admin_sidebar.php'; ?>
 
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <h1 class="text-h2 font-bold text-primary">Quản lý thương hiệu</h1>
         
         <div class="flex items-center gap-6">
-            <form action="<?php echo URLROOT; ?>/admin/brands" method="GET" class="relative w-80 md:w-96">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input id="brand-search-input" name="search" value="<?php echo htmlspecialchars($data['filters']['search'] ?? ''); ?>" class="w-full pl-12 pr-4 py-2.5 bg-[#F3F4F6] rounded-full border-none text-body-md focus:ring-2 focus:ring-secondary/20 transition-all outline-none" placeholder="Tìm tên thương hiệu, mô tả..." type="text"/>
+            <form action="<?php echo URLROOT; ?>/admin/brands" method="GET" class="w-80 md:w-96 flex items-center bg-[#F3F4F6] dark:bg-zinc-950 border border-transparent dark:border-zinc-800 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-secondary/20 transition-all relative">
+                <span class="material-symbols-outlined text-on-surface-variant text-[20px] select-none flex-shrink-0">search</span>
+                <input id="brand-search-input" name="search" value="<?php echo htmlspecialchars($data['filters']['search'] ?? ''); ?>" class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 pr-6 py-0" placeholder="Tìm tên thương hiệu, mô tả..." type="text"/>
                 <?php if(!empty($data['filters']['search'])): ?>
                     <a href="<?php echo URLROOT; ?>/admin/brands" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-error transition-colors">
                         <span class="material-symbols-outlined text-[18px]">close</span>

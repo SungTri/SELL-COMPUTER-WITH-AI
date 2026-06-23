@@ -4,19 +4,19 @@
 <!-- Main Content Area -->
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
     <!-- Header -->
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <h1 class="text-h2 font-bold text-primary">Quản lý Đánh giá</h1>
         
-        <div class="flex items-center gap-6">
-            <form method="GET" action="<?php echo URLROOT; ?>/admin/reviews" class="relative w-96">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input name="search" value="<?php echo $data['search']; ?>" class="w-full pl-12 pr-4 py-2.5 bg-[#F3F4F6] rounded-full border-none text-body-md focus:ring-2 focus:ring-secondary/20 transition-all" placeholder="Tìm tên khách hàng, sản phẩm..." type="text"/>
+        <div class="flex items-center gap-8">
+            <form method="GET" action="<?php echo URLROOT; ?>/admin/reviews" class="w-96 flex items-center bg-[#F3F4F6] dark:bg-zinc-950 border border-transparent dark:border-zinc-800 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-secondary/20 transition-all">
+                <span class="material-symbols-outlined text-on-surface-variant text-[20px] select-none flex-shrink-0">search</span>
+                <input name="search" value="<?php echo $data['search']; ?>" class="w-full bg-transparent border-none focus:ring-0 text-[13px] font-medium text-slate-700 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 py-0" placeholder="Tìm tên khách hàng, sản phẩm..." type="text"/>
             </form>
-            <div class="flex items-center gap-4 border-l border-outline-variant pl-6">
+            <div class="flex items-center gap-5 border-l border-outline-variant pl-8 ml-2">
                 <!-- Notifications -->
                 <?php require_once VIEWS . '/layout/admin_notification.php'; ?>
 
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+                <div class="flex items-center gap-4 pl-6 border-l border-outline-variant">
                     <img alt="Admin" class="w-10 h-10 rounded-full object-cover" src="<?php echo $_SESSION['user_avatar'] ?? 'https://ui-avatars.com/api/?name=Admin&background=0453cd&color=fff'; ?>"/>
                     <div class="text-right">
                         <p class="text-[14px] font-bold"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></p>

@@ -4,7 +4,7 @@
 <!-- Main Content Area -->
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
     <!-- Header -->
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <h1 class="text-h2 font-bold text-primary">Quản lý Chatbot</h1>
         
         <div class="flex items-center gap-6">
@@ -35,13 +35,13 @@
         <!-- Search Bar -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-outline-variant shadow-sm">
             <form action="<?php echo URLROOT; ?>/admin/chatbotHistory" method="GET" class="flex-1 max-w-lg flex gap-3">
-                <div class="relative flex-1">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($data['search']); ?>" placeholder="Tìm kiếm câu hỏi, câu trả lời, ID khách hàng..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-outline-variant rounded-xl text-sm outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"/>
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">search</span>
+                <div class="flex-1 flex items-center bg-gray-50 border border-outline-variant rounded-xl px-4 py-2 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all">
+                    <span class="material-symbols-outlined text-[20px] text-on-surface-variant select-none flex-shrink-0">search</span>
+                    <input type="text" name="search" value="<?php echo htmlspecialchars($data['search']); ?>" placeholder="Tìm kiếm câu hỏi, câu trả lời, ID khách hàng..." class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-700 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 py-0"/>
                 </div>
-                <button type="submit" class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-secondary transition-all">Tìm kiếm</button>
+                <button type="submit" class="px-5 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-secondary transition-all">Tìm kiếm</button>
                 <?php if(!empty($data['search'])): ?>
-                    <a href="<?php echo URLROOT; ?>/admin/chatbotHistory" class="px-4 py-2.5 border border-outline-variant text-sm font-bold text-on-surface-variant rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center">Xóa lọc</a>
+                    <a href="<?php echo URLROOT; ?>/admin/chatbotHistory" class="px-4 py-2 border border-outline-variant text-sm font-bold text-on-surface-variant rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center">Xóa lọc</a>
                 <?php endif; ?>
             </form>
             <div class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">

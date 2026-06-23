@@ -2,7 +2,7 @@
 <?php require_once VIEWS . '/layout/admin_sidebar.php'; ?>
 
 <main class="flex-1 w-full flex flex-col h-screen overflow-y-auto bg-[#F8F9FB]">
-    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-10">
+    <header class="h-20 bg-white border-b border-outline-variant flex items-center justify-between px-10 sticky top-0 z-40">
         <h1 class="text-h2 font-bold text-primary">Quản lý Tài khoản</h1>
         
         <div class="flex items-center gap-6">
@@ -23,9 +23,9 @@
         <section class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm">
             <form id="searchForm" onsubmit="return false;" class="flex flex-wrap items-center gap-6">
                 <div class="flex-1 min-w-[300px]">
-                    <div class="relative group">
-                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
-                        <input type="text" id="searchInput" name="search" value="<?php echo $data['filters']['search']; ?>" placeholder="Tìm theo tên, email hoặc số điện thoại..." class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl outline-none focus:ring-2 focus:ring-secondary/20 transition-all text-[15px] placeholder:text-on-surface-variant/60 shadow-sm group-hover:border-primary/30">
+                    <div class="w-full flex items-center bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-secondary/20 transition-all group-hover:border-primary/30 shadow-sm">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[20px] select-none flex-shrink-0">search</span>
+                        <input type="text" id="searchInput" name="search" value="<?php echo $data['filters']['search']; ?>" placeholder="Tìm theo tên, email hoặc số điện thoại..." class="w-full bg-transparent border-none focus:ring-0 text-[13.5px] font-medium text-slate-750 dark:text-zinc-200 placeholder:text-on-surface-variant/60 ml-2 py-0">
                     </div>
                 </div>
                 
