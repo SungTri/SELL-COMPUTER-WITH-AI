@@ -814,7 +814,7 @@ class AdminModel {
             FROM orders
             WHERE order_status NOT IN ('cancelled', 'pending')
             GROUP BY DATE_FORMAT(ordered_at, '%m/%Y')
-            ORDER BY ordered_at DESC
+            ORDER BY MIN(ordered_at) DESC
             LIMIT 6
         ");
         $results = $this->db->resultSet();
@@ -855,7 +855,7 @@ class AdminModel {
             WHERE order_status NOT IN ('cancelled', 'pending') 
             AND ordered_at BETWEEN :start AND :end
             GROUP BY label
-            ORDER BY ordered_at ASC
+            ORDER BY MIN(ordered_at) ASC
         ");
         $this->db->bind(':format', $format);
         $this->db->bind(':start', $startDate . ' 00:00:00');
@@ -1137,7 +1137,7 @@ class AdminModel {
             $sql .= " AND o.ordered_at BETWEEN :start AND :end";
         }
         $sql .= "
-            GROUP BY c.id
+            GROUP BY c.id, c.full_name, u.email
             ORDER BY total_spent DESC
             LIMIT :limit
         ";
@@ -1206,7 +1206,7 @@ class AdminModel {
             FROM orders
             WHERE order_status NOT IN ('cancelled', 'pending') 
             AND ordered_at >= DATE_SUB(CURRENT_DATE(), INTERVAL :weeks WEEK)
-            GROUP BY week_label
+            GROUP BY week_label, DATE_SUB(DATE(ordered_at), INTERVAL WEEKDAY(ordered_at) DAY)
             ORDER BY week_start ASC
         ");
         $this->db->bind(':weeks', $weeks);
@@ -1305,7 +1305,7 @@ class AdminModel {
                 SUM(total_amount) as revenue
             FROM orders
             WHERE order_status NOT IN ('cancelled', 'pending')
-            GROUP BY YEAR(ordered_at)
+            GROUP BY DATE_FORMAT(ordered_at, '%Y')
             ORDER BY year DESC
         ");
         return $this->db->resultSet();
