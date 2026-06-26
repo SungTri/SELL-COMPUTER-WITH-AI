@@ -65,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$isCsrfExempt) {
         $token = $_POST['csrf_token'] ?? '';
         if (!verify_csrf_token($token)) {
+            $logMsg = date('Y-m-d H:i:s') . " - CSRF FAIL - Session ID: " . session_id() 
+                . " - Session Token: " . ($_SESSION['csrf_token'] ?? 'NOT_SET') 
+                . " - POST Token: " . $token 
+                . " - Cookie: " . ($_SERVER['HTTP_COOKIE'] ?? 'NONE') . "\n";
+            file_put_contents(__DIR__ . '/csrf_log.txt', $logMsg, FILE_APPEND);
             http_response_code(403);
             // Return JSON if AJAX request, else plain text
             $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
