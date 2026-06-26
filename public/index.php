@@ -1,5 +1,6 @@
 <?php
 session_start();
+file_put_contents(__DIR__ . '/url_log.txt', date('Y-m-d H:i:s') . ' - URL: ' . ($_GET['url'] ?? 'NULL') . ' - URI: ' . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
 
 // Load Composer Autoloader & Dotenv
 require_once dirname(__DIR__) . '/vendor/autoload.php';
