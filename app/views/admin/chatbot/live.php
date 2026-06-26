@@ -98,7 +98,12 @@
             <div class="p-6 bg-white border-t border-outline-variant shrink-0" id="chatInputConsole">
                 <div class="relative flex items-center gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="chatInput" autocomplete="off" disabled placeholder="Vui lòng chọn hoặc tiếp nhận hỗ trợ để bắt đầu chat..." class="w-full pl-5 pr-14 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-gray-400 disabled:opacity-60 disabled:cursor-not-allowed"/>
+                        <button id="chatUploadBtn" disabled onclick="triggerLiveChatImageUpload()" 
+                            class="absolute top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" style="right: 52px;">
+                            <span class="material-symbols-outlined text-xl">image</span>
+                        </button>
+                        <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="handleLiveChatImageUpload(this)" />
+                        <input type="text" id="chatInput" autocomplete="off" disabled placeholder="Vui lòng chọn hoặc tiếp nhận hỗ trợ để bắt đầu chat..." class="w-full pl-5 pr-[96px] py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-gray-400 disabled:opacity-60 disabled:cursor-not-allowed"/>
                         <button onclick="sendChatMessage()" id="btnSend" disabled class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-secondary hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                             <span class="material-symbols-outlined text-xl">send</span>
                         </button>
@@ -267,11 +272,27 @@
     function buildAdminChatBubble(m, withAnim = true) {
         const isMe = m.sender === 'admin';
         const animClass = withAnim ? 'chat-bubble-anim' : '';
+        let formattedText = m.message;
+        formattedText = formattedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        formattedText = formattedText.replace(/\n/g, '<br>');
+
         if (isMe) {
+            let messageBody = '';
+            if (m.message.indexOf('[IMAGE] ') === 0) {
+                const imgUrl = m.message.substring(8);
+                const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                messageBody = `
+                    <div class="rounded-xl overflow-hidden max-w-[320px] cursor-zoom-in border border-white/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                        <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[250px]" alt="Uploaded Image" />
+                    </div>
+                `;
+            } else {
+                messageBody = `<p class="text-[13.5px] leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+            }
             return `
                 <div class="flex justify-end ${animClass}">
                     <div class="bg-primary text-white px-5 py-3.5 rounded-2xl rounded-tr-none shadow-md max-w-[70%]">
-                        <p class="text-[13.5px] leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${m.message.replace(/\n/g, '<br>')}</p>
+                        ${messageBody}
                         <span class="text-[9px] text-white/60 mt-2 block text-right font-medium uppercase">${m.time}</span>
                     </div>
                 </div>
@@ -289,13 +310,26 @@
                 `;
             }
 
+            let messageBody = '';
+            if (m.message.indexOf('[IMAGE] ') === 0) {
+                const imgUrl = m.message.substring(8);
+                const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                messageBody = `
+                    <div class="rounded-xl overflow-hidden max-w-[320px] cursor-zoom-in border border-outline-variant/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                        <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[250px]" alt="Uploaded Image" />
+                    </div>
+                `;
+            } else {
+                messageBody = `<p class="text-[13.5px] text-gray-700 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+            }
+
             return `
                 <div class="flex gap-3 max-w-[70%] ${animClass}">
                     <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex-shrink-0 flex items-center justify-center border border-slate-300 text-xs font-bold">
                         KH
                     </div>
                     <div class="bg-white border border-outline-variant/30 px-5 py-3.5 rounded-2xl rounded-tl-none shadow-sm flex flex-col w-full">
-                        <p class="text-[13.5px] text-gray-700 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${m.message.replace(/\n/g, '<br>')}</p>
+                        ${messageBody}
                         <span class="text-[9px] text-gray-400 mt-2 block font-medium uppercase">${m.time}</span>
                     </div>
                 </div>
@@ -357,18 +391,21 @@
                 // Enable/Disable Input console
                 const chatInput = document.getElementById('chatInput');
                 const btnSend = document.getElementById('btnSend');
+                const chatUploadBtn = document.getElementById('chatUploadBtn');
                 if (selectedSessionStatus === 'active' && data.admin_id == currentAdminId) {
                     chatInput.removeAttribute('disabled');
                     chatInput.placeholder = 'Nhập tin nhắn phản hồi khách hàng...';
                     btnSend.removeAttribute('disabled');
-                } else if (selectedSessionStatus === 'pending') {
-                    chatInput.setAttribute('disabled', 'true');
-                    chatInput.placeholder = 'Vui lòng bấm "Tiếp nhận hỗ trợ" để bắt đầu trò chuyện...';
-                    btnSend.setAttribute('disabled', 'true');
+                    if (chatUploadBtn) chatUploadBtn.removeAttribute('disabled');
                 } else {
                     chatInput.setAttribute('disabled', 'true');
-                    chatInput.placeholder = 'Phiên hỗ trợ đã đóng. Không thể gửi thêm tin nhắn.';
                     btnSend.setAttribute('disabled', 'true');
+                    if (chatUploadBtn) chatUploadBtn.setAttribute('disabled', 'true');
+                    if (selectedSessionStatus === 'pending') {
+                        chatInput.placeholder = 'Vui lòng bấm "Tiếp nhận hỗ trợ" để bắt đầu trò chuyện...';
+                    } else {
+                        chatInput.placeholder = 'Phiên hỗ trợ đã đóng. Không thể gửi thêm tin nhắn.';
+                    }
                 }
 
                 // Render message feed
@@ -528,6 +565,61 @@
             }
         } catch (error) {
             console.error('Error sending message:', error);
+        }
+    }
+
+    function triggerLiveChatImageUpload() {
+        document.getElementById('chatImageInput').click();
+    }
+
+    async function handleLiveChatImageUpload(input) {
+        if (!input.files || input.files.length === 0 || !selectedCustomerId) return;
+        const file = input.files[0];
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Dung lượng ảnh tối đa 5MB.');
+            input.value = '';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('customer_id', selectedCustomerId);
+        formData.append('image', file);
+        formData.append('csrf_token', csrfToken);
+
+        // Visual indicator in button
+        const chatUploadBtn = document.getElementById('chatUploadBtn');
+        const uploadIcon = chatUploadBtn.querySelector('.material-symbols-outlined');
+        if (uploadIcon) {
+            uploadIcon.innerText = 'progress_activity';
+            uploadIcon.classList.add('animate-spin');
+        }
+        chatUploadBtn.setAttribute('disabled', 'true');
+
+        try {
+            const response = await fetch('<?php echo URLROOT; ?>/admin/uploadLiveChatImage', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                loadMessages(true);
+                loadSessions();
+            } else {
+                alert(data.message || 'Lỗi upload ảnh.');
+            }
+        } catch (error) {
+            console.error('Error uploading live chat image:', error);
+            alert('Lỗi kết nối máy chủ.');
+        } finally {
+            if (uploadIcon) {
+                uploadIcon.innerText = 'image';
+                uploadIcon.classList.remove('animate-spin');
+            }
+            if (selectedSessionStatus === 'active') {
+                chatUploadBtn.removeAttribute('disabled');
+            }
+            input.value = '';
         }
     }
 

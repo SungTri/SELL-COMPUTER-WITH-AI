@@ -154,6 +154,11 @@
             <!-- Input Area -->
             <div class="p-5 bg-white dark:bg-zinc-900 border-t border-outline-variant/20 dark:border-outline-variant/10">
                 <div class="relative group">
+                    <button id="chatUploadBtn" onclick="triggerChatImageUpload()" 
+                        class="absolute top-1/2 -translate-y-1/2 w-10 h-10 bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 rounded-xl flex items-center justify-center hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all active:scale-95 cursor-pointer hidden animate-in fade-in duration-300" style="right: 52px;">
+                        <span class="material-symbols-outlined text-xl">image</span>
+                    </button>
+                    <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="handleChatImageUpload(this)" />
                     <input id="chatInput" 
                         class="w-full pl-5 pr-14 py-3.5 bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700/60 rounded-2xl text-sm dark:text-zinc-100 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-zinc-500" 
                         placeholder="<?php echo __('chatbot_placeholder', 'Nhập câu hỏi của bạn...'); ?>" 
@@ -359,6 +364,8 @@
             const btnAi = document.getElementById('btn-chat-ai');
             const messages = document.getElementById('chatMessages');
             const liveChatBanner = document.getElementById('liveChatBanner');
+            const chatUploadBtn = document.getElementById('chatUploadBtn');
+            const chatInput = document.getElementById('chatInput');
 
             if (messages && oldMode && oldMode !== mode) {
                 // Save current content of the old mode
@@ -369,6 +376,12 @@
                 btnShop.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[11px] font-bold transition-all bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-sm cursor-pointer';
                 btnAi.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[11px] font-bold transition-all text-white hover:bg-white/5 cursor-pointer';
                 
+                if (chatUploadBtn) chatUploadBtn.classList.remove('hidden');
+                if (chatInput) {
+                    chatInput.classList.remove('pr-14');
+                    chatInput.classList.add('pr-[96px]');
+                }
+
                 // Show live chat banner if not already in active session
                 if (liveChatPollInterval) {
                     if (liveChatBanner) liveChatBanner.classList.add('hidden');
@@ -402,6 +415,12 @@
                 btnAi.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[11px] font-bold transition-all bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-sm cursor-pointer';
                 btnShop.className = 'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[11px] font-bold transition-all text-white hover:bg-white/5 cursor-pointer';
                 
+                if (chatUploadBtn) chatUploadBtn.classList.add('hidden');
+                if (chatInput) {
+                    chatInput.classList.remove('pr-[96px]');
+                    chatInput.classList.add('pr-14');
+                }
+
                 if (liveChatBanner) liveChatBanner.classList.add('hidden');
 
                 const savedAiHistory = sessionStorage.getItem('chat_history_ai');
@@ -974,9 +993,21 @@
             
             if (sender === 'user') {
                 msgDiv.className = 'flex justify-end chatbot-bubble-in';
+                let messageBody = '';
+                if (cleanText.indexOf('[IMAGE] ') === 0) {
+                    const imgUrl = cleanText.substring(8);
+                    const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                    messageBody = `
+                        <div class="rounded-xl overflow-hidden max-w-[240px] cursor-zoom-in border border-white/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                            <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[200px]" alt="Uploaded Image" />
+                        </div>
+                    `;
+                } else {
+                    messageBody = `<p class="text-sm leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+                }
                 msgDiv.innerHTML = `
                     <div class="bg-blue-600 dark:bg-blue-700 text-white p-5 rounded-2xl rounded-tr-none shadow-md max-w-[80%]">
-                        <p class="text-sm leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
+                        ${messageBody}
                         <span class="text-[9px] text-white/60 mt-2 block text-right font-medium uppercase">${time}</span>
                     </div>
                 `;
@@ -1022,6 +1053,19 @@
                 }
 
                 const iconName = currentMode === 'shop' ? 'support_agent' : 'smart_toy';
+                
+                let messageBody = '';
+                if (cleanText.indexOf('[IMAGE] ') === 0) {
+                    const imgUrl = cleanText.substring(8);
+                    const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                    messageBody = `
+                        <div class="rounded-xl overflow-hidden max-w-[240px] cursor-zoom-in border border-outline-variant/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                            <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[200px]" alt="Uploaded Image" />
+                        </div>
+                    `;
+                } else {
+                    messageBody = `<p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+                }
 
                 msgDiv.innerHTML = `
                     <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-zinc-850 flex-shrink-0 flex items-center justify-center border border-blue-100 dark:border-zinc-700">
@@ -1029,7 +1073,7 @@
                     </div>
                     <div class="flex flex-col gap-1 w-full">
                         <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
-                            <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
+                            ${messageBody}
                             ${compatibilityHtml}
                             ${productsHtml}
                             <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${time}</span>
@@ -1190,10 +1234,22 @@
             const animClass = withAnim ? 'chatbot-bubble-in' : '';
 
             if (isMe) {
+                let messageBody = '';
+                if (m.message.indexOf('[IMAGE] ') === 0) {
+                    const imgUrl = m.message.substring(8);
+                    const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                    messageBody = `
+                        <div class="rounded-xl overflow-hidden max-w-[240px] cursor-zoom-in border border-white/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                            <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[200px]" alt="Uploaded Image" />
+                        </div>
+                    `;
+                } else {
+                    messageBody = `<p class="text-sm leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+                }
                 return `
                     <div class="flex justify-end ${animClass}">
                         <div class="bg-blue-600 dark:bg-blue-700 text-white p-5 rounded-2xl rounded-tr-none shadow-md max-w-[80%]">
-                            <p class="text-sm leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
+                            ${messageBody}
                             <span class="text-[9px] text-white/60 mt-2 block text-right font-medium uppercase">${m.time}</span>
                         </div>
                     </div>
@@ -1209,15 +1265,28 @@
                         </div>
                     `;
                 }
+                
+                let messageBody = '';
+                if (m.message.indexOf('[IMAGE] ') === 0) {
+                    const imgUrl = m.message.substring(8);
+                    const absoluteImgUrl = imgUrl.startsWith('http') ? imgUrl : '<?php echo URLROOT; ?>' + imgUrl;
+                    messageBody = `
+                        <div class="rounded-xl overflow-hidden max-w-[240px] cursor-zoom-in border border-outline-variant/20 shadow-sm" onclick="window.open('${absoluteImgUrl}', '_blank')">
+                            <img src="${absoluteImgUrl}" class="w-full h-auto object-cover max-h-[200px]" alt="Uploaded Image" />
+                        </div>
+                    `;
+                } else {
+                    messageBody = `<p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>`;
+                }
                 return `
                     <div class="flex gap-3 max-w-[90%] ${animClass}">
                         <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-zinc-850 flex-shrink-0 flex items-center justify-center border border-blue-100 dark:border-zinc-700">
                             <span class="material-symbols-outlined text-sm text-[#356ee7] dark:text-blue-400">support_agent</span>
                         </div>
                         <div class="flex flex-col gap-1 w-full">
-                            <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-outline-variant/20 dark:border-outline-variant/10">
-                                <p class="text-sm text-gray-700 dark:text-zinc-200 leading-relaxed" style="overflow-wrap: anywhere; word-break: break-word;">${formattedText}</p>
-                                    <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${m.time}</span>
+                            <div class="bg-white dark:bg-zinc-850 p-5 rounded-2xl rounded-tl-none shadow-[0_2px_12px_rgba(0,0,0,0.035)] border border-outline-variant/20 dark:border-outline-variant/10">
+                                ${messageBody}
+                                <span class="text-[9px] text-gray-400 dark:text-zinc-500 mt-2 block font-medium uppercase">${m.time}</span>
                             </div>
                         </div>
                     </div>
@@ -1352,6 +1421,60 @@
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        function triggerChatImageUpload() {
+            document.getElementById('chatImageInput').click();
+        }
+
+        async function handleChatImageUpload(input) {
+            if (!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            
+            // Check size on client-side
+            if (file.size > 5 * 1024 * 1024) {
+                showToast(currentLang === 'vi' ? 'Dung lượng ảnh tối đa 5MB.' : 'Maximum file size is 5MB.', 'error');
+                input.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Show typing indicator
+            const typing = document.getElementById('typingIndicator');
+            const typingIcon = document.getElementById('typing-icon');
+            const typingText = document.getElementById('typing-text');
+            if (typingIcon) typingIcon.innerText = 'support_agent';
+            if (typingText) typingText.innerText = currentLang === 'vi' ? 'Đang gửi ảnh...' : 'Sending image...';
+            if (typing) typing.classList.remove('hidden');
+
+            try {
+                const response = await fetch('<?php echo URLROOT; ?>/chatbot/uploadImage', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                if (typing) typing.classList.add('hidden');
+                
+                if (data.status === 'success') {
+                    if (liveChatPollInterval) {
+                        syncLiveChat(true);
+                    } else {
+                        appendMessage('user', '[IMAGE] ' + data.image_path, data.time);
+                    }
+                } else {
+                    showToast(data.message || (currentLang === 'vi' ? 'Lỗi upload ảnh.' : 'Image upload failed.'), 'error');
+                }
+            } catch (error) {
+                if (typing) typing.classList.add('hidden');
+                console.error('Error uploading image:', error);
+                showToast(currentLang === 'vi' ? 'Lỗi kết nối máy chủ.' : 'Connection error.', 'error');
+            }
+            input.value = '';
         }
 
         // Global Wishlist Toggle Logic

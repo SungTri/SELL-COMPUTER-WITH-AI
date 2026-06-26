@@ -3138,4 +3138,106 @@ class AdminController extends Controller {
         $dompdf->stream('TechExpert_Report_' . date('Y-m-d') . '.pdf', ['Attachment' => false]);
         exit();
     }
+
+    public function uploadLiveChatImage() {
+        ob_start();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+            exit();
+        }
+
+        $userId = $_POST['customer_id'] ?? null; // This is users.id from support_sessions
+        if (!$userId) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Missing customer_id']);
+            exit();
+        }
+
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy file ảnh hoặc upload thất bại.']);
+            exit();
+        }
+
+        $file = $_FILES['image'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        if ($file['size'] > $maxSize) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Kích thước file ảnh không được vượt quá 5MB.']);
+            exit();
+        }
+
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExtensions)) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Định dạng file không hợp lệ. Chỉ hỗ trợ JPG, JPEG, PNG, GIF, WEBP.']);
+            exit();
+        }
+
+        // Validate MIME type as double security
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($mimeType, $allowedMimes)) {
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'Định dạng file không hợp lệ (Mime type check).']);
+            exit();
+        }
+
+        $uploadDir = ROOT . '/public/img/chat/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $fileName = uniqid('chat_admin_', true) . '.' . $ext;
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            try {
+                $db = new Database();
+                // Lookup customers.id from users.id for chat_history FK
+                $db->query("SELECT id FROM customers WHERE user_id = :uid");
+                $db->bind(':uid', $userId);
+                $cust = $db->single();
+                $custId = $cust ? $cust['id'] : null;
+
+                $dbImagePath = '/public/img/chat/' . $fileName;
+
+                if ($custId) {
+                    $db->query("INSERT INTO chat_history (customer_id, question, answer, chatted_at) VALUES (:cid, NULL, :answer, NOW())");
+                    $db->bind(':cid', $custId);
+                    $db->bind(':answer', '[SHOP] [IMAGE] ' . $dbImagePath);
+                    $db->execute();
+                }
+
+                while (ob_get_level() > 0) ob_end_clean();
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'status' => 'success',
+                    'image_path' => $dbImagePath,
+                    'time' => date('H:i')
+                ]);
+                exit();
+            } catch (Exception $e) {
+                while (ob_get_level() > 0) ob_end_clean();
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['status' => 'error', 'message' => 'DB error: ' . $e->getMessage()]);
+                exit();
+            }
+        }
+
+        while (ob_get_level() > 0) ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'error', 'message' => 'Không thể di chuyển file ảnh tải lên.']);
+        exit();
+    }
 }
