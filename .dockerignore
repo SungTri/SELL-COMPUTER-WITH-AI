@@ -1,0 +1,5 @@
+.git
+vendor
+scratch
+*.zip
+casso_api_log.txt
