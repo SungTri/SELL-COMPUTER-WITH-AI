@@ -7,6 +7,58 @@
         } else {
             document.documentElement.classList.add('light');
         }
+
+        // Toggle Admin Sidebar
+        function toggleAdminSidebar() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const overlay = document.getElementById('admin-sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            } else {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('opacity-0');
+                }, 20);
+            }
+        }
+
+        // Auto-initialize responsive layout components on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Find and inject hamburger menu into all admin headers
+            const mainHeader = document.querySelector('main > header');
+            if (mainHeader) {
+                if (!mainHeader.querySelector('.admin-hamburger-btn')) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.onclick = toggleAdminSidebar;
+                    btn.className = 'admin-hamburger-btn lg:hidden w-10 h-10 rounded-xl bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-750 transition-all shadow-sm shrink-0 mr-4 cursor-pointer';
+                    btn.innerHTML = '<span class="material-symbols-outlined text-[24px]">menu</span>';
+                    
+                    mainHeader.insertBefore(btn, mainHeader.firstChild);
+                    
+                    // Adjust header padding dynamically for mobile screen
+                    mainHeader.classList.remove('px-10');
+                    mainHeader.classList.add('px-4', 'sm:px-6', 'lg:px-10');
+                }
+            }
+            
+            // Adjust page main content area padding on mobile screen
+            const mainContent = document.querySelectorAll('main > div');
+            mainContent.forEach(content => {
+                if (content.classList.contains('p-10')) {
+                    content.classList.remove('p-10');
+                    content.classList.add('p-4', 'sm:p-6', 'lg:p-10');
+                }
+            });
+        });
     </script>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>

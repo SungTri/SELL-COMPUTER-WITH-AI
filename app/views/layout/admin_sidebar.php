@@ -1,10 +1,19 @@
+<!-- Sidebar Overlay for mobile -->
+<div id="admin-sidebar-overlay" class="fixed inset-0 bg-black/50 dark:bg-black/80 z-40 hidden transition-opacity duration-300 opacity-0 lg:hidden" onclick="toggleAdminSidebar()"></div>
+
 <!-- Sidebar Navigation -->
-<aside class="w-72 bg-zinc-950 text-zinc-100 border-r border-zinc-900 h-screen flex flex-col shrink-0 select-none">
-    <div class="px-8 py-8 flex flex-col gap-1 border-b border-zinc-900/60">
-        <a href="<?php echo URLROOT; ?>/admin" class="font-h1 text-2xl font-extrabold text-white tracking-tight flex items-center gap-1.5">
-            <span>TechExpert</span><span class="text-indigo-500 font-black text-3xl leading-none">.</span>
-        </a>
-        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Bảng điều hành</span>
+<aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-zinc-950 text-zinc-100 border-r border-zinc-900 h-screen flex flex-col shrink-0 select-none transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto">
+    <div class="px-8 py-8 flex items-center justify-between border-b border-zinc-900/60">
+        <div class="flex flex-col gap-1">
+            <a href="<?php echo URLROOT; ?>/admin" class="font-h1 text-2xl font-extrabold text-white tracking-tight flex items-center gap-1.5">
+                <span>TechExpert</span><span class="text-indigo-500 font-black text-3xl leading-none">.</span>
+            </a>
+            <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Bảng điều hành</span>
+        </div>
+        <!-- Close button for mobile -->
+        <button type="button" onclick="toggleAdminSidebar()" class="lg:hidden w-8 h-8 rounded-lg bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
     </div>
     
     <?php
