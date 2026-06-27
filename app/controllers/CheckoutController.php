@@ -539,9 +539,31 @@ class CheckoutController extends Controller {
                             $tid = $record['id'] ?? '';
                             $when = $record['when'] ?? '';
 
-                            // Extract Order ID from description. Handles case where hyphens are stripped by bank e.g. DH33U20P296x106052126 -> matches 33
+                            // 1. Strict Match: Extract Order ID from description
+                            $isMatch = false;
+                            $isFallback = false;
                             preg_match('/DH\s*(\d+)/i', $desc, $matches);
-                            if (isset($matches[1]) && (int)$matches[1] === (int)$orderId) {
+                            
+                            if (isset($matches[1])) {
+                                if ((int)$matches[1] === (int)$orderId) {
+                                    $isMatch = true;
+                                }
+                            } else {
+                                // 2. Fallback Match: Check by exact amount and recent time
+                                $orderTime = strtotime($order['ordered_at']);
+                                $txTime = strtotime($when);
+                                
+                                // Check if amount matches exactly, and transaction time is within 1 hour of order creation
+                                // We also check if txTime is after orderTime - 120 (with a 2-min clock skew tolerance)
+                                if (abs($amount - $order['total_amount']) < 1 && 
+                                    $txTime >= ($orderTime - 120) && 
+                                    $txTime <= ($orderTime + 3600)) {
+                                    $isMatch = true;
+                                    $isFallback = true;
+                                }
+                            }
+
+                            if ($isMatch) {
                                 $foundMatch = true;
                                 if (!$this->orderModel->isTransactionProcessed($tid)) {
                                     if ($amount >= $order['total_amount']) {
@@ -554,11 +576,11 @@ class CheckoutController extends Controller {
                                             'amount' => $amount,
                                             'description' => $desc,
                                             'order_id' => $orderId,
-                                            'status' => 'Success'
+                                            'status' => $isFallback ? 'Success (Fallback)' : 'Success'
                                         ]);
                                         
                                         $isPaid = true;
-                                        $logMsg = "[$timestamp] Order #$orderId - Paid! Transaction matched successfully. ID: $tid, Amount: $amount, Time: $when, Description: $desc\n";
+                                        $logMsg = "[$timestamp] Order #$orderId - Paid! Transaction matched successfully" . ($isFallback ? " (Fallback)" : "") . ". ID: $tid, Amount: $amount, Time: $when, Description: $desc\n";
                                         file_put_contents($logPath, $logMsg, FILE_APPEND);
                                         break;
                                     } else {

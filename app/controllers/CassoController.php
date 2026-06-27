@@ -60,9 +60,20 @@ class CassoController extends Controller {
             // 2. Extract Order ID from description (e.g., DH123 or DH 123)
             preg_match('/DH\s*(\d+)/i', $description, $matches);
             
+            $orderId = null;
+            $isFallback = false;
+            
             if (isset($matches[1])) {
                 $orderId = $matches[1];
-                
+            } else {
+                // Fallback: try to match by exact amount and recent time
+                $orderId = $this->orderModel->findPendingOrderByAmount($amount);
+                if ($orderId) {
+                    $isFallback = true;
+                }
+            }
+            
+            if ($orderId) {
                 // Get order to check total
                 $order = $this->orderModel->getOrderById($orderId);
                 
@@ -81,7 +92,6 @@ class CassoController extends Controller {
                     }
 
                     // 3. Verify Amount (Anti-cheat)
-                    // We allow a small tolerance or exact match
                     if ($amount >= $order['total_amount']) {
                         // Update order payment status
                         $this->orderModel->updatePaymentStatus($orderId, 'Paid');
@@ -92,7 +102,7 @@ class CassoController extends Controller {
                             'amount' => $amount,
                             'description' => $description,
                             'order_id' => $orderId,
-                            'status' => 'Success'
+                            'status' => $isFallback ? 'Success (Fallback)' : 'Success'
                         ]);
                         $processedCount++;
                     } else {

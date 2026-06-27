@@ -152,6 +152,22 @@ class OrderModel {
         return $this->db->rowCount() > 0;
     }
 
+    public function findPendingOrderByAmount($amount) {
+        $this->db->query("
+            SELECT id 
+            FROM orders 
+            WHERE total_amount = :amount 
+              AND payment_status = 'pending' 
+              AND payment_method = 'BANKING' 
+              AND ordered_at >= NOW() - INTERVAL 1 HOUR
+            ORDER BY id DESC
+            LIMIT 1
+        ");
+        $this->db->bind(':amount', $amount);
+        $row = $this->db->single();
+        return $row ? $row['id'] : null;
+    }
+
     public function getShippingFeeByProvince($provinceName) {
         if (empty($provinceName)) {
             return 30000.00;
