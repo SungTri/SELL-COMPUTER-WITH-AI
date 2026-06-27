@@ -32,6 +32,8 @@
 
         // Auto-initialize responsive layout components on load
         document.addEventListener('DOMContentLoaded', () => {
+            const isMobile = window.innerWidth < 1024;
+            
             // Find and inject hamburger menu into all admin headers
             const mainHeader = document.querySelector('main > header');
             if (mainHeader) {
@@ -47,6 +49,59 @@
                     // Adjust header padding dynamically for mobile screen
                     mainHeader.classList.remove('px-10');
                     mainHeader.classList.add('px-4', 'sm:px-6', 'lg:px-10');
+                }
+
+                // JS Fallback Styles to guarantee no wrapping on cached CSS
+                if (isMobile) {
+                    // Title styling
+                    const title = mainHeader.querySelector('h1');
+                    if (title) {
+                        title.style.whiteSpace = 'nowrap';
+                        title.style.fontSize = '18px';
+                        title.style.overflow = 'hidden';
+                        title.style.textOverflow = 'ellipsis';
+                        title.style.maxWidth = '130px';
+                        title.style.flexShrink = '0';
+                    }
+
+                    // Search form styling
+                    const searchForm = mainHeader.querySelector('form.w-96, form');
+                    if (searchForm) {
+                        searchForm.style.width = '100%';
+                        searchForm.style.maxWidth = '150px';
+                        searchForm.style.paddingLeft = '0.5rem';
+                        searchForm.style.paddingRight = '0.5rem';
+                        
+                        const searchInput = searchForm.querySelector('input');
+                        if (searchInput) {
+                            searchInput.style.fontSize = '11px';
+                        }
+                        
+                        // Hide completely on very small screens
+                        if (window.innerWidth < 480) {
+                            searchForm.style.display = 'none';
+                        }
+                    }
+
+                    // Hide profile text
+                    const profileText = mainHeader.querySelector('.text-right');
+                    if (profileText) {
+                        profileText.style.display = 'none';
+                    }
+
+                    // Hide notifications area
+                    const notifArea = document.getElementById('admin-notification-area');
+                    if (notifArea) {
+                        notifArea.style.display = 'none';
+                    }
+
+                    // Remove margins/borders from user block
+                    const userBlock = mainHeader.querySelector('.pl-8, .pl-6');
+                    if (userBlock) {
+                        userBlock.style.borderLeft = 'none';
+                        userBlock.style.paddingLeft = '0';
+                        userBlock.style.marginLeft = '0';
+                    }
                 }
             }
             
@@ -150,6 +205,6 @@
         }
     </script>
     <script src="<?php echo URLROOT; ?>/js/media-selector.js?v=1.1.0"></script>
-    <link rel="stylesheet" href="<?php echo URLROOT; ?>/css/admin.css">
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/css/admin.css?v=1.2.0">
 </head>
 <body class="bg-background text-on-background dark:bg-neutral-950 dark:text-neutral-200 min-h-screen w-full flex overflow-hidden">
