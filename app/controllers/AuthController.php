@@ -220,6 +220,147 @@ class AuthController extends Controller {
         exit();
     }
 
+    public function google_login() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            exit();
+        }
+
+        $idToken = $_POST['id_token'] ?? '';
+        if (empty($idToken)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Missing ID Token']);
+            exit();
+        }
+
+        // Verify ID Token with Google's tokeninfo endpoint
+        $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === false || $httpCode !== 200) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Xác thực tài khoản Google thất bại']);
+            exit();
+        }
+
+        $payload = json_decode($response, true);
+        
+        // Optional client_id validation if configured in environment
+        $googleClientId = $_ENV['GOOGLE_CLIENT_ID'] ?? '';
+        if (!empty($googleClientId) && $googleClientId !== 'YOUR_GOOGLE_CLIENT_ID_HERE' && isset($payload['aud']) && $payload['aud'] !== $googleClientId) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Client ID không hợp lệ']);
+            exit();
+        }
+
+        $email = $payload['email'] ?? '';
+        $fullName = $payload['name'] ?? 'Khách hàng Google';
+        $picture = $payload['picture'] ?? '';
+
+        if (empty($email)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Không thể lấy email từ tài khoản Google']);
+            exit();
+        }
+
+        $userModel = $this->model('UserModel');
+        $user = $userModel->getUserByEmail($email);
+
+        if (!$user) {
+            // User does not exist, automatically register them
+            $randomPassword = bin2hex(random_bytes(16));
+            // Register creates a user with status = 1 (active) and role_id = 2 (customer)
+            $userId = $userModel->register($email, $randomPassword);
+            
+            if ($userId) {
+                // Create customer profile
+                $userModel->createCustomerProfile($userId, $fullName);
+                $user = $userModel->getUserByEmail($email);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Không thể tạo tài khoản người dùng']);
+                exit();
+            }
+        }
+
+        // Check user status
+        if ($user['status'] == 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Tài khoản của bạn đã bị khóa hoặc chưa được kích hoạt']);
+            exit();
+        }
+
+        // Set session variables
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_role'] = $user['role_id'];
+        $_SESSION['user_name'] = $user['full_name'] ?? ($user['role_id'] == 1 ? 'Admin' : 'Khách hàng');
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_avatar'] = !empty($picture) ? $picture : ('https://ui-avatars.com/api/?name=' . urlencode($_SESSION['user_name']) . '&background=0453cd&color=fff');
+
+        // Fetch customer_id and sync cart
+        $db = new Database();
+        $db->query("SELECT id FROM customers WHERE user_id = :user_id");
+        $db->bind(':user_id', $user['id']);
+        $customer = $db->single();
+        if ($customer) {
+            $_SESSION['customer_id'] = $customer['id'];
+            
+            // Sync guest cart to DB
+            $cartModel = $this->model('CartModel');
+            $cart = $cartModel->getCartByCustomerId($customer['id']);
+            if (!$cart) {
+                $cartId = $cartModel->createCart($customer['id']);
+                $cart = ['id' => $cartId];
+            }
+
+            if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $productId => $item) {
+                    $cartModel->addItem($cart['id'], $productId, $item['quantity']);
+                }
+            }
+
+            // Load back to session
+            $items = $cartModel->getItems($cart['id']);
+            $_SESSION['cart'] = [];
+            foreach ($items as $item) {
+                $_SESSION['cart'][$item['product_id']] = [
+                    'id' => $item['product_id'],
+                    'name' => $item['name'],
+                    'specs' => $item['specs'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'image' => $item['image']
+                ];
+            }
+        }
+
+        // Determine redirection target
+        $redirect = URLROOT;
+        if ($user['role_id'] == 1) {
+            $redirect = URLROOT . '/admin';
+        }
+
+        // If redirect param exists in session, use it (e.g. checkout redirection)
+        if (isset($_SESSION['redirect'])) {
+            $redirect = $_SESSION['redirect'];
+            unset($_SESSION['redirect']);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'redirect' => $redirect
+        ]);
+        exit();
+    }
+
     public function register_process() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $fullName = trim($_POST['fullName'] ?? '');

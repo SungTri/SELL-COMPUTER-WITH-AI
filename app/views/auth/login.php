@@ -61,6 +61,8 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-slate-50 dark:bg-zinc-950 text-on-background min-h-screen flex font-body-md antialiased transition-colors duration-300">
     
@@ -232,15 +234,7 @@
 
                 <!-- Đăng nhập mạng xã hội -->
                 <div class="mt-6 grid grid-cols-2 gap-4">
-                    <button class="flex items-center justify-center gap-2.5 w-full px-4 py-3 border border-slate-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-950/40 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors text-slate-700 dark:text-zinc-300 font-label-bold text-sm cursor-pointer" type="button">
-                        <svg class="h-5 w-5 shrink-0" style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                        </svg>
-                        <span>Google</span>
-                    </button>
+                    <div id="google-btn-container" class="w-full flex justify-center overflow-hidden rounded-xl h-[46px]"></div>
                     <button class="flex items-center justify-center gap-2.5 w-full px-4 py-3 border border-slate-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-950/40 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors text-slate-700 dark:text-zinc-300 font-label-bold text-sm cursor-pointer" type="button">
                         <svg class="h-5 w-5 shrink-0" style="width: 20px; height: 20px;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="12" fill="#ffffff"/>
@@ -428,6 +422,69 @@
                 errorAlert.classList.remove('hidden');
                 document.getElementById('modalErrorMessage').innerText = 'Đã xảy ra lỗi kết nối. Vui lòng thử lại sau.';
                 console.error('Error:', error);
+            });
+        }
+
+        // Initialize Google Sign-In GSI SDK
+        window.addEventListener('load', function() {
+            const googleClientId = '<?php echo $_ENV['GOOGLE_CLIENT_ID'] ?? ''; ?>';
+            if (googleClientId && googleClientId !== 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+                google.accounts.id.initialize({
+                    client_id: googleClientId,
+                    callback: handleCredentialResponse
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("google-btn-container"),
+                    { 
+                        theme: "outline", 
+                        size: "large", 
+                        width: document.getElementById("google-btn-container").offsetWidth,
+                        text: "continue_with",
+                        shape: "rectangular",
+                        logo_alignment: "center",
+                        locale: "vi"
+                    }
+                );
+                
+                // Show One Tap prompt
+                google.accounts.id.prompt();
+            } else {
+                // Fallback when Client ID is not configured
+                const container = document.getElementById("google-btn-container");
+                if (container) {
+                    container.innerHTML = `
+                        <button onclick="alert('Vui lòng cấu hình GOOGLE_CLIENT_ID trong file .env để sử dụng chức năng đăng nhập Google.')" class="flex items-center justify-center gap-2 w-full h-full border border-slate-200 dark:border-zinc-800 rounded-xl bg-slate-100 dark:bg-zinc-800/40 hover:bg-slate-200 dark:hover:bg-zinc-800/60 transition-colors text-slate-400 dark:text-zinc-500 font-label-bold text-xs" type="button">
+                            <span>Google (Chưa cấu hình)</span>
+                        </button>
+                    `;
+                }
+            }
+        });
+
+        function handleCredentialResponse(response) {
+            const idToken = response.credential;
+            
+            fetch('<?php echo URLROOT; ?>/auth/google_login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: 'id_token=' + encodeURIComponent(idToken)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message || 'Đăng nhập Google thất bại.');
+                }
+            })
+            .catch(err => {
+                console.error('Error during Google login:', err);
+                alert('Có lỗi xảy ra trong quá trình đăng nhập bằng Google.');
             });
         }
     </script>
