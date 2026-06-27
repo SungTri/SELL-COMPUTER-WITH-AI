@@ -120,3 +120,76 @@ html.dark .table-card {
     align-items: center;
     justify-content: center;
 }
+
+/* Responsive Mobile Admin Layout Fixes */
+@media (max-w: 1023px) {
+    /* Prevent Admin Title from wrapping into vertical lines */
+    header h1, header h1.text-h2 {
+        font-size: 1.125rem !important; /* text-lg */
+        line-height: 1.75rem !important;
+        white-space: nowrap !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+        flex-shrink: 0;
+        margin-bottom: 0 !important;
+    }
+
+    /* Make headers flexible and prevent wrapping */
+    header {
+        height: 4.5rem !important; /* h-18 */
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Shrink the size of the header search form container */
+    header form.w-96, header .w-96 {
+        width: 100% !important;
+        max-width: 150px !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        gap: 0.25rem !important;
+    }
+
+    header form input, header input[type="text"] {
+        font-size: 11px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Hide the text info next to user avatar in header */
+    header .text-right {
+        display: none !important;
+    }
+
+    /* Hide the notification area and profile border separator to save space */
+    header .border-l {
+        border-left: none !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Hide notification area on extra small widths if it still overflows */
+    #admin-notification-area {
+        display: none !important;
+    }
+
+    /* Ensure flex headers don't have large gap */
+    header > div {
+        gap: 0.5rem !important;
+    }
+}
+
+/* On extra small screens (< 480px) */
+@media (max-w: 480px) {
+    header h1, header h1.text-h2 {
+        max-width: 120px;
+    }
+    
+    /* Hide the header search bar on very narrow screens so title remains visible */
+    header form.w-96, header .w-96, header form {
+        display: none !important;
+    }
+}
+
