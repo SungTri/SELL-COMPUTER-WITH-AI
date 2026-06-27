@@ -10,6 +10,17 @@
     $metaDesc = $data['meta_description'] ?? ($data['app_settings']['meta_description'] ?? 'Chuyên cung cấp linh kiện máy tính cao cấp');
     $metaKeys = $data['meta_keywords'] ?? ($data['app_settings']['meta_keywords'] ?? 'pc, laptop, linh kien');
     
+    // Parse Store Logo dynamically to prevent broken image URL due to DB syncing or domain changes
+    $storeLogo = '';
+    if (!empty($data['app_settings']['store_logo'])) {
+        $storeLogo = $data['app_settings']['store_logo'];
+        if (preg_match('/\/public\/images\/[^\/]+$/', $storeLogo, $matches)) {
+            $storeLogo = URLROOT . $matches[0];
+        } elseif (strpos($storeLogo, 'http') !== 0) {
+            $storeLogo = URLROOT . '/' . ltrim($storeLogo, '/');
+        }
+    }
+    
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $requestUri = strtok($_SERVER['REQUEST_URI'] ?? '', '?');
@@ -38,24 +49,24 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const isDark = document.documentElement.classList.contains('dark');
-            const icon = document.getElementById('theme-toggle-icon');
-            if (icon) {
+            const icons = document.querySelectorAll('.theme-toggle-icon');
+            icons.forEach(icon => {
                 icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-            }
+            });
         });
 
         function toggleTheme() {
             const html = document.documentElement;
-            const icon = document.getElementById('theme-toggle-icon');
+            const icons = document.querySelectorAll('.theme-toggle-icon');
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
-                if (icon) icon.textContent = 'dark_mode';
+                icons.forEach(icon => icon.textContent = 'dark_mode');
                 if (typeof showToast === 'function') showToast('Đã chuyển sang giao diện sáng', 'success');
             } else {
                 html.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
-                if (icon) icon.textContent = 'light_mode';
+                icons.forEach(icon => icon.textContent = 'light_mode');
                 if (typeof showToast === 'function') showToast('Đã chuyển sang giao diện tối', 'success');
             }
         }
@@ -73,8 +84,8 @@
         if (strpos($ogImage, 'http') !== 0) {
             $ogImage = URLROOT . '/' . ltrim($ogImage, '/');
         }
-    } elseif (!empty($data['app_settings']['store_logo'])) {
-        $ogImage = $data['app_settings']['store_logo'];
+    } elseif (!empty($storeLogo)) {
+        $ogImage = $storeLogo;
     }
     if (!empty($ogImage)): ?>
     <meta property="og:image" content="<?php echo htmlspecialchars($ogImage); ?>">
@@ -197,8 +208,8 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a href="<?php echo URLROOT; ?>" class="group flex items-center gap-3">
                     <div class="relative">
-                        <?php if(!empty($data['app_settings']['store_logo'])): ?>
-                            <img src="<?php echo $data['app_settings']['store_logo']; ?>" alt="Logo" class="h-10 w-auto max-w-[160px] rounded-xl object-contain group-hover:scale-105 transition-transform duration-500">
+                        <?php if(!empty($storeLogo)): ?>
+                            <img src="<?php echo $storeLogo; ?>" alt="Logo" class="h-10 w-auto max-w-[160px] rounded-xl object-contain group-hover:scale-105 transition-transform duration-500">
                         <?php else: ?>
                             <div class="w-10 h-10 bg-primary text-on-primary rounded-xl flex items-center justify-center font-bold text-xl group-hover:rotate-[10deg] transition-transform duration-500 shadow-lg shadow-primary/20">
                                 <?php echo substr($data['app_settings']['store_name'] ?? 'M', 0, 1); ?>
@@ -235,7 +246,7 @@
             </div>
 
             <!-- Right: Actions & User Account -->
-            <div class="flex items-center gap-1.5 shrink-0">
+            <div class="hidden lg:flex items-center gap-1.5 shrink-0">
                 <!-- Mobile Search Trigger (visible only on mobile) -->
                 <a href="<?php echo URLROOT; ?>/product/search" class="p-2 md:hidden text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="Tìm kiếm">
                     <span class="material-symbols-outlined !text-[24px]">search</span>
@@ -262,7 +273,7 @@
 
                 <!-- Theme Toggle Button -->
                 <button id="theme-toggle-btn" onclick="toggleTheme()" class="p-2 text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="<?php echo __('theme_toggle_title', 'Đổi giao diện'); ?>">
-                    <span class="material-symbols-outlined !text-[24px]" id="theme-toggle-icon">dark_mode</span>
+                    <span class="material-symbols-outlined theme-toggle-icon !text-[24px]">dark_mode</span>
                 </button>
 
                 <a href="<?php echo URLROOT; ?>/user/profile?tab=wishlist" class="p-2 text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="<?php echo __('wishlist', 'Yêu thích'); ?>">
@@ -351,11 +362,32 @@
                 </a>
                 <?php endif; ?>
             </div>
+
+            <!-- Mobile Action Bar (Visible only on mobile/tablet) -->
+            <div class="flex lg:hidden items-center gap-1 shrink-0">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="<?php echo __('theme_toggle_title', 'Đổi giao diện'); ?>">
+                    <span class="material-symbols-outlined theme-toggle-icon !text-[24px]">dark_mode</span>
+                </button>
+
+                <!-- Cart Link -->
+                <a href="<?php echo URLROOT; ?>/cart" class="relative p-2 text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="<?php echo __('cart', 'Giỏ hàng'); ?>">
+                    <span class="material-symbols-outlined !text-[24px]">shopping_cart</span>
+                    <span class="cart-count-badge absolute top-0.5 right-0.5 bg-secondary text-on-secondary text-[7px] font-black rounded-full min-w-[14px] h-[14px] flex items-center justify-center border-2 border-white <?php echo $cartCount == 0 ? 'hidden' : ''; ?>">
+                        <?php echo $cartCount; ?>
+                    </span>
+                </a>
+
+                <!-- Hamburger Button -->
+                <button onclick="toggleMobileMenu()" class="p-2 text-on-surface/50 hover:text-secondary hover:bg-secondary/5 rounded-xl transition-all" title="Menu">
+                    <span class="material-symbols-outlined !text-[24px]">menu</span>
+                </button>
+            </div>
             
         </div>
 
         <!-- Row 2: Category Navigation Menu -->
-        <div class="border-t border-outline-variant/10 dark:border-outline-variant/5 bg-surface-container-lowest/80 backdrop-blur-md">
+        <div class="hidden lg:block border-t border-outline-variant/10 dark:border-outline-variant/5 bg-surface-container-lowest/80 backdrop-blur-md">
             <div class="max-w-container-max mx-auto px-gutter py-2.5 flex items-center justify-center">
                 <nav class="hidden lg:flex items-center gap-8 xl:gap-10">
                     <?php 
@@ -527,8 +559,177 @@
             document.querySelectorAll(`.compare-btn[data-id="${id}"]`).forEach(btn => {
                 btn.classList.add('bg-secondary', 'text-on-secondary');
             });
-        });
     });
+    });
+    </script>
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobile-drawer-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300" onclick="toggleMobileMenu()"></div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-[300px] max-w-[85vw] bg-surface-container-lowest/95 dark:bg-zinc-900/95 backdrop-blur-2xl border-l border-outline-variant/20 dark:border-outline-variant/10 z-[100] translate-x-full transition-transform duration-300 ease-out shadow-2xl flex flex-col h-full">
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-outline-variant/15 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-black tracking-wider text-primary uppercase"><?php echo __('menu', 'DANH MỤC'); ?></span>
+            </div>
+            <button onclick="toggleMobileMenu()" class="p-2 hover:bg-outline-variant/10 text-on-surface-variant rounded-xl transition-all">
+                <span class="material-symbols-outlined !text-[20px]">close</span>
+            </button>
+        </div>
+
+        <!-- Drawer Body -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-6">
+            <!-- Account Status & CTAs -->
+            <div class="bg-surface-container-low/50 dark:bg-zinc-800/40 border border-outline-variant/10 rounded-2xl p-4">
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <div class="flex items-center gap-3">
+                        <img src="<?php echo $_SESSION['user_avatar']; ?>" alt="Avatar" class="w-10 h-10 rounded-full border border-white dark:border-zinc-700 shadow-sm object-cover" />
+                        <div class="overflow-hidden">
+                            <p class="text-[10px] font-bold text-outline uppercase tracking-wider mb-0.5"><?php echo __('greeting', 'Xin chào,'); ?></p>
+                            <p class="text-sm font-bold text-primary truncate leading-tight"><?php echo $_SESSION['user_name']; ?></p>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 gap-2 pt-3 border-t border-outline-variant/10">
+                        <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 1): ?>
+                            <a href="<?php echo URLROOT; ?>/admin" class="flex items-center gap-2.5 px-3 py-2 text-xs font-black text-secondary hover:bg-secondary/5 rounded-xl transition-colors">
+                                <span class="material-symbols-outlined !text-[18px]">dashboard_customize</span>
+                                <?php echo __('admin_panel', 'QUẢN TRỊ HỆ THỐNG'); ?>
+                            </a>
+                        <?php endif; ?>
+                        <a href="<?php echo URLROOT; ?>/user/profile" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">
+                            <span class="material-symbols-outlined !text-[18px]">person</span>
+                            <?php echo __('profile', 'HỒ SƠ CÁ NHÂN'); ?>
+                        </a>
+                        <a href="<?php echo URLROOT; ?>/user/profile?tab=orders" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">
+                            <span class="material-symbols-outlined !text-[18px]">package_2</span>
+                            <?php echo __('orders', 'ĐƠN HÀNG CỦA TÔI'); ?>
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <p class="text-xs text-on-surface-variant/75 text-center mb-3 font-medium">Đăng nhập để trải nghiệm mua sắm tốt hơn với AI tư vấn!</p>
+                    <a href="<?php echo URLROOT; ?>/auth/login" class="btn-premium w-full py-3 text-xs normal-case tracking-normal shadow-sm hover:shadow-indigo-500/20">
+                        <span class="material-symbols-outlined !text-[16px]">login</span>
+                        <?php echo __('login', 'Đăng nhập'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <!-- Search Bar -->
+            <form action="<?php echo URLROOT; ?>/product/search" method="GET" class="w-full flex items-center bg-surface-container-low/50 dark:bg-zinc-800/40 rounded-xl px-3.5 py-2 border border-outline-variant/10 focus-within:border-secondary/40 focus-within:bg-surface-container-lowest transition-all duration-300">
+                <span class="material-symbols-outlined text-outline/40 !text-[18px]">search</span>
+                <input name="q" class="bg-transparent border-none focus:ring-0 text-[12px] font-medium text-on-surface placeholder:text-outline/30 w-full min-w-0 ml-2 py-0" placeholder="<?php echo __('search_placeholder', 'Tìm kiếm...'); ?>" type="text" value="<?php echo $_GET['q'] ?? ''; ?>"/>
+                <button type="button" onclick="toggleAISearch(); toggleMobileMenu();" class="p-1 text-secondary hover:bg-secondary/10 rounded-lg">
+                    <span class="material-symbols-outlined !text-[16px]">magic_button</span>
+                </button>
+            </form>
+
+            <!-- Menu Links -->
+            <div class="flex flex-col gap-2">
+                <a href="<?php echo URLROOT; ?>" class="flex items-center justify-between py-2 text-on-surface-variant font-bold text-sm hover:text-secondary transition-colors">
+                    <span><?php echo __('home', 'TRANG CHỦ'); ?></span>
+                    <span class="material-symbols-outlined !text-[18px]">chevron_right</span>
+                </a>
+                <a href="<?php echo URLROOT; ?>/buildpc" class="flex items-center justify-between py-2 text-on-surface-variant font-bold text-sm hover:text-secondary transition-colors">
+                    <span><?php echo __('buildpc', 'BUILD PC'); ?></span>
+                    <span class="material-symbols-outlined !text-[18px]">chevron_right</span>
+                </a>
+
+                <!-- Categories Accordion -->
+                <?php if(isset($data['categories'])): ?>
+                    <div class="border-t border-outline-variant/10 pt-2">
+                        <button onclick="toggleMobileCategoryAcc()" class="w-full flex items-center justify-between py-2 text-on-surface-variant font-bold text-sm hover:text-secondary transition-colors">
+                            <span>DANH MỤC SẢN PHẨM</span>
+                            <span class="material-symbols-outlined transition-transform duration-300 !text-[18px]" id="mobile-cat-arrow">expand_more</span>
+                        </button>
+                        <div id="mobile-categories-content" class="hidden pl-3 border-l-2 border-outline-variant/20 space-y-2 mt-1">
+                            <?php foreach($data['categories'] as $cat): ?>
+                                <div class="py-1">
+                                    <a href="<?php echo URLROOT; ?>/product/category/<?php echo $cat['id']; ?>" class="block text-[13px] font-bold text-on-surface hover:text-secondary transition-colors">
+                                        <?php echo mb_strtoupper(__($cat['name']), 'UTF-8'); ?>
+                                    </a>
+                                    <?php if(!empty($cat['subcategories'])): ?>
+                                        <div class="pl-3 mt-1.5 space-y-1.5">
+                                            <?php foreach($cat['subcategories'] as $sub): ?>
+                                                <a href="<?php echo URLROOT; ?>/product/category/<?php echo $sub['id']; ?>" class="block text-[12px] font-medium text-on-surface-variant hover:text-secondary transition-colors flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 bg-outline-variant/50 rounded-full"></span>
+                                                    <?php echo __($sub['name']); ?>
+                                                </a>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <a href="<?php echo URLROOT; ?>/order/track" class="flex items-center justify-between py-2 text-on-surface-variant font-bold text-sm hover:text-secondary transition-colors border-t border-outline-variant/10 pt-2">
+                    <span><?php echo __('track_order', 'TRA CỨU ĐƠN HÀNG'); ?></span>
+                    <span class="material-symbols-outlined !text-[18px]">chevron_right</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="p-5 border-t border-outline-variant/15 bg-surface-container-low/30 dark:bg-zinc-950/20 space-y-4">
+            <div class="flex items-center justify-between text-xs font-semibold text-on-surface-variant">
+                <!-- Language Selection -->
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined !text-[16px]">language</span>
+                    <span class="text-outline uppercase"><?php echo __('language', 'Ngôn ngữ'); ?>:</span>
+                    <div class="flex items-center gap-1.5 bg-surface-container/50 p-0.5 rounded-lg border border-outline-variant/10">
+                        <a href="<?php echo URLROOT; ?>/language/change/vi" class="px-2 py-0.5 rounded-md text-[10px] <?php echo ($_SESSION['lang'] ?? 'vi') === 'vi' ? 'bg-white dark:bg-zinc-800 text-secondary font-bold shadow-sm' : ''; ?>">VI</a>
+                        <a href="<?php echo URLROOT; ?>/language/change/en" class="px-2 py-0.5 rounded-md text-[10px] <?php echo ($_SESSION['lang'] ?? 'vi') === 'en' ? 'bg-white dark:bg-zinc-800 text-secondary font-bold shadow-sm' : ''; ?>">EN</a>
+                    </div>
+                </div>
+
+                <!-- Wishlist link -->
+                <a href="<?php echo URLROOT; ?>/user/profile?tab=wishlist" class="flex items-center gap-1 hover:text-secondary transition-colors">
+                    <span class="material-symbols-outlined !text-[16px]">favorite</span>
+                    <span><?php echo __('wishlist', 'Yêu thích'); ?></span>
+                </a>
+            </div>
+
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <a href="<?php echo URLROOT; ?>/auth/logout" onclick="sessionStorage.clear()" class="flex items-center justify-center gap-2 w-full py-2.5 border border-error/20 hover:bg-error/5 text-error text-xs font-bold rounded-xl transition-colors">
+                    <span class="material-symbols-outlined !text-[16px]">logout</span>
+                    <?php echo __('logout', 'ĐĂNG XUẤT'); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <script>
+    function toggleMobileMenu() {
+        const drawer = document.getElementById('mobile-drawer');
+        const overlay = document.getElementById('mobile-drawer-overlay');
+        if (drawer.classList.contains('translate-x-full')) {
+            drawer.classList.remove('translate-x-full');
+            drawer.classList.add('translate-x-0');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden';
+        } else {
+            drawer.classList.add('translate-x-full');
+            drawer.classList.remove('translate-x-0');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            document.body.style.overflow = '';
+        }
+    }
+
+    function toggleMobileCategoryAcc() {
+        const content = document.getElementById('mobile-categories-content');
+        const arrow = document.getElementById('mobile-cat-arrow');
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            arrow.classList.add('rotate-180');
+        } else {
+            content.classList.add('hidden');
+            arrow.classList.remove('rotate-180');
+        }
+    }
     </script>
 
     <main class="max-w-container-max mx-auto px-gutter pb-section-padding pt-[70px]">

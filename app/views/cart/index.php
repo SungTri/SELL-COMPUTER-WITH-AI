@@ -296,7 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.status === 'success') {
                     card.remove();
                     updateTotals();
-                    if (document.getElementById('header-cart-count')) {
+                    if (typeof updateCartCount === 'function') {
+                        updateCartCount(data.cart_count);
+                    } else if (document.getElementById('header-cart-count')) {
                         document.getElementById('header-cart-count').textContent = data.cart_count;
                     }
                     showToast(currentLang === 'en' ? 'Product removed from cart' : 'Đã xóa sản phẩm khỏi giỏ hàng', 'success');
