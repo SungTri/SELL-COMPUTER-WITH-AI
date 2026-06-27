@@ -107,6 +107,21 @@ function get_product_image($image) {
             if (strpos($image, '/public/') === false) {
                 $image = str_replace('/img/', '/public/img/', $image);
             }
+            
+            // Nếu chạy trên máy chủ Render (URLROOT không chứa localhost/127.0.0.1),
+            // chuyển đổi domain localhost thành tên miền URLROOT để ảnh tải đúng
+            if (strpos(URLROOT, 'localhost') === false && strpos(URLROOT, '127.0.0.1') === false) {
+                $path_start = false;
+                if (strpos($image, '/public/') !== false) {
+                    $path_start = strpos($image, '/public/');
+                } elseif (strpos($image, '/img/') !== false) {
+                    $path_start = strpos($image, '/img/');
+                }
+                
+                if ($path_start !== false) {
+                    $image = URLROOT . substr($image, $path_start);
+                }
+            }
         }
         return $image;
     }
