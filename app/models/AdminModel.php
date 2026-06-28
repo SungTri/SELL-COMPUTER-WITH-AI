@@ -619,6 +619,17 @@ class AdminModel {
     }
 
     public function deleteVoucher($id) {
+        // Set orders.voucher_id to NULL to prevent foreign key constraint fails
+        $this->db->query("UPDATE orders SET voucher_id = NULL WHERE voucher_id = :id");
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+
+        // Delete from user_vouchers mapping table
+        $this->db->query("DELETE FROM user_vouchers WHERE voucher_id = :id");
+        $this->db->bind(':id', $id);
+        $this->db->execute();
+
+        // Finally, delete the voucher
         $this->db->query("DELETE FROM vouchers WHERE id = :id");
         $this->db->bind(':id', $id);
         return $this->db->execute();
